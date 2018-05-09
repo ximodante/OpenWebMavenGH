@@ -39,30 +39,8 @@ public class LoginAction implements Serializable{
 	
 	private String result;
 		
-	public String executeEdu() {
-		Properties properties;
-		try {
-			String provaurl=FileUtilsEdu.getPathFromResourcesFolder("properties/importcsv.properties");
-			System.out.println(provaurl);
-			
-			System.out.println("1a propietats");
-			properties = PropertyUtilsEdu.getProperties(FileUtilsEdu.getStreamFromResourcesFolder("properties/importcsv.properties"));
-			for(Object o: properties.keySet()) System.out.println(o.toString() + "-->"+ properties.getProperty(o.toString()));
-			
-			System.out.println("2a propietats");
-			Properties properties1 = PropertyUtilsEdu.getProperties(FileUtilsEdu.getStreamFromResourcesFolder("properties/importcsv.properties"));
-			for(Object o: properties1.keySet()) System.out.println(o.toString() + "-->"+ properties1.getProperty(o.toString()));
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		result = "index";
-		return result;
-	}
-	
 	public String execute() {
-			
+		
 		result = "index";
 		
 		//comprobar usuari i clau
@@ -79,8 +57,6 @@ public class LoginAction implements Serializable{
 		}
 		
 		else if (ctx.login(usuari)){
-			
-			System.out.println("CTX=" + ctx.toString());
 			
 			result = "main";
 		

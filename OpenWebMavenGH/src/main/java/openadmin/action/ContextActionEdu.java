@@ -101,18 +101,21 @@ public class ContextActionEdu implements Serializable {
 	LogDaoEdu log = null;
 	*/
 	@Inject
+	@Getter
 	private LangTypeEdu langType;
 	
 	@Getter @Setter
 	private Role activeRol;
 	
+	/*
 	@PostConstruct
 	public void initEdu () {
 	    this.connected=false;
 	    connControl=null;
 	    System.out.println("-99.5 connected=" + connected);
 	}
-
+    */
+	
 	private void connect() {
 		//comprova si hi ha conexi� a la base de dades
 		//initEdu();
@@ -425,7 +428,7 @@ public class ContextActionEdu implements Serializable {
 	
 	//Work view
 	public ViewFacadeEdu getView(Integer key) {
-		
+		System.out.println("VISTA: " + key);
 		return lstView.get(key);
 	
 	}

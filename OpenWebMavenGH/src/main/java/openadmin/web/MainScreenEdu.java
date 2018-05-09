@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
+
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.html.HtmlOutputText;
 import javax.faces.context.FacesContext;
@@ -21,7 +21,7 @@ import org.primefaces.model.menu.MenuModel;
 import lombok.Getter;
 import lombok.Setter;
 import openadmin.action.ContextActionEdu;
-import openadmin.dao.operation.DBAction;
+
 import openadmin.model.Base;
 import openadmin.model.control.Access;
 import openadmin.model.control.Action;
@@ -30,15 +30,15 @@ import openadmin.model.control.EntityAdm;
 import openadmin.model.control.MenuItem;
 import openadmin.model.control.Program;
 import openadmin.model.control.Role;
-import openadmin.model.log.LogEdu;
-import openadmin.util.edu.LogUtilsEdu;
+
 import openadmin.util.edu.ReflectionUtilsEdu;
 import openadmin.util.lang.LangTypeEdu;
+import openadmin.util.reflection.ReflectionField;
 import openadmin.web.components.PFMenuBarEdu;
-import openadmin.web.components.PFPanelMenu;
+
 import openadmin.web.components.PFPanelMenuEdu;
 import openadmin.web.view.DefaultViewEdu;
-import openadmin.web.view.DefaultViewEduOld;
+
 import openadmin.web.view.ViewFacadeEdu;
 
 
@@ -65,7 +65,7 @@ public class MainScreenEdu implements Serializable {
 	@Inject
 	private LangTypeEdu lang;
 
-	@Getter @Setter
+	@Setter
 	private MenuModel menuBar=null;
 	
 	@Getter @Setter
@@ -119,11 +119,7 @@ public class MainScreenEdu implements Serializable {
 			 
 				menuBar.addElement(pfMenuBar.menuEntities("entities", entities));
 			 
-				//KKKKKKKK
-				for(EntityAdm ent: entities) {
-					System.out.println("KKKKK " + ent.getDescription());
-				}
-			 
+							 
 			}
 		
 			//if there is an entity, no entity is displayed and go straight to the lateral menu
@@ -131,8 +127,6 @@ public class MainScreenEdu implements Serializable {
 						 
 				if (null == activeEntity)  activeEntity = entities.stream().findFirst().get();
 				
-				System.out.println("CTX2=" + ctx.toString());
-					
 				lstAccess = ctx.getMapEntityAccess().get(activeEntity);
 			
 				//If there is a program
@@ -158,8 +152,6 @@ public class MainScreenEdu implements Serializable {
     
 	public void loadMenuItems(long pRol, long pProgram) {
 		
-		System.out.println("CTX3=" + ctx.toString());
-		System.out.println("CTX3.1=" + ctx.getConnControl().getEntityManager().toString());
 		menuLateral = new DefaultMenuModel();
 		
 		PFPanelMenuEdu pPFPanelMenu = new PFPanelMenuEdu(lang);
@@ -172,14 +164,11 @@ public class MainScreenEdu implements Serializable {
 		
 		//Current Rol
 		ctx.setActiveRol(ctx.getConnControl().findObjectPK(rol));
-		System.out.println("CTX4=" + ctx.toString());
-		System.out.println("CTX4.1=" + ctx.getActiveRol().toString());
 		
 		Program program = new Program();
 		program.setId(pProgram);
 		
 		program = ctx.getConnControl().findObjectPK(program);
-		System.out.println("CTX4.2=" + program.toString());
 		 
 		ActionViewRole actionViewRole = new ActionViewRole();		 
 		actionViewRole.setRole(ctx.getActiveRol());
@@ -233,7 +222,7 @@ public void loadScreen(long pMenuItem)
 	menuItem.setId(pMenuItem);
 	menuItem = ctx.getConnControl().findObjectPK(menuItem);
 	
-	screen(menuItem);
+	screen(menuItem, null);
 
 }
 
@@ -245,11 +234,32 @@ public void loadScreenRecursive(String pMenuItem)
 	menuItem.setDescription(pMenuItem);
 	menuItem = ctx.getConnControl().findObjectDescription(menuItem);
 	
-	screen(menuItem);
+	screen(menuItem, null);
 
 }
 
-public void screen(MenuItem pMenuItem) 
+public void exitScreenRecursive() 
+		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
+	
+	Base _obj = ctx.getView(ctx.numberView()).getBase();
+	
+	ReflectionField refl = new ReflectionField();
+	
+	refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView() - 1).getMetodo());
+	
+	ctx.deleteView();
+	
+	//Object before screen
+	Base obj =  ctx.getView(ctx.numberView()).getBase();
+	
+	MenuItem menuItem = ctx.getView(ctx.numberView()).getMenuItem();
+	ctx.deleteView();
+	
+	screen(menuItem, obj);
+	
+}
+
+public void screen(MenuItem pMenuItem, Object obj) 
 		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException{
 	
 	//Delete screen
@@ -278,7 +288,11 @@ public void screen(MenuItem pMenuItem)
 	.collect(Collectors.toList());
 	
 	//Create object
-	Object obj = ReflectionUtilsEdu.createObject(pMenuItem.getClassName().getDescription());
+	if (null == obj) {
+		
+		obj = ReflectionUtilsEdu.createObject(pMenuItem.getClassName().getDescription());
+		
+	}
 	
 	//Default View
 	if (pMenuItem.getViewType().equals("default")) {

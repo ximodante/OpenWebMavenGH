@@ -2,14 +2,18 @@ package openadmin.action;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 
 import org.primefaces.component.outputpanel.OutputPanel;
+import org.primefaces.event.SelectEvent;
 
 import lombok.Getter;
 import lombok.Setter;
 import openadmin.model.Base;
+import openadmin.model.control.MenuItem;
 import openadmin.util.edu.ReflectionUtilsEdu;
 import openadmin.util.lang.WebMessages;
 import openadmin.util.reflection.SerialClone;
@@ -26,11 +30,16 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 	@Getter @Setter
 	private ContextActionEdu ctx;
 	
+	@Getter @Setter
+	private MenuItem menuItem;
+	
 	//To edit
 	private Base objOriginal;
 	
 	@Getter
 	private String metodo;
+	
+	private List<Base> lstbase;
 	
 	
 	public void _new() {
@@ -91,10 +100,37 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 	public void _search() {
 		
  		System.out.println("BUSCA");
- 		PFDialog dialeg = new PFDialog();
+ 		List<Base> lstbaseNew = new ArrayList<Base>();
  		
- 		dialeg.panel01();
+		lstbaseNew = ctx.getConnControl().findObjects(base);
+		
+		lstbase = SerialClone.clone(lstbaseNew);
  		
+		if (lstbase.size() == 0 ) {
+			
+			WebMessages.messageError("noexist_find_pk");
+			
+			return;
+			
+		}
+		
+ 		PFDialog dialeg = new PFDialog(ctx.getLangType());
+ 		
+ 		dialeg.panel01(lstbase);;
+ 		
+	}
+	
+
+	public void selectRow(SelectEvent event) {
+		
+		System.out.println("Selecci� fila: " + ((Base) event.getObject()).getId());
+		
+	}
+	
+	public void selectRow(Base pBase) {
+		
+		System.out.println("Selecci� fila2: " + pBase.getId());
+		
 	}
 	
 	public void setBase(Base pBase) {
