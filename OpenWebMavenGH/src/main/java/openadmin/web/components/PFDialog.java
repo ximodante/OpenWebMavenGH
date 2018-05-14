@@ -44,12 +44,14 @@ private LangTypeEdu langType;
 		properties.put("width", 600);
 		properties.put("height", 600);
 		
-		PrimeFaces.current().dialog().openDynamic("/pages/dialogs/dialogo01.xhtml", properties, null);
+		System.out.println("Obrint dialog dinamic /pages/dialogs/dialogo01.xhtml" );
+		//PrimeFaces.current().dialog().openDynamic("/pages/dialogs/dialogo01.xhtml", properties, null);
+		PrimeFaces.current().dialog().openDynamic("/pages/dialogs/viewCars", properties, null);
 		//DefaultRequestContext.getCurrentInstance().openDialog("/pages/dialogs/dialogo02.xhtml", properties, null);
-		
+		System.out.println("Obert dialog dinamic /pages/dialogs/dialogo01.xhtml" );
 		UIComponent component = _context.getViewRoot().findComponent("form1");
 		
-		UtilFaces.findComponentOfId(component, "idContingutDialog");
+		//UtilFaces.findComponentOfId(component, "idContingutDialog");
 		
 		return "";
 		
@@ -91,9 +93,11 @@ private LangTypeEdu langType;
 		
 		form.getChildren().add(dialog);
 		
-		RequestContext request = RequestContext.getCurrentInstance();
-		request.execute("PF('widget').show()");
-		request.update("form1");
+		//RequestContext request = RequestContext.getCurrentInstance();
+		//request.execute("PF('widget').show()");
+		//request.update("form1");
+		PrimeFaces.current().executeScript("PF('widget').show()");
+		PrimeFaces.current().ajax().update("form1");
 		
 	}
 	

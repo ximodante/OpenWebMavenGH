@@ -28,6 +28,22 @@
         	<var>rscaction</var>
 	 	</resource-bundle>
 	 	
+	 	
+	 	<!-- Primefaces DIALOG FRAMEWORK -->
+	 	<action-listener>
+			org.primefaces.application.DialogActionListener
+ 		</action-listener>
+ 		
+ 		<navigation-handler>
+			org.primefaces.application.DialogNavigationHandler
+ 		</navigation-handler>
+ 		
+ 		<view-handler>
+			org.primefaces.application.DialogViewHandler
+ 		</view-handler>
+  
+    	<!-- END Primefaces DIALOG FRAMEWORK -->
+	 	
 	</application>            
 
 </faces-config>

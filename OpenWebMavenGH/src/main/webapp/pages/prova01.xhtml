@@ -1,0 +1,26 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:f="http://java.sun.com/jsf/core" 
+      xmlns:p="http://primefaces.org/ui">  
+    <h:head>  
+    </h:head>  
+      
+    <h:body>  
+      
+        <h:form>
+           <p:commandButton value="View-ActionListenerOK" icon="ui-icon-extlink" actionListener="#{dfView.viewCars}" update="tatiaa"/>
+           <p:commandButton value="View-Actions-BAD" icon="ui-icon-extlink" action="#{dfView.viewCars}" update="tatiaa"/>
+           
+           
+           <p:commandButton value="Options-ActionListenerOK" icon="ui-icon-extlink" actionListener="#{dfView.viewCarsCustomized}" update="tatiaa"/>
+           
+           <p:commandButton value="Options-Action-BAD" icon="ui-icon-extlink" action="#{dfView.viewCarsCustomized}" update="tatiaa"/>
+            
+           <p:commandButton value="Obrir no existent" icon="ui-icon-extlink" actionListener="#{dfView.showMessage1}" update="tatiaa"/>
+           <p:commandButton value="Show Message" icon="ui-icon-script" actionListener="#{dfView.showMessage}" update="tatiaa"/>
+
+           
+            <h:outputText id="tatiaa" value="#{dfView.tatia}" />
+       </h:form>
+    </h:body>  
+</html>

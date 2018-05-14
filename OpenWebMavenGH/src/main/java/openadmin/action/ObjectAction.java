@@ -3,10 +3,13 @@ package openadmin.action;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.outputpanel.OutputPanel;
 import org.primefaces.event.SelectEvent;
 
@@ -114,10 +117,15 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 			
 		}
 		
- 		PFDialog dialeg = new PFDialog(ctx.getLangType());
+		Map<String,Object> options = new HashMap<String, Object>();
+        options.put("resizable", false);
+        PrimeFaces.current().dialog().openDynamic("/pages/dialogs/viewCars", options, null);
+		
+ 		/*
+        PFDialog dialeg = new PFDialog(ctx.getLangType());
  		
  		dialeg.panel01(lstbase);;
- 		
+ 		*/
 	}
 	
 

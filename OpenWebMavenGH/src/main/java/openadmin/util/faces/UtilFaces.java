@@ -11,10 +11,9 @@ public class UtilFaces {
 		
 		UIComponent root = pRoot;
 		
-		System.out.println("Component root: " + root);
-		System.out.println("Component root: " + root.getId());
+		System.out.println("Buscant " + id + "en el component " + root.getId());
+
 		if(root.getId().equals(id)){
-	    	
 	        return root;
 	    }
 	    if(root.getChildCount() > 0){
@@ -29,12 +28,13 @@ public class UtilFaces {
 	        		
 	                UIComponent returnComponent = findComponentOfId(subUiComponent, id);
 	                
-	                System.out.println("Component: " + returnComponent);
-	                System.out.println("Component client: " + returnComponent.getClientId());
+	                
 	                
 	                if(returnComponent != null){
+	                	System.out.println("Component trobat: " + returnComponent);
+		                System.out.println("Component trobat...: " + returnComponent.getClientId());
 	                    return returnComponent;
-	            }
+	                }
 	        }
 	    }
 	    return null;
