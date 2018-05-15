@@ -3,11 +3,12 @@ package openadmin.util.faces;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
 public class UtilFaces {
 
-	public static UIComponent findComponentOfId(UIComponent pRoot, String id){
+	public static UIComponent findComponentOfId(UIComponent pRoot, String id, String arbre){
 		
 		UIComponent root = pRoot;
 		
@@ -18,15 +19,17 @@ public class UtilFaces {
 	    }
 	    if(root.getChildCount() > 0){
 	        for(UIComponent subUiComponent : root.getChildren()){
-	        	
+	        	String arbre1=arbre + "-->" + subUiComponent.getId();
+	        	System.out.println(arbre1);
+	        		/*
 	        		System.out.println("Component1: " + subUiComponent.getId());
 	        		System.out.println("Component2: " + subUiComponent);
 	        		System.out.println("Component3: " + subUiComponent.getNamingContainer());
 	        		System.out.println("Component4: " + subUiComponent.getChildCount());
 	        		System.out.println("Component5: " + subUiComponent.getClientId());
 	        		System.out.println("Component6: " + subUiComponent.getFamily());
-	        		
-	                UIComponent returnComponent = findComponentOfId(subUiComponent, id);
+	        		*/
+	                UIComponent returnComponent = findComponentOfId(subUiComponent, id, arbre1);
 	                
 	                
 	                
@@ -65,5 +68,10 @@ public class UtilFaces {
 	    		    }
 	    		}
 	   }  		
+	}
+	
+	public static UIComponent getComponentFromPage(String id) {
+		UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
+		return findComponentOfId(view, id, "[MAIN("+view.getId()+")");
 	}
 }

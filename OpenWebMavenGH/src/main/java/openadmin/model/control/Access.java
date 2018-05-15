@@ -64,16 +64,16 @@ public class Access extends Audit implements Base, java.io.Serializable {
 	private String description;
 		
 	/** attribute that contain the relationship with role*/
+	@OpenScreen(normal=true)
 	@Getter @Setter
 	@ManyToOne
 	@JoinColumn(name = "programa", nullable= false)
-	@OpenScreen(normal=true)
 	private Program program;
 	
+	@OpenScreen(normal=true)
 	@Getter @Setter
 	@ManyToOne
 	@JoinColumn(name = "role", nullable= false)
-	@OpenScreen(normal=true)
 	private Role role;
 	
 	/** attribute that contain the relationship with user*/

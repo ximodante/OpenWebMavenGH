@@ -45,13 +45,19 @@ private LangTypeEdu langType;
 		properties.put("height", 600);
 		
 		System.out.println("Obrint dialog dinamic /pages/dialogs/dialogo01.xhtml" );
-		//PrimeFaces.current().dialog().openDynamic("/pages/dialogs/dialogo01.xhtml", properties, null);
-		PrimeFaces.current().dialog().openDynamic("/pages/dialogs/viewCars", properties, null);
+		PrimeFaces.current().dialog().openDynamic("/pages/dialogs/dialogo01.xhtml", properties, null);
 		//DefaultRequestContext.getCurrentInstance().openDialog("/pages/dialogs/dialogo02.xhtml", properties, null);
-		System.out.println("Obert dialog dinamic /pages/dialogs/dialogo01.xhtml" );
+		
 		UIComponent component = _context.getViewRoot().findComponent("form1");
 		
+		
 		//UtilFaces.findComponentOfId(component, "idContingutDialog");
+		UtilFaces.getComponentFromPage("idContingutDialog");
+		System.out.println("===============================================================================\n\n");
+		for (int i=0; i<1000; i++) {
+			System.out.println(i+"===============================================================================");
+			UtilFaces.getComponentFromPage("null_dlg");
+		}
 		
 		return "";
 		
