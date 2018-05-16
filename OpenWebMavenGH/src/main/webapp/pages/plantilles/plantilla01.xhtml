@@ -6,7 +6,7 @@
 		xmlns:p="http://primefaces.org/ui"
  		xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-	<h:head>
+	<h:head id="headPlantilla01">
 		
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -18,13 +18,13 @@
 		 		
 	</h:head>
 
-	<h:body styleClass="general" id="bodyPlantilla01">
+	<h:body id="bodyPlantilla01" styleClass="general">
 	
 	<h:form id="form"> 
 	
 		<div id = "idcap">
-    	
-    		<ui:include src="/pages/plantilles/cap.xhtml"/>
+    		
+    		<ui:insert name="capTipus1"/> 
     		   		
 		</div>
 	

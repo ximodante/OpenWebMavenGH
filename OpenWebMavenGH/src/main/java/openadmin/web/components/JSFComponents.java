@@ -147,15 +147,13 @@ public class JSFComponents implements Serializable{
 	}
 	
 	//Input texte
-	public CommandButton button01(String pAction,  Class<?> typeClass){
+	public CommandButton button01(String pAction,  Class<?> typeClass, String  pIcon){
 			
 			Application app = FacesContext.getCurrentInstance().getApplication();
 			
 			CommandButton button = (CommandButton)app.createComponent(CommandButton.COMPONENT_TYPE);
 			button.setActionExpression(createMethodExpression(pAction, null, typeClass));
-			button.setIcon("ui-icon-star");
-			button.setLabel("...");
-		    //button.setIcon("ui-icon-star");
+			button.setIcon(pIcon);
 			button.setUpdate("form1");
 			
 			return button;

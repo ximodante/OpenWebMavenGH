@@ -2,9 +2,11 @@ package openadmin.web;
 
 //import java.io.IOException;
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -67,7 +69,9 @@ public class LoginAction implements Serializable{
 	
 	public void changeLang(ValueChangeEvent e) {
 				
-		lang.changeLocale( e.getNewValue().toString());
+		//lang.changeLocale( e.getNewValue().toString());
+		FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(e.getNewValue().toString()));
+		
 		setLangLogin(e.getNewValue().toString());
 	}
 	

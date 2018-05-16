@@ -1,39 +1,101 @@
 package openadmin.web.components;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.el.MethodExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIOutput;
 import javax.faces.component.html.HtmlOutputText;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 import org.primefaces.PrimeFaces;
+import org.primefaces.behavior.ajax.AjaxBehavior;
+import org.primefaces.behavior.ajax.AjaxBehaviorListenerImpl;
+import org.primefaces.component.outputpanel.OutputPanel;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.component.column.Column;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.dialog.Dialog;
-import org.primefaces.component.outputpanel.OutputPanel;
-import org.primefaces.context.RequestContext;
+
+import org.primefaces.model.SelectableDataModel; 
+import javax.faces.model.ListDataModel;
 
 import openadmin.model.Base;
 import openadmin.util.faces.UtilFaces;
 import openadmin.util.lang.LangTypeEdu;
 
-public class PFDialog {
+public class PFDialog implements Serializable {
+	
+	private static final long serialVersionUID = 14051801L;
 
 	private OutputPanel panelDialogo;	
 	
-private LangTypeEdu langType;
+	private LangTypeEdu langType;
 	
 	public PFDialog(LangTypeEdu pLangType) {
 		
 		langType = pLangType;
 		
+	}	
+	
+	public void tabla01() {
+		
+		Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+	   
+	    System.out.println("Nom ALFRED:  " + (String)sessionMap.get("user"));
+	    
+	    sessionMap.remove("user");
 	}
 	
-	public String  panel01(List<Base> lstbase) {
+	public void dialog01(List<Base> lstbase) {
+		
+		PFTable pfTable = new PFTable(langType);
+		
+		FacesContext _context = FacesContext.getCurrentInstance();	
+		Dialog dialog = (Dialog) _context.getViewRoot().findComponent("form1:dialogo01");
+		
+		UIComponent form = _context.getViewRoot().findComponent("form1");
+		
+		if (null != dialog) {
+			 
+			dialog.getChildren().clear();
+			
+		} else {
+			
+			dialog =  (Dialog) _context.getApplication().createComponent(Dialog.COMPONENT_TYPE);
+			dialog.setId("dialogo01");
+		}
+				
+		dialog.setWidgetVar("widget");
+		dialog.setHeader("Carles");
+		dialog.setVisible(true);
+		dialog.setMinimizable(true);
+		dialog.setDynamic(true);
+		dialog.setFooter("Alex");
+		dialog.setDraggable(true);
+		dialog.setMinWidth(300);
+		dialog.setClosable(false);
+		
+		JSFComponents pJSFComponents = new JSFComponents();
+				
+		dialog.getChildren().add(pJSFComponents.button01("#{ctx.getView( ctx.numberView()).closedDialog(\"" + dialog.getId() + "\")}" , String.class, "ui-icon-closethick"));
+		
+		dialog.getChildren().add(pfTable.dataTable01(lstbase));
+		
+		form.getChildren().add(dialog);
+		
+		RequestContext.getCurrentInstance().execute("PF('widget').show()");
+		RequestContext.getCurrentInstance().update("form1");
+		
+	}
+	
+	public String  dialog02(List<Base> lstbase) {
 		
 		FacesContext _context = FacesContext.getCurrentInstance();
 		//PrimeFaces.current().dialog().showMessageDynamic(new FacesMessage(severity, summary, detail));
@@ -44,66 +106,19 @@ private LangTypeEdu langType;
 		properties.put("width", 600);
 		properties.put("height", 600);
 		
-		System.out.println("Obrint dialog dinamic /pages/dialogs/dialogo01.xhtml" );
+		 Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+		 sessionMap.put("user", "Oliver");
+		
 		PrimeFaces.current().dialog().openDynamic("/pages/dialogs/dialogo01.xhtml", properties, null);
 		//DefaultRequestContext.getCurrentInstance().openDialog("/pages/dialogs/dialogo02.xhtml", properties, null);
 		
-		UIComponent component = _context.getViewRoot().findComponent("form1");
+		//UIComponent component = _context.getViewRoot().findComponent(":formDialog01");
 		
+		//System.out.println("Nom component:  " + component);
 		
 		//UtilFaces.findComponentOfId(component, "idContingutDialog");
-		UtilFaces.getComponentFromPage("idContingutDialog");
-		System.out.println("===============================================================================\n\n");
-		for (int i=0; i<1000; i++) {
-			System.out.println(i+"===============================================================================");
-			UtilFaces.getComponentFromPage("null_dlg");
-		}
 		
 		return "";
-		
-	}
-	
-	public void panel02(List<Base> lstbase) {
-		
-		FacesContext _context = FacesContext.getCurrentInstance();	
-		Dialog dialog = (Dialog) _context.getViewRoot().findComponent("form1:dialogo01");
-		
-		UIComponent form = _context.getViewRoot().findComponent("form1");
-		
-		if (null != dialog) {
-			 
-			dialog.getChildren().clear();
-			UtilFaces.removeComponentOfId(form, "dialogo01");
-			
-		} else {
-			
-			dialog =  (Dialog) _context.getApplication().createComponent(Dialog.COMPONENT_TYPE);
-			dialog.setId("dialogo01");
-		}
-		
-		System.out.println("Dialogo:  " + dialog);
-		
-		dialog.setWidgetVar("widget");
-		dialog.setHeader("Carles");
-		dialog.setVisible(true);
-		dialog.setMinimizable(true);
-		dialog.setDynamic(true);
-		dialog.setFooter("Alex");
-		dialog.setDraggable(true);
-		dialog.setMinWidth(300);
-		dialog.setClosable(true);
-		dialog.setModal(true);
-		
-		
-		dialog.getChildren().add(createDataTable(lstbase));
-		
-		form.getChildren().add(dialog);
-		
-		//RequestContext request = RequestContext.getCurrentInstance();
-		//request.execute("PF('widget').show()");
-		//request.update("form1");
-		PrimeFaces.current().executeScript("PF('widget').show()");
-		PrimeFaces.current().ajax().update("form1");
 		
 	}
 	
@@ -111,15 +126,17 @@ private LangTypeEdu langType;
 		
 		FacesContext _context = FacesContext.getCurrentInstance();
 		
-		DataTable table = (DataTable) _context.getApplication().createComponent(DataTable.COMPONENT_TYPE);
+		//DataTable table = (DataTable) _context.getApplication().createComponent(DataTable.COMPONENT_TYPE);
+		DataTable table = new DataTable();
 		table.setId("idlist");
 		table.setRows(10);
 		table.setValue(lstbase);
 		table.setVar("pbase");
 		table.setSelectionMode("single");
 		table.setSelection("#{ctx.getView(ctx.numberView()).selectRow()}");
-		table.setRowKey("#{pbase.id}");
+		//table.setRowKey("#{pbase.id}");
 		//table.setRowSelectMode(_rowSelectMode);
+		//table.setValueExpression(name, binding);
 		
 		Base base = lstbase.get(0);
 		

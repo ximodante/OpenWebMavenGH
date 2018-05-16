@@ -277,40 +277,7 @@ public class ContextActionEdu implements Serializable {
 				connControl.findObjects(access).stream()
 				.collect(Collectors.groupingBy(Access::getEntityAdm));
 		
-		/********************************
-		 * Load items of menu for each program
-		 ******************************
-		//loadMenuItems(access.getRole(), en);
 		
-		
-		
-		//Segona opcio
-		/**Map<EntityAdm, Set<Role>> mapEntityRole = lstAccess.stream()
-													.collect(Collectors.groupingBy(Access::getEntityAdm,
-																					Collectors.mapping(Access::getRole, Collectors.toSet())));
-		
-		
-		//Set<Access> list = new TreeSet<Access>((Collection<? extends Access>) mapEntityAccess.values());
-		
-		List <Access> _access = null;
-		
-		for (EntityAdm ent: mapEntityAccess.keySet()) {
-			
-			System.out.println("Entitat: " + ent.getDescription());
-			
-			_access =  mapEntityAccess.get(ent);
-			
-			for (Access ac : _access) {
-				
-				System.out.println("\tAccess: " + ac.getProgram().getDescription());
-			}
-			
-			//System.out.println("\tAccess: " + mapEntityAccess.get(ent));
-			
-		}
-		
-		System.out.println("Programes carregats");
-		*/
 	}
 	
 	

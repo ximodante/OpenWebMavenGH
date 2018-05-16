@@ -88,7 +88,10 @@ public class InterceptorComponent {
 					//Falta comprobar si es pot dibuixar en funcio de rol (Per fer)
 					if (pField.isAnnotationPresent(OpenScreen.class)  && pField.getAnnotation(OpenScreen.class).normal()) {
 						
-						panelViewObject.getChildren().add(pJSFComponents.button01("#{main.loadScreenRecursive('"+ pField.getType().getName().toLowerCase().replace(".", "_") + "_default')}", String.class));
+						panelViewObject.getChildren().add(
+								pJSFComponents.button01(
+										"#{main.loadScreenRecursive('"+ pField.getType().getName().toLowerCase().replace(".", "_") + "_default')}", 
+										String.class," "));
 						
 					}
 					
