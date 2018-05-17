@@ -7,15 +7,15 @@ import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultSubMenu;
 
 import openadmin.model.control.MenuItem;
-import openadmin.util.lang.LangType;
+import openadmin.util.lang.LangTypeEdu;
 
 public class PFPanelMenu implements Serializable {
 
 	private static final long serialVersionUID = 11081501L;
 	
-	private LangType langType;
+	private LangTypeEdu langType;
 	
-	public PFPanelMenu(LangType pLangType) {
+	public PFPanelMenu(LangTypeEdu pLangType) {
 		
 		langType = pLangType;
 		

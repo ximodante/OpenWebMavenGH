@@ -13,9 +13,15 @@
     </h:head>
      
     <h:body>
+        <h:form id="form">
         <i id="customheader" class="fa fa-fw fa-car" style="display:none"></i>
  
         <p:dataTable var="car" value="#{dfCarsView.cars}">
+             
+            <p:ajax event="rowSelect" listener="#{dfView.onRowSelect}" update=":form:msgs" />
+            <p:ajax event="rowUnselect" listener="#{dfView.onRowUnselect}" update=":form:msgs" />
+        
+            
             <p:column headerText="Id">
                 <h:outputText value="#{car.id}" />
             </p:column>
@@ -31,7 +37,9 @@
             <p:column headerText="Color">
                 <h:outputText value="#{car.color}" />
             </p:column>
+            
         </p:dataTable>
+        </h:form>
     </h:body>
      
 </html>

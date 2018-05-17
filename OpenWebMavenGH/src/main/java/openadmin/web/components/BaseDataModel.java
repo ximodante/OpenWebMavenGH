@@ -2,7 +2,9 @@ package openadmin.web.components;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.ListDataModel;
 
 import org.primefaces.model.SelectableDataModel;
@@ -20,12 +22,13 @@ public class BaseDataModel  extends ListDataModel<Base> implements SelectableDat
 	   
 	    }
 	
-		@Override
+	    @Override
 		public Base getRowData(String pDescription) {
 			
 			System.out.println("Base model: " + pDescription);
 			
-			List<Base> lstBase = (List<Base>) getWrappedData();  
+			@SuppressWarnings("unchecked")
+			List<? extends Base> lstBase = (List<? extends Base>) getWrappedData();  
 	        
 			int comptador = 0;
 			
@@ -36,6 +39,10 @@ public class BaseDataModel  extends ListDataModel<Base> implements SelectableDat
 	            if(pBase.getDescription().equals(pDescription)) {
 	            	
 	            	System.out.println("Base model select: " + pBase.getDescription());
+	            	
+	            	Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+	            	
+	            	sessionMap.put("idBase", pBase);
 	            	
 	                return pBase; 
 	            	

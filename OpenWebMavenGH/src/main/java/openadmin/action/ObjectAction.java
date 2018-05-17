@@ -3,9 +3,8 @@ package openadmin.action;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -164,7 +163,7 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		this.base =  pBase;
 	
 	} 
-	
+	/*
 	//Copy object
 	public void _exit() {
 		
@@ -200,5 +199,5 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		}
 			
 	}
-
+	*/
 }

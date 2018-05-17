@@ -2,7 +2,6 @@ package openadmin.web.components;
 
 import java.io.Serializable;
 
-import javax.el.MethodExpression;
 import javax.faces.application.Application;
 import javax.faces.component.html.HtmlInputTextarea;
 import javax.faces.component.html.HtmlOutputLabel;
@@ -12,6 +11,9 @@ import javax.faces.component.html.HtmlPanelGroup;
 import javax.faces.component.html.HtmlMessages;
 import javax.faces.context.FacesContext;
 import org.primefaces.component.inputtext.InputText;
+
+import openadmin.util.faces.UtilMethodExpression;
+
 import org.primefaces.component.inputnumber.InputNumber;
 import org.primefaces.component.commandbutton.CommandButton;
 
@@ -52,16 +54,13 @@ public class JSFComponents implements Serializable{
 	
 	public HtmlInputTextarea textArea01(boolean readOnly, String value, Class<?> typeClass){
 		
-		Application app = FacesContext.getCurrentInstance().getApplication();
-		
 		HtmlInputTextarea textArea = new HtmlInputTextarea();
 		
 		textArea.setReadonly(readOnly);
 		textArea.setCols(80);
 		textArea.setRows(2);
 		
-		textArea.setValueExpression("value", app.getExpressionFactory().createValueExpression(
-				FacesContext.getCurrentInstance().getELContext(), value, typeClass));
+		textArea.setValueExpression("value", UtilMethodExpression.createValueExpression(value, typeClass));
 		
 		return textArea;
 		
@@ -84,8 +83,7 @@ public class JSFComponents implements Serializable{
 		
 		if (readOnly) input.setStyleClass("txtReadOnly");
 		
-		input.setValueExpression("value", app.getExpressionFactory().createValueExpression(
-				FacesContext.getCurrentInstance().getELContext(), value, typeClass));
+		input.setValueExpression("value", UtilMethodExpression.createValueExpression(value, typeClass));
 		
 		return input;
 	
@@ -108,8 +106,7 @@ public class JSFComponents implements Serializable{
 
 		if (readOnly) input.setStyleClass("txtReadOnly");
 		
-		input.setValueExpression("value", app.getExpressionFactory().createValueExpression(
-				FacesContext.getCurrentInstance().getELContext(), value, typeClass));
+		input.setValueExpression("value", UtilMethodExpression.createValueExpression(value, typeClass));
 		
 		
 		return input;
@@ -152,7 +149,7 @@ public class JSFComponents implements Serializable{
 			Application app = FacesContext.getCurrentInstance().getApplication();
 			
 			CommandButton button = (CommandButton)app.createComponent(CommandButton.COMPONENT_TYPE);
-			button.setActionExpression(createMethodExpression(pAction, null, typeClass));
+			button.setActionExpression(UtilMethodExpression.createMethodExpression(pAction, null, typeClass));
 			button.setIcon(pIcon);
 			button.setUpdate("form1");
 			
@@ -160,10 +157,4 @@ public class JSFComponents implements Serializable{
 			
 	}
 	
-	public static MethodExpression createMethodExpression(String expression, Class<?> returnType, Class<?>... parameterTypes) {
-	    FacesContext facesContext = FacesContext.getCurrentInstance();
-	    
-	    return facesContext.getApplication().getExpressionFactory().createMethodExpression(
-	        facesContext.getELContext(), expression, returnType, parameterTypes);
-	}
 }

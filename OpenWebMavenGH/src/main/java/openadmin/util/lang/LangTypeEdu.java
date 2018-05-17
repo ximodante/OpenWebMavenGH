@@ -80,25 +80,5 @@ public class LangTypeEdu implements Serializable {
 	
 	public void changeMessageLog(TypeLanguages pLanguage) {langLog = pLanguage;}
 	
-	public void changeLocale(String pLocale) {
-
-		for (Map.Entry<String, Object> entry : countries.entrySet()) {
-
-			if (entry.getValue().toString().equals(pLocale)) {
-
-				setLang(pLocale);
-				FacesContext.getCurrentInstance().getViewRoot().setLocale((Locale)entry.getValue());
-
-			}
-		}
-
-	}
-	
-	static {
-		
-		countries = new LinkedHashMap<String,Object>();
-		countries.put("spain", new Locale("es")); 
-		countries.put("valencia", new Locale("ca"));
-	}
 	
 }

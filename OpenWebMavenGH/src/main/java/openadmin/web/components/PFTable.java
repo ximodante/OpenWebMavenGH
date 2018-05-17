@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
+
 import javax.el.MethodExpression;
 import javax.faces.component.UIOutput;
 import javax.faces.component.html.HtmlOutputText;
@@ -18,7 +18,6 @@ import org.primefaces.event.SelectEvent;
 
 import openadmin.model.Base;
 import openadmin.util.lang.LangTypeEdu;
-import javax.faces.model.ArrayDataModel;
 
 public class PFTable implements Serializable {
 	
@@ -80,10 +79,12 @@ public class PFTable implements Serializable {
 												
 				//add component to column
 				//If is String	
-				if (f.getType().getSimpleName().endsWith("String") || 
-					f.getType().getSimpleName().endsWith("Integer") ||			
-					f.getType().getSimpleName().endsWith("Date")    ||
-					f.getType().getSimpleName().endsWith("Short")) {	
+				if (f.getType().getSimpleName().toLowerCase().endsWith("string")  || 
+					f.getType().getSimpleName().toLowerCase().endsWith("integer") ||			
+					f.getType().getSimpleName().toLowerCase().endsWith("date")    ||
+					f.getType().getSimpleName().toLowerCase().endsWith("long")    || 
+					f.getType().getSimpleName().toLowerCase().endsWith("int")     || 
+					f.getType().getSimpleName().toLowerCase().endsWith("short")) {	
 				
 				 HtmlOutputText outText = new HtmlOutputText();
 				 
@@ -107,24 +108,27 @@ public class PFTable implements Serializable {
 					column.getChildren().add(outText);
 				
 				}
-				
-				
-				MethodExpression me = _context.getApplication().getExpressionFactory().createMethodExpression(_context.getELContext(),
-					     "#{ctx.getView(ctx.numberView()).selectRow()}", String.class, new Class[0]);
-				
-				MethodExpression meArg = _context.getApplication().getExpressionFactory().createMethodExpression(_context.getELContext(),
-					     "#{ctx.getView(ctx.numberView()).selectRow()}", null, new Class<?>[]{SelectEvent.class});
-				
-				AjaxBehavior ajaxBehavior = new AjaxBehavior();
-				ajaxBehavior.setUpdate("form1:idlist");
-				ajaxBehavior.setProcess("@this");
-				ajaxBehavior.addAjaxBehaviorListener(new AjaxBehaviorListenerImpl(meArg,null));
-				table.addClientBehavior("rowSelect", ajaxBehavior);
+								
 				
 				//add column to data table
 				table.getChildren().add(column);
 				
 		}
+		
+		MethodExpression meArg = _context.getApplication().getExpressionFactory().createMethodExpression(_context.getELContext(),
+				"#{ctx.getView(ctx.numberView()).setBase(pbase)}", null ,new Class<?>[]{Base.class});
+		
+		MethodExpression me = _context.getApplication().getExpressionFactory().createMethodExpression(_context.getELContext(), 
+				"#{ctx.getView(ctx.numberView()).selectRow()}", void.class, new Class<?>[]{SelectEvent.class});
+		
+		MethodExpression me2 = _context.getApplication().getExpressionFactory().createMethodExpression(_context.getELContext(),
+			     "#{ctx.getView(ctx.numberView()).selectRow}", String.class, new Class[]{});
+		
+		AjaxBehavior ajaxBehavior = new AjaxBehavior();
+		ajaxBehavior.setUpdate("form1:idContingut");
+		ajaxBehavior.setProcess("@this");
+		ajaxBehavior.addAjaxBehaviorListener(new AjaxBehaviorListenerImpl(me2,null));
+		table.addClientBehavior("rowSelect", ajaxBehavior);
 		
 		return table;
 		
