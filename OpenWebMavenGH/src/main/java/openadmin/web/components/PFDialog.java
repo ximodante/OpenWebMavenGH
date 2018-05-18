@@ -75,11 +75,8 @@ public class PFDialog implements Serializable {
 		dialog.setFooter("Alex");
 		dialog.setDraggable(true);
 		dialog.setMinWidth(300);
-		//dialog.setClosable(false);
-		//---EDU
 		dialog.setClosable(true);
 		dialog.setModal(true);
-		//---FI EDU
 		
         dialog.getChildren().add(pfTable.dataTable01(lstbase));
 		
@@ -104,6 +101,7 @@ public class PFDialog implements Serializable {
 		
 	}
 	
+	// To use with Primaface diualog Framework (DISCARDED)
 	public String  dialog02(List<Base> lstbase) {
 		
 		Map<String,Object> properties  = new HashMap<String,Object>();

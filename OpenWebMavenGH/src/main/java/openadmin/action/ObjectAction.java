@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -91,14 +91,42 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 	
 	public void _edit() {
 		
- 		System.out.println("MODIFICA");
-	
+ 		//if (WebValidator.execute(base)) return;
+		
+		if (this.base.getId() == null) {
+			
+			WebMessages.messageError("noexist_find_pk");
+			
+			return;
+			
+		}
+			    					    				
+		ctx.getConnControl().begin();
+		ctx.getConnControl().updateObject(objOriginal, base);
+		ctx.getConnControl().commit();
+		
+		if (ctx.getConnControl().isResultOperation()) WebMessages.messageInfo("operation_edit_correct");
+			
+			
 	}
 	
 	public void _delete() {
 		
  		System.out.println("ELIMINA");
 	
+ 		if (this.base.getId() == null) {
+						
+			WebMessages.messageError("noexist_find_pk");
+			
+			return;
+			
+		}
+		
+		ctx.getConnControl().begin();
+		ctx.getConnControl().removeObject(base);
+		ctx.getConnControl().commit();
+ 		
+		if (ctx.getConnControl().isResultOperation()) WebMessages.messageInfo("operation_delete_correct");
 	}
 	
 	public void _search() {
@@ -150,12 +178,21 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		
 	}
 	
-	public void selectRow(Base pBase) {
+	public void selectRow() {
 		
-		System.out.println("Selecció fila2: " + pBase.getId());
+		Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+		
+		Base pBaseMap = (Base) sessionMap.get("idBase");
+		
+		sessionMap.remove("idBase");
+		
+		objOriginal = SerialClone.clone(pBaseMap);
+
+		this.base =  pBaseMap;
 		
 	}
 	
+		
 	public void setBase(Base pBase) {
 		
 		objOriginal = SerialClone.clone(pBase);
@@ -163,41 +200,5 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		this.base =  pBase;
 	
 	} 
-	/*
-	//Copy object
-	public void _exit() {
-		
-			
-		Base _obj = ctx.getView(ctx.numberView()).getBase();
-			
-		if (null != _obj && ctx.numberView() > 1){
-						
-			//ReflectionField refl = new ReflectionField();
-				
-			//refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView() - 1).getMetodo());
-			
-			FacesContext _context = FacesContext.getCurrentInstance();
-				
-			OutputPanel outView = (OutputPanel)_context.getViewRoot().findComponent("form1:idContingut");
-			
-			System.out.println("Llista exit: " + outView.getChildren().get(0).getId());
-		
-			if (outView.getChildCount() > 0) {
-				
-				
-				System.out.println("Esborra component del contingu eixir");
-				System.out.println(outView.getChildren().size());
-				outView.getChildren().clear();
-				System.out.println(outView.getChildren().size());
-			}
-			System.out.println(outView.getChildren().size());
-			ctx.deleteView();
-			System.out.println(outView.getChildren().size());
-			System.out.println("Vista: " + ctx.getView(ctx.numberView()));
-			outView.getChildren().add(ctx.getView(ctx.numberView()).getOutPanel());
-				
-		}
-			
-	}
-	*/
+	
 }
