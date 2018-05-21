@@ -137,6 +137,7 @@ public class PFMenuBarEdu implements Serializable{
 				//item.setUpdate("frmplan1:idMenuLateral frmplan1:rutaPrograma");
 				
 				subMenu.addElement(item);
+				System.out.println("Entity=" + ac.getEntityAdm().getId());
 
 		}
 		

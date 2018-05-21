@@ -168,6 +168,7 @@ public class MainScreenEdu implements Serializable {
 		if (lstAccess.size() == 1) {
 		
 			Access vaccess = lstAccess.stream().findFirst().get();
+			System.out.println("ENTITYYYY="+vaccess.getEntityAdm().getId());
 		
 			loadMenuItems(vaccess.getRole().getId(), vaccess.getProgram().getId());
 		
@@ -204,6 +205,7 @@ public class MainScreenEdu implements Serializable {
 		Set<MenuItem> lstMenuItems = 
 				ctx.getConnControl().findObjects(actionViewRole).stream()
 				.map(ActionViewRole::getMenuItem).collect(Collectors.toCollection(TreeSet::new));
+		
 		
 		//Registra en el log el nom del programa seleccionat
 	    if (lstMenuItems.size() > 0){
