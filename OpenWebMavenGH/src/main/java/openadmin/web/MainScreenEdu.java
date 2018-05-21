@@ -122,15 +122,15 @@ public class MainScreenEdu implements Serializable {
 							 
 			}
 		
-			//if there is an entity, no entity is displayed and go straight to the lateral menu
+			//if there is an entity, no entity is displayed and go straight to the program menu
 			if (entities.size() == 1) {
 						 
 				if (null == activeEntity)  activeEntity = entities.stream().findFirst().get();
 				
 				lstAccess = ctx.getMapEntityAccess().get(activeEntity);
 			
-				//If there is a program
-				if (lstAccess.size() > 1) {
+				//If there is a program go to the first program
+				if (lstAccess.size() == 1) {
 				
 					Access vaccess = lstAccess.stream().findFirst().get();
 				
@@ -229,33 +229,46 @@ public void loadScreen(long pMenuItem)
 public void loadScreenRecursive(String pMenuItem) 
 		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 	
-	System.out.println("Model recursiu");
+
 	MenuItem menuItem = new MenuItem();
 	menuItem.setDescription(pMenuItem);
 	menuItem = ctx.getConnControl().findObjectDescription(menuItem);
 	
-	screen(menuItem, null);
+	//Objecte actual
+	Base _obj = ctx.getView(ctx.numberView()).getBase();
+	
+	//Objecte a crear
+	Base obj = (Base)ReflectionUtilsEdu.createObject(menuItem.getClassName().getDescription());
+	
+	//Find object if is instance
+	if (null != _obj){
+					
+		obj = ReflectionField.copyObject2(_obj, (Base)obj);
+		
+	}
+	
+	
+	screen(menuItem, obj);
 
 }
 
 public void exitScreenRecursive() 
 		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
-	
+			
+
 	Base _obj = ctx.getView(ctx.numberView()).getBase();
-	
+			
 	ReflectionField refl = new ReflectionField();
 	
-	refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView() - 1).getMetodo());
+	Base pObejectCopy = refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView()).getMetodo());
 	
 	ctx.deleteView();
-	
-	//Object before screen
-	Base obj =  ctx.getView(ctx.numberView()).getBase();
 	
 	MenuItem menuItem = ctx.getView(ctx.numberView()).getMenuItem();
+	
 	ctx.deleteView();
 	
-	screen(menuItem, obj);
+	screen(menuItem, pObejectCopy);
 	
 }
 

@@ -73,8 +73,6 @@ public class ActionViewRole extends Audit implements Base, java.io.Serializable 
 				
 		if( null != getMenuItem() ||null !=  getAction() || null != getRole())
 			this.description = getRole().getId() + "_" + getMenuItem().getId() + "_" + getAction().getId() ;
-		//else this.description="KKKKKK";
-		//System.out.println("------------------------------descripcio="+this.description);
 	}
 	
 }

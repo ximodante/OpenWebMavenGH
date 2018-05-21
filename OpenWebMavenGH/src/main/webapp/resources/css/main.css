@@ -13,17 +13,54 @@
 	font-size: 16px;
 	color: red;
 	display: inline-block;
-	background-color: #f2f4fd;
+	background-color: #ff0080;
 	padding: 10px;
 }
 
 /****************************************************************************************/
 /*************************    Text   ****************************************************/
+.textTitle{
+	
+	font-size: 16px;
+	color: #d6293a;
+	
+	
+}
+
 .txt14Gris {
 	
 	font-size: 14px;
 	color: #525e69;
-	margin: 5px;
+
+}
+
+.txtReadOnly{
+	
+	border-bottom: solid gray !important;
+    color: #aaaaaa !important;
+    background-color: #ebebeb!important;
+    border-bottom-width: 1px !important;
+	
+}
+
+.txtInputTp1{
+	
+	border-bottom: solid gray !important;
+    color: #aaaaaa !important;
+    background-color: #f6f7fd !important;
+    border-bottom-width: 1px !important;
+}
+
+.txtRequired {
+	font-size: 14px;
+	color: red;
+	
+}
+
+.txtInformation {
+	
+	font-size: 14px;
+	color: #330099;	
 
 }
 
@@ -67,6 +104,12 @@
 	right: 30px;
 }
 
+.caixaViewTp1{
+	
+	padding: 20px;
+	
+}
+
 /**********************    Botons   ****************************************************/
 /****************************************************************************************/
 .btm4 {
@@ -74,15 +117,52 @@
 	text-align: right;
 }
 
-/**********************    Menu   ****************************************************/
+/**********************    Menu bar  ****************************************************/
 /****************************************************************************************/
+.menubarTp1 {
 
+	background-color: #f7ab08 !important;
+	margin-bottom: 1em !important;
+	width: fit-content !important;
+}
+
+.itemTp1 {
+
+	margin: 0.1em;
+
+}
+
+/**********************    JSF components   ****************************************************/
+/****************************************************************************************/
+.panelGridTp1{
+	
+	 
+}
+   
+
+.panelGroupTp1{
+	
+	background-color: #ffffff;
+	
+}
 
 /**********************    PrimeFaces   ****************************************************/
 /****************************************************************************************/
 /** menu */
 .ui-widget{
 	border: none;
-    background: none;
+	background: #ffffff;
 }
 
+.ui-menu .ui-menuitem .ui-state-hover{
+	border: none;
+	background: #ff8000;
+	color: white;
+}
+
+.ui-panelmenu .ui-menuitem .ui-state-hover{
+	border: none;
+	background: #ff8000;
+	color: white;
+	
+}

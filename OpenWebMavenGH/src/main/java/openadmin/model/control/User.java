@@ -179,35 +179,5 @@ public class User extends Audit implements Base, java.io.Serializable {
 	
 	}
 
-	/**
-	@Override
-	public String getLastUser() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setLastUser(String lastUser) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public LocalDateTime getAuditData() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setAuditData(LocalDateTime data) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setChanges(String user) {
-		// TODO Auto-generated method stub
-		
-	}
-	**/
+	
 }

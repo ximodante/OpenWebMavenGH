@@ -14,6 +14,7 @@ import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -142,7 +143,7 @@ public class ContextActionEdu implements Serializable {
 	/**<desc> Performs the application login</desc>
  	 * @return true if login user is correct
 	 */
-	public boolean login (User pUser) {
+	public boolean login (User pUser)  {
 		
 		//Usuari que es connecta
 		user = pUser;
@@ -264,8 +265,11 @@ public class ContextActionEdu implements Serializable {
 	}
 
 
+		
+	
+	
 	private void loadPrograms() {
-				
+		
 		/*****************************************************************
 		 * Find all the entities that has the user, in the table access
 		 *****************************************************************/
@@ -277,121 +281,8 @@ public class ContextActionEdu implements Serializable {
 				connControl.findObjects(access).stream()
 				.collect(Collectors.groupingBy(Access::getEntityAdm));
 		
-		
 	}
 	
-	
-	/**
-	 * <desc> Load menu items for each application</desc>
-	  * @param pRole, role of application
-	  * @param entity, selected entity
-	 
-	private void loadMenuItems(Role pRole, EntityAdm entity) {
-		
-		/*****************************************************************
-		 * Find all items of menu for each entity, program and user, in the table ActionViewRole
-		 ***************************************************************
-		ActionViewRole actionViewRole = new ActionViewRole();
-		
-		actionViewRole.setRole(pRole);
-		
-		//Load of items menu with the key (id entity and id program)
-		menuItems.put("idi" + entity.getId() + "_" + pRole.getProgram().getId(), connControl.findObjects(actionViewRole));
-		
-		/*****************************************************************
-		 * Find all actions for each view and role, in the table ActionViewRole
-		 ***************************************************************
-		//List of menu items
-		Set<MenuItem> listMenuItem = new TreeSet<MenuItem>();
-		
-		for (Base b : connControl.findObjects(actionViewRole)) {
-			
-			actionViewRole = (ActionViewRole)b;
-			listMenuItem.add(actionViewRole.getMenuItem());
-			
-		}
-		
-		List<Base> lst = new ArrayList<Base>();
-		
-		lst.addAll(listMenuItem);
-		
-		for (MenuItem item: listMenuItem){
-			
-			actionViewRole = new ActionViewRole();
-			actionViewRole.setMenuItem(item);
-			actionViewRole.setRole(pRole);
-			
-			//actionsViews.put("ida" + item.getDescription() + "_" + pRole.getId(), connControl.findObjects(actionViewRole));
-			actionsViews.put("ida" + item.getDescription(), connControl.findObjects(actionViewRole));
-			//System.out.println("CARREGA" + "ida" + item.getDescription());
-		}
-			
-	}
-	
-	/**
-	public List<EntityRole> getPrograms() {
-		return programs;
-	}
-	
-	public List<Base> getLoadMenuItems(String pKey){
-		
-		
-		return menuItems.get(pKey);
-
-	} 
-	*/
-	/**
-	  * <desc> /Loads all actions of the view</desc>
-	  * @param pKey, id view and id role
-	  * @return List the actions
-	  
-	public List<Base> getLoadActionsView(String pKey){
-
-		
-		return actionsViews.get(pKey);
-		
-	}
-
-	
-	/**-----------------------------------------------------
-	 * ---------------- gets i sets --------------------
-	 * -----------------------------------------------------
-	 */
-
-	/**
-	public List<EntityAdm> getListEntity() {
-		
-		List<EntityAdm> lst = new ArrayList<EntityAdm>();
-		
-		for (EntityAdm b : listEntity) {
-			
-			lst.add(b);
-			
-		}
-		
-		return lst;
-	}
-
-	public EntityAdm getEntityDefault() {
-		return entityDefault;
-	}
-
-
-	public void setEntityDefault(EntityAdm entityDefault) {
-		this.entityDefault = entityDefault;
-	}
-
-
-	public Role getRolDefault() {
-		return rolDefault;
-	}
-
-
-	public void setRolDefault(Role rolDefault) {
-		this.rolDefault = rolDefault;
-	}
-
-	*/
 	
 	//Work view
 	public ViewFacadeEdu getView(Integer key) {

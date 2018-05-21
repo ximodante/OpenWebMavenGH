@@ -128,6 +128,21 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
  		
 		if (ctx.getConnControl().isResultOperation()) WebMessages.messageInfo("operation_delete_correct");
 	}
+
+	public void otherAction(String pAction) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
+			
+		String pack = base.getClass().getPackage().getName();
+		int j=pack.lastIndexOf(".");
+		pack=pack.substring(j+1, pack.length());
+		Object objAction  = ReflectionUtilsEdu.createObject("openadmin.action." +
+   				pack + "." +
+   				base.getClass().getSimpleName() + "Action");
+   		
+		OtherActionFacada action = (OtherActionFacada) objAction;
+       	
+   		action.execute(pAction, base, ctx);
+	}
+	
 	
 	public void _search() {
 		
@@ -164,19 +179,21 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		
 		if (null != dialog) {
 			
-			PrimeFaces.current().executeScript("PF('widget').hide()");
-			dialog.getChildren().clear();
+			//PrimeFaces.current().executeScript("PF('widget').hide()");
+			//dialog.getChildren().clear();
 			UtilFaces.removeComponentOfId(component, pDialog);
 		}
 		
 		
 	}
 
+	/*
 	public void selectRow(SelectEvent event) {
 		
 		System.out.println("Selecció fila: " + ((Base) event.getObject()).getId());
 		
 	}
+	*/
 	
 	public void selectRow() {
 		
@@ -187,18 +204,30 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		sessionMap.remove("idBase");
 		
 		objOriginal = SerialClone.clone(pBaseMap);
+		
+		ctx.getView(ctx.numberView()).setBase(objOriginal);
 
-		this.base =  pBaseMap;
+		//this.base =  pBaseMap;
 		
 	}
 	
 		
 	public void setBase(Base pBase) {
 		
+		System.out.println("Base: "  + pBase);
+		
 		objOriginal = SerialClone.clone(pBase);
 
+		metodo = pBase.getClass().getSimpleName().substring(0, 1).toUpperCase() +  pBase.getClass().getSimpleName().substring(1);
+		
 		this.base =  pBase;
 	
 	} 
+	
+	public void clean() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
+		
+		this.base = (Base) ReflectionUtilsEdu.createObject(this.base.getClass().getCanonicalName());
+	
+	}
 	
 }

@@ -44,6 +44,9 @@ public class PFTable implements Serializable {
 		table.setValue(baseDataModel);
 		table.setVar("pbase");
 		table.setSelectionMode("single");
+		table.setResizableColumns(true);
+		if (lstbase.size() > 10) table.setPaginator(true);
+		table.setDraggableColumns(true);
 		//table.setRowKey("#{pbase.description}");
 		//table.setSelection("#{ctx.getView(ctx.sizeView()).setBase(pbase)}");
 		
