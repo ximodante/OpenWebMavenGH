@@ -57,6 +57,9 @@ public class MainScreenEdu implements Serializable {
 	//private Role activeRol;
 	
 	List<Access> lstAccess;
+	
+	Set<EntityAdm> entities; //EDU
+	PFMenuBarEdu pfMenuBar; //edu
 
 	/** Field that contain the connection*/
 	@Inject
@@ -94,7 +97,8 @@ public class MainScreenEdu implements Serializable {
 		//if (menuBar==null ) {
 			menuBar = new DefaultMenuModel();
 		
-			PFMenuBarEdu pfMenuBar = new PFMenuBarEdu(lang);
+			//PFMenuBarEdu pfMenuBar = new PFMenuBarEdu(lang);
+			pfMenuBar = new PFMenuBarEdu(lang);
 
 			//List <String[]> lst = new ArrayList<String[]>();
 		
@@ -112,7 +116,8 @@ public class MainScreenEdu implements Serializable {
 
 			// ***************   Genera el submenu de les aplicacions ********************
 
-			Set<EntityAdm> entities = ctx.getMapEntityAccess().keySet();		
+			//Set<EntityAdm> entities = ctx.getMapEntityAccess().keySet();		
+			entities = ctx.getMapEntityAccess().keySet(); //EDU
 		
 			//if there are two o more entities
 			if (entities.size() > 1) {
@@ -127,6 +132,8 @@ public class MainScreenEdu implements Serializable {
 						 
 				if (null == activeEntity)  activeEntity = entities.stream().findFirst().get();
 				
+				loadMenuItems(activeEntity.getId()); //EDU
+				/*
 				lstAccess = ctx.getMapEntityAccess().get(activeEntity);
 			
 				//If there is a program go to the first program
@@ -139,7 +146,7 @@ public class MainScreenEdu implements Serializable {
 			
 				} else menuBar.addElement(pfMenuBar.menuPrograms("programs", lstAccess));
 			 
-			
+			    */
 			
 			}
 		
@@ -149,6 +156,27 @@ public class MainScreenEdu implements Serializable {
 		return menuBar;
 	
 	}
+	
+	//Edu Begin
+	public void loadMenuItems(long pEntity) {
+		System.out.println("LOADMENUITEMS-"+pEntity);
+		activeEntity = entities.stream().filter(e -> e.getId()==pEntity).findFirst().get();
+		
+		lstAccess = ctx.getMapEntityAccess().get(activeEntity);
+	
+		//If there is a program go to the first program
+		if (lstAccess.size() == 1) {
+		
+			Access vaccess = lstAccess.stream().findFirst().get();
+		
+			loadMenuItems(vaccess.getRole().getId(), vaccess.getProgram().getId());
+		
+	
+		} else menuBar.addElement(pfMenuBar.menuPrograms("programs", lstAccess));
+	 
+	
+	}
+	//Edu Fin
     
 	public void loadMenuItems(long pRol, long pProgram) {
 		

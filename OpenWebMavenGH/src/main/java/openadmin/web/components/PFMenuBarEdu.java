@@ -99,8 +99,11 @@ public class PFMenuBarEdu implements Serializable{
 			item.setIcon(enti.getIcon());
 			item.setId("" + enti.getId());
 			//item.setCommand("#{main.loadMenuItems(" + item.getId() + ","  + item.getValue() + ")}");
-						
-			//subMenu.addElement(item);
+			//Begin EDU
+			item.setCommand("#{main.loadMenuItems(" + enti.getId() + ")}");
+			item.setUpdate("form1:idMenuLateral");
+			//End Edu
+			subMenu.addElement(item);
 		}
 		
 		
