@@ -70,10 +70,18 @@ public class Action extends Audit implements Base, java.io.Serializable {
 	@Getter @Setter
 	private Integer grup;
 	
+	// 0: default - 1: custom
+	@Getter @Setter
+	@Column(name="tipus")
+	private byte type = 0;
+		
+	
 	/** Getters and setters*/
+	
 	public void setDescription(String pDescription) {
 		
 		this.description = pDescription.toLowerCase();
 	}
+	
 
 }

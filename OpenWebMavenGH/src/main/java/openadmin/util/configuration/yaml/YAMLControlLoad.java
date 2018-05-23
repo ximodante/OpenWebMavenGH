@@ -47,7 +47,7 @@ public class YAMLControlLoad implements Serializable{
 	private List<YAMLEntityAdm> entities= null;       // EntityAdm 
 	
 	@Getter @Setter
-	private List<YAMLAction> defaultActions= null;         // Programs
+	private List<YAMLAction> defaultActions= null;         // Actions
 
 	@Getter @Setter
 	private List<YAMLMenuItem> menuItems= null;         // Programs
@@ -226,18 +226,19 @@ public class YAMLControlLoad implements Serializable{
 		HashMap<String,Role>lRoles=new HashMap<String,Role>();
 		if(this.roles !=null) {
 			for (YAMLRole ymlRole : this.roles) {
-				/*
+				
 				for (String sRol: ymlRole.getNames()) { 
 					for (String sProg: ymlRole.getPrograms()) {
-						Role myRole=new Role(sProg.trim().toLowerCase()+ "." + sRol.trim().toUpperCase());
+						Role myRole=new Role(sRol.trim().toUpperCase() + "." + sProg.trim().toLowerCase());
 						if (lRoles.get(myRole.getDescription()) == null)
 								lRoles.put(myRole.getDescription(), this.connection.persist(myRole));
-		}	}	}	}*/
+		}	}	}	}
+				/*
 				for (String sRol: ymlRole.getNames()) { 
 					Role myRole=new Role(sRol.trim().toUpperCase());
 						if (lRoles.get(myRole.getDescription()) == null)
 								lRoles.put(myRole.getDescription(), this.connection.persist(myRole));
-		}	}	}	
+		}	}	}*/	
 		return lRoles;
 	}
 	
@@ -273,7 +274,7 @@ public class YAMLControlLoad implements Serializable{
 									myAcc.setProgram(myProg);
 									myAcc.setUser(this.cUsers.get(sUser));
 									//myAcc.setRole(this.cRoles.get(myProg.getDescription().trim().toLowerCase()+"."+ymlAllow.getRole().trim().toUpperCase()));
-									myAcc.setRole(this.cRoles.get(ymlAllow.getRole().trim().toUpperCase()));
+									myAcc.setRole(this.cRoles.get(ymlAllow.getRole().trim().toUpperCase() + "." + ymlProg.getName().trim().toLowerCase()));
 									myAcc.setDescription("");
 									System.out.println("------ACCESS: EntityAdm:" + myEnt.getDescription() + " - User:" + sUser + " - Program:"+ myProg.getDescription() + " - Role:"+ ymlAllow.getRole());
 									this.cAccesses.add(this.connection.persist(myAcc));
@@ -353,7 +354,7 @@ public class YAMLControlLoad implements Serializable{
 	}	
 		
 	
-	//2.4.2 Simple MenuItems
+	//2.4.2 Simple MenuItems (return roles)
 	private Set<String> MenuItemsClassNameActionsPriv(YAMLMenuItem ymlMenu, MenuItem parent, Set<String> myParentRoles ) {
 		
 		MenuItem myMenu=new MenuItem();
@@ -376,8 +377,10 @@ public class YAMLControlLoad implements Serializable{
 		myMenu.setViewType(ymlMenu.getViewType());
 		
 		String mySuffix=ymlMenu.getViewType().trim();
+		
 		// On action menuitems the suffix is the action name
-		//   and viewType is ":" + action name        
+		//   and viewType is ":" + action name
+		//?????????????????????????? CANVIAR !!!!!!!
 		if (ymlMenu.getViewType().trim().equalsIgnoreCase("action")) {
 			mySuffix=ymlMenu.getActions().get(0).getName().trim();
 			myMenu.setViewType(":" + mySuffix); 

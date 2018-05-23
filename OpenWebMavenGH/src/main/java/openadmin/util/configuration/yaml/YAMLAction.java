@@ -20,6 +20,9 @@ public class YAMLAction implements Serializable{
 	
 	@Getter @Setter
 	private Integer group =0;        // 
+	
+	@Getter @Setter
+	private byte type =0;            // =:Default 1: Custom
 		
 	@Getter @Setter
 	private List<String> roles= null;        // Roles

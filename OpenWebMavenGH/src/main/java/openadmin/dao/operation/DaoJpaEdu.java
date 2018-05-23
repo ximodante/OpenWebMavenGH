@@ -64,6 +64,7 @@ public class DaoJpaEdu implements DaoOperationFacadeEdu, Serializable{
 	@Getter @Setter
 	private LangTypeEdu langType;
 	
+	
 	@Getter @Setter
 	private Short idEntity=null;
 	
@@ -79,7 +80,7 @@ public class DaoJpaEdu implements DaoOperationFacadeEdu, Serializable{
 		langType = pLangType;
 		
 		this.setUser(pUser);
-		this.idEntity=idEntity;
+		//this.idEntity=idEntity;
 		System.out.println("1.DaoJpaEdu " +pDataBase);		
 		connection(pDataBase);
 		

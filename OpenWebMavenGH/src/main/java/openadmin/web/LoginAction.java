@@ -33,10 +33,6 @@ public class LoginAction implements Serializable{
 	@Inject @Getter @Setter
 	private ContextActionEdu ctx;
 	
-	/*
-	@Inject @Getter @Setter
-	private LangTypeEdu lang;
-	*/
 	@Getter @Setter
 	private String langLogin;
 	

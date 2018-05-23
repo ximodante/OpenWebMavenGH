@@ -66,10 +66,10 @@ public class ContextActionEdu implements Serializable {
 	/** Field that contain the connection with log*/
 	//private DaoOperationFacadeEdu connLog = null;
 	
-	/** Field that contain the connection with log
+	/** Field that contain the connection with log*/
 	@Getter @Setter
 	private DaoOperationFacadeEdu connDefault = null;
-	*/
+	
 	/** Field that contain the menuItems*/
 	//private Map<String, List<Base>> menuItems = new HashMap<String, List<Base>>();
 	
@@ -119,8 +119,6 @@ public class ContextActionEdu implements Serializable {
 	
 	private void connect() {
 		//comprova si hi ha conexi� a la base de dades
-		//initEdu();
-		System.out.println("-99.4 connected?=" + connected);
 		if (!connected){
 			
 			//hi ha que modificar l'idioma del log per el de la configuracio manual, la connexió també  
@@ -178,12 +176,18 @@ public class ContextActionEdu implements Serializable {
 		return false;
 	
 	}
-	/*
-	private void jpqlProva() {
-		String jpql_="SELECT "
-		this.connControl.findObjectPersonalized(pSentencia)
+	
+	public void connEntityDefault(String pconn, Long entityId){
+		
+		//connection
+		if (connDefault != null){
+			
+			connDefault.finalize();
+		}
+		
+		connDefault = new DaoJpaEdu(user, pconn,entityId.shortValue(), langType);
+		connDefault.setEnvironment(TypeEnvironment.WEB);
 	}
-	*/
 	
 	/**
 	public boolean loginFirma(String pIdentificador) {
