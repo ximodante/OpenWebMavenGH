@@ -85,6 +85,21 @@ public class MenuItem extends Audit implements Base, java.io.Serializable {
 	@JoinColumn(name = "nomClasse", nullable= true)
 	private ClassName className;
 	
+	/**
+	 * This attribute can be:
+	 * 1. If the viewType is an action then it is the method of the class to call. the class that owns the method is identified by the attribute "className"
+	 *    Possible values:
+	 *       loadData() 
+	 *       deleteObject(1,2)
+	 * 2. If the viewType is a YAML screen then it represents the name of the file to read in the resources folder "view"     
+	 */
+	@Getter @Setter
+	@Size(max = 150)
+	@Column(name="parametre")
+	private String parameter;
+	
+		
+	
 	@Getter @Setter
 	@Column(name="ordreItem")
 	private Integer orden;
