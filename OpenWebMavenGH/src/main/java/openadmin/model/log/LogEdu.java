@@ -102,7 +102,7 @@ public class LogEdu implements Serializable{
 	/**
 	 * Constructors
 	 */
-	
+	//new LogEdu(null, obj, idEntity, pSentencia , DBAction.QUERY_SOME, "")
 	public <T extends Base> LogEdu(Throwable e, T obj, Short entityAdm, String hql, DBAction dbAction, String notes ) {
 		this.date=DateUtilsEdu.getDateTime();
 		this.inet=JSFUtils.getClientAddress();

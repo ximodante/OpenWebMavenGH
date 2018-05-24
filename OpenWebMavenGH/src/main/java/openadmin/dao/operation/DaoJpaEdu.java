@@ -134,24 +134,6 @@ public class DaoJpaEdu implements DaoOperationFacadeEdu, Serializable{
 		}				
 		
 	}
-	public void persistObject2(Base obj) {
-		
-		resultOperation = false;		
-		try{
-			if (em.isOpen()){		
-				obj.setChanges(this.user.getDescription());
-				em.persist(obj);
-				resultOperation = true;
-				if (obj.isDebugLog()) 
-					LogUtilsEdu.LogAudit(new LogEdu(null, obj, idEntity, null, DBAction.NEW, null));
-						
-			}
-		
-		} catch(Exception ex) {
-			LogUtilsEdu.LogError(new LogEdu(ex, obj, idEntity, null, DBAction.NEW, "ERROR Persistint entity"));
-		}	
-		
-	}	
 	
 	
 	
@@ -430,7 +412,8 @@ public class DaoJpaEdu implements DaoOperationFacadeEdu, Serializable{
 			resultOperation = false;
 			String className = obj.getClass().getSimpleName();		
 			AnalyzerConsult c = new AnalyzerConsult();
-			String whereClause = c.makeWhere((Base) obj);								
+			//String whereClause = c.makeWhere((Base) obj);								
+			String whereClause = c.makeWhere((T) obj);
 			
 			
 			hql="select " +  className + " from " + className + " " + className +  " " + whereClause;
@@ -474,7 +457,8 @@ public class DaoJpaEdu implements DaoOperationFacadeEdu, Serializable{
 				}
 				
 				
-				LogUtilsEdu.LogAudit(new LogEdu(null, (Base) obj, idEntity, pSentencia , DBAction.QUERY_SOME, ""));									
+				//LogUtilsEdu.LogAudit(new LogEdu(null, (Base) obj, idEntity, pSentencia , DBAction.QUERY_SOME, ""));									
+				LogUtilsEdu.LogAudit(new LogEdu(null, (Base) obj, idEntity, pSentencia , DBAction.QUERY_SOME, ""));
 				
 				return (List<T[]>) lstObjects;
 			}

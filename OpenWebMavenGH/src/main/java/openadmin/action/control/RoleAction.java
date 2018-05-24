@@ -1,12 +1,12 @@
 package openadmin.action.control;
 
 import openadmin.action.ContextActionEdu;
-import openadmin.action.OtherActionFacada;
+import openadmin.action.OtherActionFacade;
 import openadmin.model.Base;
 
-public class RoleAction implements OtherActionFacada {
+public class RoleAction <T extends Base> implements OtherActionFacade <T> {
 	
-	public void execute(String pAction, Base pBase, ContextActionEdu pCtx){
+	public void execute(String pAction, T pBase, ContextActionEdu pCtx){
 		
 		System.out.println("Acció a calcular: " + pAction);
 		

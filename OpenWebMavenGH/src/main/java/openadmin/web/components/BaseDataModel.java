@@ -11,28 +11,28 @@ import org.primefaces.model.SelectableDataModel;
 
 import openadmin.model.Base;
 
-public class BaseDataModel  extends ListDataModel<Base> implements SelectableDataModel<Base>, Serializable {
+public class BaseDataModel <T extends Base>  extends ListDataModel<T> implements SelectableDataModel<T>, Serializable {
 
 
 		private static final long serialVersionUID = 14051803L;
 		
-	    public BaseDataModel(List<Base> pData) {
+	    public BaseDataModel(List<T> pData) {
 	    	
 	    	super(pData);
 	   
 	    }
 	
 	    @Override
-		public Base getRowData(String pDescription) {
+		public T getRowData(String pDescription) {
 			
 			System.out.println("Base model: " + pDescription);
 			
 			@SuppressWarnings("unchecked")
-			List<? extends Base> lstBase = (List<? extends Base>) getWrappedData();  
+			List<T> lstBase = (List<T>) getWrappedData();  
 	        
 			int comptador = 0;
 			
-			for(Base pBase : lstBase) { 
+			for(T pBase : lstBase) { 
 	        	
 	        	System.out.println("LstBase: " + pBase.getDescription() + " - " + comptador++);
 	        	

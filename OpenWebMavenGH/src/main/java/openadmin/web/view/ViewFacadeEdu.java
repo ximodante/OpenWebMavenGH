@@ -7,13 +7,14 @@ import org.primefaces.component.outputpanel.OutputPanel;
 
 //import openadmin.action.ContextActionEdu;
 import openadmin.action.ObjectActionFacade;
+import openadmin.model.Base;
 import openadmin.model.control.Action;
 //import openadmin.model.control.MenuItem;
 import openadmin.util.lang.LangTypeEdu;
 
 //import openadmin.action.ObjectActionFacade;
 
-public interface ViewFacadeEdu extends ObjectActionFacade {
+public  interface ViewFacadeEdu <T extends Base> extends ObjectActionFacade<T> {
 
 	/**
 	 * Get all the fields initialized

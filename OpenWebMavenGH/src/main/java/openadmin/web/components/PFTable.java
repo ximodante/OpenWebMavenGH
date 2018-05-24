@@ -32,7 +32,7 @@ public class PFTable implements Serializable {
 		langType = pLangType;
 	}
 	
-	public DataTable dataTable01(List<Base> lstbase) {
+	public <T extends Base> DataTable dataTable01(List<T> lstbase) {
 		
 		baseDataModel = new BaseDataModel(lstbase);
 		

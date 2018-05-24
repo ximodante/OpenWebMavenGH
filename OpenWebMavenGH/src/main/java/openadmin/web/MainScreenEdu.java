@@ -256,7 +256,7 @@ public void loadScreen(long pMenuItem)
 
 }
 
-public void loadScreenRecursive(String pMenuItem) 
+public <T extends Base> void  loadScreenRecursive(String pMenuItem) 
 		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 	
 
@@ -265,15 +265,15 @@ public void loadScreenRecursive(String pMenuItem)
 	menuItem = ctx.getConnControl().findObjectDescription(menuItem);
 	
 	//Objecte actual
-	Base _obj = ctx.getView(ctx.numberView()).getBase();
+	T _obj = ctx.getView(ctx.numberView()).getBase();
 	
 	//Objecte a crear
-	Base obj = (Base)ReflectionUtilsEdu.createObject(menuItem.getClassName().getDescription());
+	T obj = (T) ReflectionUtilsEdu.createObject(menuItem.getClassName().getDescription());
 	
 	//Find object if is instance
 	if (null != _obj){
 					
-		obj = ReflectionField.copyObject2(_obj, (Base)obj);
+		obj = ReflectionField.copyObject2(_obj, (T)obj);
 		
 	}
 	

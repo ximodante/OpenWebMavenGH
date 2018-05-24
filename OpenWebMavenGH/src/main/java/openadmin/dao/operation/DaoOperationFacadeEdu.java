@@ -64,7 +64,7 @@ public interface DaoOperationFacadeEdu {
 	//public void persistObject(Base obj);
 	public <T extends Base> void persistObject(T obj);
 	
-	public void persistObject2(Base obj);
+	//public void persistObject2(Base obj);
 	
 	//public void persistObjectDefault(Base obj);
 	public <T extends Base> void persistObjectDefault(T obj);
@@ -119,6 +119,7 @@ public interface DaoOperationFacadeEdu {
 	public <T extends Base> List<T> findObjects (T obj);
 	
 	//public List<Object[]> findObjectPerson (String pSentencia);
+	//public <T extends Object> List<T[]> findObjectPersonalized (String pSentencia);
 	public <T extends Object> List<T[]> findObjectPersonalized (String pSentencia);
 	
 	//public List<Base> findObjectPerson2 (String pSentencia);

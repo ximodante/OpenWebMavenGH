@@ -24,12 +24,12 @@ import openadmin.util.reflection.SerialClone;
 import openadmin.web.components.PFDialog;
 
 
-public class ObjectAction implements Serializable, ObjectActionFacade{
+public class  ObjectAction <T extends Base> implements Serializable, ObjectActionFacade<T>{ 
 	
 	private static final long serialVersionUID = 19091001L;
 	
 	@Getter
-	private Base base;
+	private T base;
 	
 	@Getter @Setter
 	private ContextActionEdu ctx;
@@ -38,14 +38,15 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 	private MenuItem menuItem;
 	
 	//To edit
-	private Base objOriginal;
+	private T objOriginal;
 	
 	@Getter
 	private String metodo;
 	
-	private List<Base> lstbase;
+	private List<T> lstbase;
 	
 	
+	@SuppressWarnings("unchecked")
 	public void _new() {
 		
  		System.out.println("ALTA");
@@ -73,7 +74,8 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		ctx.getConnControl().commit();
 			
 		try {
-			this.base = (Base) ReflectionUtilsEdu.createObject(this.base.getClass());
+			//this.base = (Base) ReflectionUtilsEdu.createObject(this.base.getClass());
+			this.base = (T) ReflectionUtilsEdu.createObject(this.base.getClass());
 		
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
@@ -138,7 +140,7 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
    				pack + "." +
    				base.getClass().getSimpleName() + "Action");
    		
-		OtherActionFacada action = (OtherActionFacada) objAction;
+		OtherActionFacade action = (OtherActionFacade) objAction;
        	
    		action.execute(pAction, base, ctx);
 	}
@@ -147,7 +149,7 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 	public void _search() {
 		
  		System.out.println("BUSCA");
- 		List<Base> lstbaseNew = new ArrayList<Base>();
+ 		List<T> lstbaseNew = new ArrayList<T>();
  		
 		lstbaseNew = ctx.getConnControl().findObjects(base);
 		
@@ -199,7 +201,7 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		
 		Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
 		
-		Base pBaseMap = (Base) sessionMap.get("idBase");
+		T pBaseMap = (T) sessionMap.get("idBase");
 		
 		sessionMap.remove("idBase");
 		
@@ -211,8 +213,7 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		
 	}
 	
-		
-	public void setBase(Base pBase) {
+	public void setBase (T pBase) {
 		
 		System.out.println("Base: "  + pBase);
 		
@@ -226,7 +227,7 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 	
 	public void clean() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 		
-		this.base = (Base) ReflectionUtilsEdu.createObject(this.base.getClass().getCanonicalName());
+		this.base = (T) ReflectionUtilsEdu.createObject(this.base.getClass().getCanonicalName());
 	
 	}
 	

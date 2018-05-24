@@ -12,7 +12,7 @@ import openadmin.util.reflection.ReflectionField;
  * @version 0.1 Created 10-05-2009 Author Alfred Oliver
  *
  */
-public class AnalyzerConsult {
+public class AnalyzerConsult  {
 
 	/**
 	 * Pattern Type 1: || ...... || is the logical operator "Or"
@@ -36,7 +36,7 @@ public class AnalyzerConsult {
 	 *            object type Base
 	 * @return String. Where clause of the sentence SQL
 	 */
-	public String makeWhere(Base obj) {
+	public <T extends Base> String makeWhere(T obj) {
 
 		String whereClause = "";
 

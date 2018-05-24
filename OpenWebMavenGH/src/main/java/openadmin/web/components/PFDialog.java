@@ -48,7 +48,7 @@ public class PFDialog implements Serializable {
 	    sessionMap.remove("user");
 	}
 	
-	public void dialog01(List<Base> lstbase) {
+	public <T extends Base> void dialog01(List<T> lstbase) {
 		
 		PFTable pfTable = new PFTable(langType);
 		
