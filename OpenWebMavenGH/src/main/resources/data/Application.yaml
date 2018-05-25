@@ -77,17 +77,20 @@ menuItems:
                             { className: openadmin.model.control.Access,                    icon: fa-key,                            } ,
                             { className: openadmin.model.control.MenuItem,                  icon: fa-th-list,  viewType: custom      } ,
                             { className: openadmin.model.control.ActionViewRole,            icon: fa-th-list                         } , 
-                            { className: openadmin.model.control.Role,                      icon: fa-graduation-cap,                   
+                            { className: openadmin.model.control.Role,                      icon: fa-graduation-cap,                  
                                          #------------------------------------------------------------------------------------------
                                          actions: [ { name: dni,       roles: [ ADMIN] } ]
                                          #------------------------------------------------------------------------------------------ 
                             },
                             { className: openadmin.util.configuration.FirstControlLoadYAML, icon: fa-upload,   viewType: action, defaultActions: false, 
+                                         parameter: dataLoad, roles: [ ADMIN]  
+                            }  
                                          #------------------------------------------------------------------------------------------
-                                         actions: [ { name: dataLoad,  roles: [ ADMIN] , type: 1 } ]
+                                    #     actions: [ { name: dataLoad,  roles: [ ADMIN] , type: 1 } ]
                                          #------------------------------------------------------------------------------------------
-                            } ] }   
-                          
+                                    #} ] }
+                         ]             
+    }                      
   #----------------------------------------------------------------------------------------------------------------------------------
   - { program: policia,  className: openadmin.model.control.Administracion1,     icon: fa-gear,     viewType: submenu,
                #---------------------------------------------------------------------------------------------------------------------

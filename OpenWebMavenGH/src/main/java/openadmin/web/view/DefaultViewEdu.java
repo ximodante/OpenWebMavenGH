@@ -21,7 +21,7 @@ import openadmin.web.components.PFMenuBarEdu;
 import openadmin.action.ObjectAction;
 import openadmin.annotations.Default;
 
-public class DefaultViewEdu <T extends Base> extends ObjectAction<T> implements Serializable, ViewFacadeEdu<T>{
+public class DefaultViewEdu  extends ObjectAction implements Serializable, ViewFacadeEdu{
 
 	private static final long serialVersionUID = 23031001L;
 	

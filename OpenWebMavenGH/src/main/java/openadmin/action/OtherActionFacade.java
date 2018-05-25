@@ -2,8 +2,8 @@ package openadmin.action;
 
 import openadmin.model.Base;
 
-public interface OtherActionFacade <T extends Base>{
+public interface OtherActionFacade {
 	 
-	public void execute (String pAction, T pBase, ContextActionEdu ctx);
+	public <T extends Base> void execute (String pAction, T pBase, ContextActionEdu ctx);
 	
 }

@@ -9,9 +9,9 @@ import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
-import org.primefaces.PrimeFaces;
-import org.primefaces.component.outputpanel.OutputPanel;
-import org.primefaces.event.SelectEvent;
+//import org.primefaces.PrimeFaces;
+//import org.primefaces.component.outputpanel.OutputPanel;
+//import org.primefaces.event.SelectEvent;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -24,12 +24,12 @@ import openadmin.util.reflection.SerialClone;
 import openadmin.web.components.PFDialog;
 
 
-public class  ObjectAction <T extends Base> implements Serializable, ObjectActionFacade<T>{ 
+public class  ObjectAction implements Serializable, ObjectActionFacade { 
 	
 	private static final long serialVersionUID = 19091001L;
 	
 	@Getter
-	private T base;
+	private Base  base;
 	
 	@Getter @Setter
 	private ContextActionEdu ctx;
@@ -38,15 +38,15 @@ public class  ObjectAction <T extends Base> implements Serializable, ObjectActio
 	private MenuItem menuItem;
 	
 	//To edit
-	private T objOriginal;
+	private Base objOriginal;
 	
 	@Getter
 	private String metodo;
 	
-	private List<T> lstbase;
+	private List<Base> lstbase;
 	
 	
-	@SuppressWarnings("unchecked")
+	
 	public void _new() {
 		
  		System.out.println("ALTA");
@@ -75,7 +75,7 @@ public class  ObjectAction <T extends Base> implements Serializable, ObjectActio
 			
 		try {
 			//this.base = (Base) ReflectionUtilsEdu.createObject(this.base.getClass());
-			this.base = (T) ReflectionUtilsEdu.createObject(this.base.getClass());
+			this.base = (Base) ReflectionUtilsEdu.createObject(this.base.getClass());
 		
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
@@ -149,7 +149,7 @@ public class  ObjectAction <T extends Base> implements Serializable, ObjectActio
 	public void _search() {
 		
  		System.out.println("BUSCA");
- 		List<T> lstbaseNew = new ArrayList<T>();
+ 		List<Base> lstbaseNew = new ArrayList<Base>();
  		
 		lstbaseNew = ctx.getConnControl().findObjects(base);
 		
@@ -201,7 +201,7 @@ public class  ObjectAction <T extends Base> implements Serializable, ObjectActio
 		
 		Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
 		
-		T pBaseMap = (T) sessionMap.get("idBase");
+		Base pBaseMap = (Base) sessionMap.get("idBase");
 		
 		sessionMap.remove("idBase");
 		
@@ -213,7 +213,7 @@ public class  ObjectAction <T extends Base> implements Serializable, ObjectActio
 		
 	}
 	
-	public void setBase (T pBase) {
+	public void setBase (Base pBase) {
 		
 		System.out.println("Base: "  + pBase);
 		
@@ -227,7 +227,7 @@ public class  ObjectAction <T extends Base> implements Serializable, ObjectActio
 	
 	public void clean() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 		
-		this.base = (T) ReflectionUtilsEdu.createObject(this.base.getClass().getCanonicalName());
+		this.base = (Base) ReflectionUtilsEdu.createObject(this.base.getClass().getCanonicalName());
 	
 	}
 	

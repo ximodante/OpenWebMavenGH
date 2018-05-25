@@ -103,11 +103,26 @@ public class YAMLControlLoad implements Serializable{
 		Set<String> roleNames= new HashSet<String>();
 		for (YAMLRole ymlRol: this.roles) {
 			for (String sRol: ymlRol.getNames()) {
-				roleNames.add(sRol.trim().toLowerCase());
+				//roleNames.add(sRol.trim().toLowerCase());
+				for (String sProg: ymlRol.getPrograms()) {
+					roleNames.add(this.getRoleDescription(sRol, sProg));
+				}
 		}	}
 		return roleNames;
 	}
 	
+	/**
+	 * Get all simple role name ("ADMIN" and NOT "ADMIN.control") 
+	 * @return
+	 */
+	private Set<String> getSimpleRoleNames() {
+		Set<String> roleNames= new HashSet<String>();
+		for (YAMLRole ymlRol: this.roles) {
+			for (String sRol: ymlRol.getNames()) {
+				roleNames.add(sRol.trim().toUpperCase());
+		}	}
+		return roleNames;
+	}
 	
 	
 	/**
@@ -229,7 +244,8 @@ public class YAMLControlLoad implements Serializable{
 				
 				for (String sRol: ymlRole.getNames()) { 
 					for (String sProg: ymlRole.getPrograms()) {
-						Role myRole=new Role(sRol.trim().toUpperCase() + "." + sProg.trim().toLowerCase());
+						//Role myRole=new Role(sRol.trim().toUpperCase() + "." + sProg.trim().toLowerCase());
+						Role myRole=new Role(this.getRoleDescription(sRol, sProg));
 						if (lRoles.get(myRole.getDescription()) == null)
 								lRoles.put(myRole.getDescription(), this.connection.persist(myRole));
 		}	}	}	}
@@ -274,7 +290,8 @@ public class YAMLControlLoad implements Serializable{
 									myAcc.setProgram(myProg);
 									myAcc.setUser(this.cUsers.get(sUser));
 									//myAcc.setRole(this.cRoles.get(myProg.getDescription().trim().toLowerCase()+"."+ymlAllow.getRole().trim().toUpperCase()));
-									myAcc.setRole(this.cRoles.get(ymlAllow.getRole().trim().toUpperCase() + "." + ymlProg.getName().trim().toLowerCase()));
+									//myAcc.setRole(this.cRoles.get(ymlAllow.getRole().trim().toUpperCase() + "." + ymlProg.getName().trim().toLowerCase()));
+									myAcc.setRole(this.cRoles.get(this.getRoleDescription(ymlAllow.getRole(), ymlProg.getName())));
 									myAcc.setDescription("");
 									System.out.println("------ACCESS: EntityAdm:" + myEnt.getDescription() + " - User:" + sUser + " - Program:"+ myProg.getDescription() + " - Role:"+ ymlAllow.getRole());
 									this.cAccesses.add(this.connection.persist(myAcc));
@@ -374,19 +391,39 @@ public class YAMLControlLoad implements Serializable{
 		myMenu.setOrden(this.orden++);
 		//myMenu.setTypeNode(ymlMenu.getViewType());
 		myMenu.setTypeNode("c");
-		myMenu.setViewType(ymlMenu.getViewType());
+		myMenu.setViewType(ymlMenu.getViewType().toLowerCase());
 		
 		String mySuffix=ymlMenu.getViewType().trim();
+		String myParam= (ymlMenu.getParameter()!=null) ? "_" + ymlMenu.getParameter().trim() : "";		
+		
 		
 		// On action menuitems the suffix is the action name
 		//   and viewType is ":" + action name
 		//?????????????????????????? CANVIAR !!!!!!!
+		/*
 		if (ymlMenu.getViewType().trim().equalsIgnoreCase("action")) {
 			mySuffix=ymlMenu.getActions().get(0).getName().trim();
 			myMenu.setViewType(":" + mySuffix); 
 		}
-		myMenu.setDescription((myClass.getDescription().trim() + "_" + mySuffix).replaceAll("\\.", "_").toLowerCase());
+		*/
+		if (ymlMenu.getViewType().trim().equals("action")) {
+			myMenu.setParameter(ymlMenu.getParameter());
+			if (ymlMenu.getRoles() !=null) {
+				YAMLAction ymlAct=new YAMLAction(
+					myClass.getDescription().trim().toLowerCase() + "_" + ymlMenu.getParameter(),
+					myMenu.getIcon(),
+					0,
+					(byte)1,
+					ymlMenu.getRoles());
+				myParentRoles=this.setMyActions(ymlAct, myClass, myMenu, myParentRoles);
+				
+		}	}
 		
+		
+		myMenu.setDescription((myClass.getDescription().trim() + 
+				               myParam + 
+				               "_" + 
+				               mySuffix).replaceAll("\\.", "_").toLowerCase());
 		
 		//myMenu.setDescription((myClass.getDescription().trim() + "_" + ymlMenu.getViewType().trim()).replace(".", "_").toLowerCase());
 		this.cMenuItems.put(myMenu.getDescription(), this.connection.persist(myMenu));
@@ -397,6 +434,7 @@ public class YAMLControlLoad implements Serializable{
 		   !ymlMenu.getViewType().trim().equalsIgnoreCase("submenu")) 
 			myParentRoles=this.setMyDefaultActions(ymlMenu, myClass, myMenu, myParentRoles);
 		
+				
 		//Add other actions
 		if (ymlMenu.getActions() != null) {
 			for (YAMLAction ymlAct: ymlMenu.getActions()) {
@@ -430,7 +468,9 @@ public class YAMLControlLoad implements Serializable{
 		if (ymlAct.getRoles() != null) {
 			for (String sRole: ymlAct.getRoles()) {
 				//String roleDesc=this.defaultProgram +"."+ sRole.trim().toUpperCase();
-				String roleDesc=sRole.trim().toUpperCase();
+				//String roleDesc=sRole.trim().toUpperCase();
+				//String roleDesc=sRole.trim().toUpperCase() + "." + this.defaultProgram.trim().toLowerCase();
+				String roleDesc=this.getRoleDescription(sRole, this.defaultProgram);
 				Role myRole=this.cRoles.get(roleDesc);
 				// If the role exists for this program
 				if (myRole!=null) {
@@ -582,7 +622,8 @@ public class YAMLControlLoad implements Serializable{
 		for (YAMLEntityAdm ymlEnt: this.entities) {
 			for (YAMLProgram ymlProg: ymlEnt.getPrograms()) {
 				for (YAMLAllowed ymlAllow: ymlProg.getAlloweds()) {
-					if (! mySet.contains(ymlAllow.getRole().trim().toLowerCase()))
+					//if (! mySet.contains(ymlAllow.getRole().trim().toLowerCase()))
+					if (! mySet.contains(this.getRoleDescription(ymlAllow.getRole(), ymlProg.getName())))
 							myErrors=myErrors + "\n" + "->Rol in Program in EntityAdm NOT defined in Roles:" + ymlEnt.getName() + "-" + ymlProg.getName() + "-" + ymlAllow.getRole();
 					
 				}	
@@ -598,10 +639,12 @@ public class YAMLControlLoad implements Serializable{
 	 * @return
 	 */
 	public String NoDefaultActionRole(String myErrors) {
-		Set<String> mySet= this.getRoleNames();
+		//Set<String> mySet= this.getRoleNames();
+		Set<String> mySet= this.getSimpleRoleNames();
 		if (this.defaultActions !=null) { 
 			for (YAMLAction ymlAct: this.defaultActions) {
 				for (String sRol: ymlAct.getRoles()) {
+					// Verify only in simple names of roles
 					if (! mySet.contains(sRol.trim().toLowerCase()))
 						myErrors=myErrors + "\n" + "->Role in DefaultActions NOT defined in Roles:" + 
 								ymlAct.getName() +  "-" + sRol;
@@ -677,6 +720,16 @@ public class YAMLControlLoad implements Serializable{
 		return myErrors;
 	}
 	
+	/**
+	 * Gets the role description as ROLE.program
+	 * @param simpleRoleName
+	 * @param programName
+	 * @return
+	 */
+	private String getRoleDescription(String simpleRoleName, String programName) {
+		return simpleRoleName.trim().toUpperCase()+ "." + programName.trim().toLowerCase();
+	}
+	
 	public String checkErrors(boolean verbose) {
 		String s="";
 		if (verbose) s=s+
@@ -739,7 +792,7 @@ public class YAMLControlLoad implements Serializable{
 			"======================================================\n" +
 			"10. NoMenuItemProgram:\n" + 
 			"======================================================\n";
-		this.NoDefaultActionRole(s);
+		this.NoMenuItemProgram(s);
 			
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
