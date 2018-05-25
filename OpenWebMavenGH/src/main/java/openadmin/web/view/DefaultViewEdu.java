@@ -12,6 +12,7 @@ import javax.faces.component.html.HtmlPanelGroup;
 import org.primefaces.component.outputpanel.OutputPanel;
 
 import lombok.Getter;
+import openadmin.model.Base;
 import openadmin.model.control.Action;
 
 import openadmin.util.lang.LangTypeEdu;
@@ -20,7 +21,7 @@ import openadmin.web.components.PFMenuBarEdu;
 import openadmin.action.ObjectAction;
 import openadmin.annotations.Default;
 
-public class DefaultViewEdu extends ObjectAction implements Serializable, ViewFacadeEdu{
+public class DefaultViewEdu <T extends Base> extends ObjectAction<T> implements Serializable, ViewFacadeEdu<T>{
 
 	private static final long serialVersionUID = 23031001L;
 	

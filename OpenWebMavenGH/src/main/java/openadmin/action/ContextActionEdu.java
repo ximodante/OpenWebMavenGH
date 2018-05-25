@@ -14,7 +14,7 @@ import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.security.NoSuchAlgorithmException;
+//import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 
 import openadmin.dao.operation.DaoJpaEdu;
 import openadmin.dao.operation.DaoOperationFacadeEdu;
-
+import openadmin.model.Base;
 import openadmin.model.control.Access;
 
 import openadmin.model.control.EntityAdm;
 import openadmin.model.control.Role;
 import openadmin.model.control.User;
-import openadmin.util.configuration.FirstControlLoadEdu;
+//import openadmin.util.configuration.FirstControlLoadEdu;
 import openadmin.util.configuration.FirstControlLoadYAML;
 //import openadmin.util.configuration.FirstControlLoad;
 import openadmin.util.configuration.TypeEnvironment;
@@ -42,7 +42,7 @@ import openadmin.util.lang.WebMessages;
 
 import openadmin.web.view.ViewFacadeEdu;
 
-import javax.annotation.PostConstruct;
+//import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -55,7 +55,7 @@ import lombok.ToString;
 @Named(value = "ctx")
 @SessionScoped
 @ToString
-public class ContextActionEdu implements Serializable {
+public class ContextActionEdu<T extends Base> implements Serializable {
 
 	private static final long serialVersionUID = 21100901L;
 
@@ -88,7 +88,7 @@ public class ContextActionEdu implements Serializable {
 	//private Role rolDefault = null;
 	
 	/** Field that contain the list of actions*/
-	private Map<Integer, ViewFacadeEdu> lstView = new HashMap<Integer, ViewFacadeEdu>();
+	private Map<Integer, ViewFacadeEdu<T>> lstView = new HashMap<Integer, ViewFacadeEdu<T>>();
 	
 	/** Field that contain the user*/
 	@Getter @Setter
@@ -289,13 +289,13 @@ public class ContextActionEdu implements Serializable {
 	
 	
 	//Work view
-	public ViewFacadeEdu getView(Integer key) {
+	public ViewFacadeEdu<T> getView(Integer key) {
 		System.out.println("VISTA: " + key);
 		return lstView.get(key);
 	
 	}
 
-	public void setView(Integer key, ViewFacadeEdu pVista) {
+	public void setView(Integer key, ViewFacadeEdu<T> pVista) {
 		
 		lstView.put(key, pVista);
 		

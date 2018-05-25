@@ -45,7 +45,7 @@ import openadmin.web.view.ViewFacadeEdu;
 
 @Named (value = "main")
 @SessionScoped
-public class MainScreenEdu implements Serializable {
+public class MainScreenEdu<T extends Base> implements Serializable {
 	
 	// Atributs
 	private static final long serialVersionUID = 6081501L;
@@ -63,7 +63,7 @@ public class MainScreenEdu implements Serializable {
 
 	/** Field that contain the connection*/
 	@Inject
-	private ContextActionEdu ctx;
+	private ContextActionEdu<T> ctx;
 	
 	@Inject
 	private LangTypeEdu lang;
@@ -256,7 +256,7 @@ public void loadScreen(long pMenuItem)
 
 }
 
-public <T extends Base> void  loadScreenRecursive(String pMenuItem) 
+public void  loadScreenRecursive(String pMenuItem) 
 		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 	
 
@@ -265,15 +265,16 @@ public <T extends Base> void  loadScreenRecursive(String pMenuItem)
 	menuItem = ctx.getConnControl().findObjectDescription(menuItem);
 	
 	//Objecte actual
-	T _obj = ctx.getView(ctx.numberView()).getBase();
+	T _obj = ctx.getView(ctx.numberView()).getBase(); 
 	
 	//Objecte a crear
+	@SuppressWarnings("unchecked")
 	T obj = (T) ReflectionUtilsEdu.createObject(menuItem.getClassName().getDescription());
 	
 	//Find object if is instance
 	if (null != _obj){
 					
-		obj = ReflectionField.copyObject2(_obj, (T)obj);
+		obj = ReflectionField.copyObject2(_obj, obj);
 		
 	}
 	
@@ -286,11 +287,11 @@ public void exitScreenRecursive()
 		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 			
 
-	Base _obj = ctx.getView(ctx.numberView()).getBase();
+	T _obj = ctx.getView(ctx.numberView()).getBase();
 			
-	ReflectionField refl = new ReflectionField();
-	
-	Base pObejectCopy = refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView()).getMetodo());
+	//ReflectionField refl = new ReflectionField();
+	//T pObejectCopy = refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView()).getMetodo());
+	T pObejectCopy = ReflectionField.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView()).getMetodo());
 	
 	ctx.deleteView();
 	
@@ -302,6 +303,7 @@ public void exitScreenRecursive()
 	
 }
 
+@SuppressWarnings("unchecked")
 public void screen(MenuItem pMenuItem, Object obj) 
 		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException{
 	
@@ -341,9 +343,9 @@ public void screen(MenuItem pMenuItem, Object obj)
 	if (pMenuItem.getViewType().equals("default")) {
 				
 		Integer numberView = ctx.numberView()+1;
-		ViewFacadeEdu view = new DefaultViewEdu();
+		ViewFacadeEdu<T> view = new DefaultViewEdu<T>();
 		view.setCtx(ctx);
-		view.setBase((Base) obj);
+		view.setBase((T) obj);
 		view.execute(lang, numberView, lstActionView);
 		outView.getChildren().add(view.getOutPanel());
 		

@@ -69,7 +69,7 @@ public class ReflectionField {
 	}
 	
 	
-	public List<String[]> execute(Base pObj) {
+	public <T extends Base> List<String[]> execute(T pObj) {
 		
 		fields = new ArrayList<String[]>();
 		
@@ -180,7 +180,7 @@ public class ReflectionField {
 	 * @param obj  object type Base
 	 * @return List of fields with their properties (type, name and value)
 	 * */
-	public List<String[]> executeOld(Base obj) {
+	public <T extends Base> List<String[]> executeOld(T obj) {
 						
 		fields = new ArrayList<String[]>(0);				
 				
@@ -313,7 +313,7 @@ public class ReflectionField {
 	}
 	
 	
-	public static Base searchSelect(Base obj, Base base){
+	public static <T extends Base> T searchSelect(T obj, T base){
 		
 		Base baseResult = null;
 		
@@ -415,7 +415,7 @@ public class ReflectionField {
 		
 	}
 	
-	public static Base copyObject(Base objCopy, Base basePaste, String metodo){		
+	public static <T extends Base> T copyObject(T objCopy, T basePaste, String metodo){		
 		
 		for (Method me: basePaste.getClass().getDeclaredMethods()){
 			
@@ -448,7 +448,9 @@ public class ReflectionField {
 		return basePaste;
 	}
 	
-	public static Base copyObject2(Base objCopy, Base basePaste){
+	
+	@SuppressWarnings("unchecked")
+	public static <T extends Base> T copyObject2(T objCopy, T basePaste){
 		
 		for (Method me: objCopy.getClass().getDeclaredMethods()){
 			
@@ -460,7 +462,7 @@ public class ReflectionField {
 					
 				if (me.invoke(objCopy, (Object)null) != null){
 					
-					basePaste = (Base) me.invoke(objCopy, (Object)null);
+					basePaste = (T) me.invoke(objCopy, (Object)null);
 					
 				}
 										
