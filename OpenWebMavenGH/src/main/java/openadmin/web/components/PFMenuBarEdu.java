@@ -48,6 +48,8 @@ public class PFMenuBarEdu implements Serializable{
 			item.setId("" + enti.getId());
 			item.setCommand("#{main.selectActiveEntity(" + enti.getId() + ")}");
 			item.setUpdate("form1");
+			System.out.println("EDU: Adding entity:" + enti.getId() + "-" + enti.getDescription());
+			subMenu.addElement(item);
 		}
 		
 		

@@ -27,14 +27,15 @@ public class PFPanelMenuEdu implements Serializable {
 		 
 		 for (MenuItem vr: lstMenuItem ){
 			 
-			 if (pMenuItem.equals(vr.getParent()) && vr.getTypeNode().equals("c")){
+			//if (pMenuItem.equals(vr.getParent()) && vr.getTypeNode().equals("c")){
+			 if (pMenuItem.equals(vr.getParent()) && vr.getType()!=0){	 
 				 
 				//Calls the method loadChild
 				 submenu.addElement(itemFill(vr));
 			 }
 			 
-			 else if (pMenuItem.equals(vr.getParent()) && vr.getTypeNode().equals("p")){
-				 
+			 //else if (pMenuItem.equals(vr.getParent()) && vr.getTypeNode().equals("p")){
+			 else if (pMenuItem.equals(vr.getParent()) && vr.getType()==0){	 
 				//Calls again the method loadParent
 				 submenu.addElement(itemPare(vr, lstMenuItem));
 			 }

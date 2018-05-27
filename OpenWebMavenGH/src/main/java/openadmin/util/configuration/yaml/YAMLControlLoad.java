@@ -143,7 +143,8 @@ public class YAMLControlLoad implements Serializable{
 		if (lMenuItems !=null) {
 			for (YAMLMenuItem ymlMenu: lMenuItems) {
 				if (ymlMenu.getClassName() !=null)
-					classNames.add(ymlMenu.getClassName().trim());
+					//classNames.add(ymlMenu.getClassName().trim());
+					classNames.add(ymlMenu.getClassSimpleName());
 				classNames=getClassNamesPriv(classNames , ymlMenu.getMenuItems()); 
 		}	}
 		return classNames;
@@ -154,7 +155,6 @@ public class YAMLControlLoad implements Serializable{
 		classNames=getClassNamesPriv(classNames, this.menuItems);
 		return classNames;
 	}
-	
 	
 	
 	
@@ -314,8 +314,10 @@ public class YAMLControlLoad implements Serializable{
 		
 		if(this.menuItems !=null) {
 			for (YAMLMenuItem ymlMenu : this.menuItems) {
-				if (ymlMenu.getViewType().trim().toLowerCase().equals("submenu")) {
+				//Submenu
+				if (ymlMenu.getNodeType()==0) {
 					myRoles =this.SubMenuItemsClassNameActionsPriv(ymlMenu, null, myRoles);
+				// Not submenus (action or views)	
 				} else {
 					myRoles = MenuItemsClassNameActionsPriv(ymlMenu, null, myRoles);
 	}	}	}	} 
@@ -323,37 +325,35 @@ public class YAMLControlLoad implements Serializable{
 	//2.4.1 SubMenu MenuItems
 	private Set<String> SubMenuItemsClassNameActionsPriv(YAMLMenuItem ymlMenu, MenuItem parent, Set<String> myParentRoles ) {
 		MenuItem myMenu=new MenuItem();
-		ClassName myClass=new ClassName();
+		ClassName myClass=null;
 		
 		Set<String> myRoles=new TreeSet<String>();
 		
 		if (ymlMenu.getProgram().trim().length()>0) 
 			this.defaultProgram=ymlMenu.getProgram().trim().toLowerCase();
-		
+		/* In a Submenu there are no classNames 
 		// Add ClassName
-		myClass.setDescription(ymlMenu.getClassName().trim());
-		this.cClassNames.put(myClass.getDescription(), this.connection.persist(myClass));
+		*/
 		
 		// Add MenuItems
 		myMenu.setClassName(myClass);
 		myMenu.setIcon(ymlMenu.getIcon());
 		myMenu.setParent(parent);
 		myMenu.setOrden(this.orden++);
-		myMenu.setTypeNode("p");
-		myMenu.setViewType(ymlMenu.getViewType());
-		String mySuffix=ymlMenu.getViewType().trim().toLowerCase();
-		myMenu.setDescription((myClass.getDescription().trim() + "_" + mySuffix).replaceAll("\\.", "_").toLowerCase());
+		myMenu.setType(ymlMenu.getNodeType());
+		myMenu.setDescription(ymlMenu.getDescription());
+		
 		this.cMenuItems.put(myMenu.getDescription(), this.connection.persist(myMenu));
 		
 		
 		
 		if(ymlMenu.getMenuItems() !=null) {
 			for (YAMLMenuItem ymlMenu1 : ymlMenu.getMenuItems()) {
-				if (ymlMenu1.getViewType().trim().toLowerCase().equals("submenu")) {
+				//0=Submenu
+				if (ymlMenu1.getNodeType()==0) {
 					myRoles=SubMenuItemsClassNameActionsPriv(ymlMenu1, myMenu, myRoles);
-				} else if (ymlMenu1.getViewType().trim().toLowerCase().equals("action")) {
-					myRoles=MenuItemsClassNameActionsPriv(ymlMenu1, myMenu, myRoles);
-				} else {	
+				//1=Command or action, 2=Default View, 3=Custom View 4= YAML View
+				} else {
 					myRoles=MenuItemsClassNameActionsPriv(ymlMenu1, myMenu, myRoles);
 		}	}	}
 		
@@ -365,7 +365,7 @@ public class YAMLControlLoad implements Serializable{
 		ymlAct.setName("submenu");
 		ymlAct.setGroup(0); // No matter the group value as there is only 1 action
 		ymlAct.setRoles(lRol);
-		myParentRoles= this.setMyActions(ymlAct, myClass, myMenu, myParentRoles);
+		myParentRoles= this.setMyActions(ymlAct, myClass, myMenu, myParentRoles, false);
 		
 		return myParentRoles;
 	}	
@@ -375,70 +375,39 @@ public class YAMLControlLoad implements Serializable{
 	private Set<String> MenuItemsClassNameActionsPriv(YAMLMenuItem ymlMenu, MenuItem parent, Set<String> myParentRoles ) {
 		
 		MenuItem myMenu=new MenuItem();
-		ClassName myClass=new ClassName();
+		ClassName myClass=null;
 		
 		if (ymlMenu.getProgram().trim().length()>0) 
 			this.defaultProgram=ymlMenu.getProgram().trim().toLowerCase();
 		
 		// Add ClassName
-		myClass.setDescription(ymlMenu.getClassName().trim());
-		this.cClassNames.put(myClass.getDescription(), this.connection.persist(myClass));
+		if (ymlMenu.getClassName().trim().length()>0) {
+			myClass=new ClassName();
+			myClass.setDescription(ymlMenu.getClassSimpleName());
+			myClass.setPack(ymlMenu.getClassPackage());
+			this.cClassNames.put(myClass.getDescription(), this.connection.persist(myClass));
+		}
 		
 		// Add MenuItems
 		myMenu.setClassName(myClass);
 		myMenu.setIcon(ymlMenu.getIcon());
 		myMenu.setParent(parent);
 		myMenu.setOrden(this.orden++);
-		//myMenu.setTypeNode(ymlMenu.getViewType());
-		myMenu.setTypeNode("c");
-		myMenu.setViewType(ymlMenu.getViewType().toLowerCase());
+		myMenu.setType(ymlMenu.getNodeType());
+		myMenu.setDescription(ymlMenu.getDescription().trim());
 		
-		String mySuffix=ymlMenu.getViewType().trim();
-		String myParam= (ymlMenu.getParameter()!=null) ? "_" + ymlMenu.getParameter().trim() : "";		
-		
-		
-		// On action menuitems the suffix is the action name
-		//   and viewType is ":" + action name
-		//?????????????????????????? CANVIAR !!!!!!!
-		/*
-		if (ymlMenu.getViewType().trim().equalsIgnoreCase("action")) {
-			mySuffix=ymlMenu.getActions().get(0).getName().trim();
-			myMenu.setViewType(":" + mySuffix); 
-		}
-		*/
-		if (ymlMenu.getViewType().trim().equals("action")) {
-			myMenu.setParameter(ymlMenu.getParameter());
-			if (ymlMenu.getRoles() !=null) {
-				YAMLAction ymlAct=new YAMLAction(
-					myClass.getDescription().trim().toLowerCase() + "_" + ymlMenu.getParameter(),
-					myMenu.getIcon(),
-					0,
-					(byte)1,
-					ymlMenu.getRoles());
-				myParentRoles=this.setMyActions(ymlAct, myClass, myMenu, myParentRoles);
-				
-		}	}
-		
-		
-		myMenu.setDescription((myClass.getDescription().trim() + 
-				               myParam + 
-				               "_" + 
-				               mySuffix).replaceAll("\\.", "_").toLowerCase());
-		
-		//myMenu.setDescription((myClass.getDescription().trim() + "_" + ymlMenu.getViewType().trim()).replace(".", "_").toLowerCase());
+		if (myMenu.getDescription().length()==0) myMenu.setDescription(myClass.getDescription());
 		this.cMenuItems.put(myMenu.getDescription(), this.connection.persist(myMenu));
 		
 		// Add default actions only if viewType is not action nor submenu
-		if(ymlMenu.isDefaultActions() && 
-		   !ymlMenu.getViewType().trim().equalsIgnoreCase("action") && 
-		   !ymlMenu.getViewType().trim().equalsIgnoreCase("submenu")) 
+		if(ymlMenu.isDefaultActions() && myMenu.getType()!=0 && myMenu.getType()!=1 ) 
 			myParentRoles=this.setMyDefaultActions(ymlMenu, myClass, myMenu, myParentRoles);
 		
 				
 		//Add other actions
 		if (ymlMenu.getActions() != null) {
 			for (YAMLAction ymlAct: ymlMenu.getActions()) {
-				myParentRoles=this.setMyActions(ymlAct, myClass, myMenu, myParentRoles);
+				myParentRoles=this.setMyActions(ymlAct, myClass, myMenu, myParentRoles, false);
 		}	}
 		return myParentRoles;
 	}	
@@ -448,21 +417,29 @@ public class YAMLControlLoad implements Serializable{
 		if (ymlMenu.isDefaultActions()) {
 			if (this.getDefaultActions() != null) {
 				for (YAMLAction ymlAct: this.getDefaultActions() ) {
-					myParentRoles=this.setMyActions(ymlAct, myClass, myMenu, myParentRoles);
+					myParentRoles=this.setMyActions(ymlAct, myClass, myMenu, myParentRoles ,true);
 		}	}	}	
 		return myParentRoles;
 	}
 		
 	//2.4.4 Create Actions and ActionviewRole
-	private Set<String> setMyActions(YAMLAction ymlAct, ClassName myClass, MenuItem myMenu, Set<String> myParentRoles) {
-		// Add action
-		Action myAct=new Action (); 
-		//myAct.setDescription((myClass.getDescription().trim() + "_" + ymlAct.getName()).trim().replace(".", "_").toLowerCase());
-		myAct.setDescription((myClass.getDescription().trim() + "_" + ymlAct.getName()).trim().toLowerCase());
-		myAct.setClassName(myClass);
-		myAct.setGrup(ymlAct.getGroup());
-		myAct.setIcon(ymlAct.getIcon());
-		this.cActions.put(myAct.getDescription(), this.connection.persist(myAct));
+	private Set<String> setMyActions(YAMLAction ymlAct, ClassName myClass, MenuItem myMenu, Set<String> myParentRoles, boolean isDefaultAction) {
+		Action myAct=null;
+		
+		//(Not for submenus that have no actions) 1=Command, 2=Default View, 3=Custom View, 4=YAML View
+		if (myMenu.getType()!=0) {
+			// Add action
+			myAct=new Action ();
+			myAct.setDescription((myClass.getDescription().trim() + "_" + ymlAct.getName()).trim().toLowerCase());
+			myAct.setClassName(myClass);
+			myAct.setGrup(ymlAct.getGroup());
+			myAct.setIcon(ymlAct.getIcon());
+			
+			if (isDefaultAction) myAct.setType((byte)0); // Default action
+			else myAct.setType((byte)1);                 // Not default Action 
+			
+			this.cActions.put(myAct.getDescription(), this.connection.persist(myAct));
+		}
 		
 		// Add ActionViewRole
 		if (ymlAct.getRoles() != null) {

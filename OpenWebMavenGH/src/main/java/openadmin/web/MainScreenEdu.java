@@ -100,25 +100,10 @@ public class MainScreenEdu implements Serializable {
 			//PFMenuBarEdu pfMenuBar = new PFMenuBarEdu(lang);
 			pfMenuBar = new PFMenuBarEdu(lang);
 
-			//List <String[]> lst = new ArrayList<String[]>();
-		
-			// ****************** Genera els items **********************
-			// El String te tres entrades valor, acci� i icona
-			// Si el valor d'acci� �s 0 �s un grup
-			//Per finalizar el grup l'acci� val 1
-				
-			//Es crea el logout
-			//String[] file = new String[] {MessagesTypes.msgActions("exit"), "#{ctx.logout}", "ui-icon-extlink"};
-			//lst.add(file);
-		
-			//Add item 
-			//menuBar.addElement(PFMenuBar.subMenuSimple(MessagesTypes.msgActions("Archivo"), lst));
-
 			// ***************   Genera el submenu de les aplicacions ********************
 
-			//Set<EntityAdm> entities = ctx.getMapEntityAccess().keySet();		
-			entities = ctx.getMapEntityAccess().keySet(); //EDU
-		
+			Set<EntityAdm> entities = ctx.getMapEntityAccess().keySet();		
+					
 			//if there are two o more entities
 			if (entities.size() > 1) {
 			 
@@ -127,58 +112,37 @@ public class MainScreenEdu implements Serializable {
 							 
 			}
 		
-			//if there is an entity, no entity is displayed and go straight to the program menu
-			if (entities.size() == 1) {
-						 
-				if (null == activeEntity)  activeEntity = entities.stream().findFirst().get();
-				
-				loadMenuItems(activeEntity.getId()); //EDU
-				/*
-				lstAccess = ctx.getMapEntityAccess().get(activeEntity);
+			if (null == activeEntity)  activeEntity = entities.stream().findFirst().get();
 			
-				//If there is a program go to the first program
-				if (lstAccess.size() == 1) {
+			lstAccess = ctx.getMapEntityAccess().get(activeEntity);
 				
-					Access vaccess = lstAccess.stream().findFirst().get();
+			//If there is an program
+			if (lstAccess.size() == 1) {
+					
+				Access vaccess = lstAccess.stream().findFirst().get();
+					
+				loadMenuItems(vaccess.getRole().getId(), vaccess.getProgram().getId());
 				
-					loadMenuItems(vaccess.getRole().getId(), vaccess.getProgram().getId());
-				
-			
-				} else menuBar.addElement(pfMenuBar.menuPrograms("programs", lstAccess));
+			} else menuBar.addElement(pfMenuBar.menuPrograms("programs", lstAccess));
+				 
 			 
-			    */
-			
-			}
-		
 			menuBar.generateUniqueIds();
+			
+			return menuBar;
 		
-		//}	
-		return menuBar;
-	
+		}
+
+     public void selectActiveEntity(Long pEntity){
+		
+		EntityAdm pEntityAdm = new EntityAdm();
+		pEntityAdm.setId(pEntity);
+		
+		activeEntity = ctx.getConnControl().findObjectPK(pEntityAdm);
+		getMenuBar();
+		
+		//Actualitzar el context
 	}
 	
-	//Edu Begin
-	public void loadMenuItems(long pEntity) {
-		System.out.println("LOADMENUITEMS-"+pEntity);
-		activeEntity = entities.stream().filter(e -> e.getId()==pEntity).findFirst().get();
-		
-		lstAccess = ctx.getMapEntityAccess().get(activeEntity);
-	
-		//If there is a program go to the first program
-		if (lstAccess.size() == 1) {
-		
-			Access vaccess = lstAccess.stream().findFirst().get();
-			System.out.println("ENTITYYYY="+vaccess.getEntityAdm().getId());
-		
-			loadMenuItems(vaccess.getRole().getId(), vaccess.getProgram().getId());
-		
-	
-		} else menuBar.addElement(pfMenuBar.menuPrograms("programs", lstAccess));
-	 
-	
-	}
-	//Edu Fin
-    
 	public void loadMenuItems(long pRol, long pProgram) {
 		
 		menuLateral = new DefaultMenuModel();
@@ -219,14 +183,18 @@ public class MainScreenEdu implements Serializable {
 	    for (MenuItem vr: lstMenuItems){
 					
 				
-	    	if (vr.getTypeNode().equals("c") && null == vr.getParent() ){
+	    	//if (vr.getTypeNode().equals("c") && null == vr.getParent() ){
+	    	// If node is not a submenu and has no parent
+	    	if (vr.getType()!=0  && null == vr.getParent() ){
 	    		
 	    		//Calls the method loadChild
 	    		menuLateral.addElement(pPFPanelMenu.itemFill(vr));
 	    		 
 	    	}
 						
-	    	else if (vr.getTypeNode().equals("p") && null == vr.getParent()) {
+	    	//else if (vr.getTypeNode().equals("p") && null == vr.getParent()) {
+	    	//If node is a submenu and has no parent
+	    	else if (vr.getType()==0 && null == vr.getParent()) {
 			
 			  //Calls the method loadParent
 	    		menuLateral.addElement(pPFPanelMenu.itemPare(vr, lstMenuItems));
@@ -241,244 +209,124 @@ public class MainScreenEdu implements Serializable {
 	 *
 	 *              Load screen
 	 ********************************************************************************************************************************/
-public void loadScreen(long pMenuItem) 
+	public void loadScreen(long pMenuItem) 
 		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 	
-	System.out.println("Model directe");
+		System.out.println("Model directe");
 	
-	if (ctx.numberView() > 0) ctx.deleteAllView();
+		if (ctx.numberView() > 0) ctx.deleteAllView();
 	
-	MenuItem menuItem = new MenuItem();
-	menuItem.setId(pMenuItem);
-	menuItem = ctx.getConnControl().findObjectPK(menuItem);
+		MenuItem menuItem = new MenuItem();
+		menuItem.setId(pMenuItem);
+		menuItem = ctx.getConnControl().findObjectPK(menuItem);
 	
-	screen(menuItem, null);
+		screen(menuItem, null);
 
 }
 
-public <T extends Base> void  loadScreenRecursive(String pMenuItem) 
+	public <T extends Base> void  loadScreenRecursive(String pMenuItem) 
 		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 	
 
-	MenuItem menuItem = new MenuItem();
-	menuItem.setDescription(pMenuItem);
-	menuItem = ctx.getConnControl().findObjectDescription(menuItem);
+		MenuItem menuItem = new MenuItem();
+		menuItem.setDescription(pMenuItem);
+		menuItem = ctx.getConnControl().findObjectDescription(menuItem);
 	
-	//Objecte actual
-	@SuppressWarnings("unchecked")
-	T _obj = (T) ctx.getView(ctx.numberView()).getBase(); 
+		//Objecte actual
+		@SuppressWarnings("unchecked")
+		T _obj = (T) ctx.getView(ctx.numberView()).getBase(); 
 	
-	//Objecte a crear
-	@SuppressWarnings("unchecked")
-	T obj = (T) ReflectionUtilsEdu.createObject(menuItem.getClassName().getDescription());
+		//Objecte a crear
+		@SuppressWarnings("unchecked")
+		T obj = (T) ReflectionUtilsEdu.createObject(menuItem.getClassName().getDescription());
 	
-	//Find object if is instance
-	if (null != _obj){
+		//Find object if is instance
+		if (null != _obj){
 					
-		obj = ReflectionField.copyObject2(_obj, obj);
+			obj = ReflectionField.copyObject2(_obj, obj);
 		
+		}
+	
+	
+		screen(menuItem, obj);
+
 	}
-	
-	
-	screen(menuItem, obj);
 
-}
-
-public <T extends Base> void exitScreenRecursive() 
+	public <T extends Base> void exitScreenRecursive() 
 		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 			
-	@SuppressWarnings("unchecked")
-	T _obj = (T) ctx.getView(ctx.numberView()).getBase();
+		@SuppressWarnings("unchecked")
+		T _obj = (T) ctx.getView(ctx.numberView()).getBase();
 			
-	//ReflectionField refl = new ReflectionField();
-	//T pObejectCopy = refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView()).getMetodo());
-	@SuppressWarnings("unchecked")
-	T pObejectCopy = (T) ReflectionField.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView()).getMetodo());
+		//ReflectionField refl = new ReflectionField();
+		//T pObejectCopy = refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView()).getMetodo());
+		@SuppressWarnings("unchecked")
+		T pObejectCopy = (T) ReflectionField.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView()).getMetodo());
 	
-	ctx.deleteView();
+		ctx.deleteView();
 	
-	MenuItem menuItem = ctx.getView(ctx.numberView()).getMenuItem();
+		MenuItem menuItem = ctx.getView(ctx.numberView()).getMenuItem();
 	
-	ctx.deleteView();
+		ctx.deleteView();
 	
-	screen(menuItem, pObejectCopy);
+		screen(menuItem, pObejectCopy);
 	
-}
+	}
 
-@SuppressWarnings("unchecked")
-public <T extends Base> void screen(MenuItem pMenuItem, Object obj) 
+	@SuppressWarnings("unchecked")
+	public <T extends Base> void screen(MenuItem pMenuItem, Object obj) 
 		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException{
 	
-	//Delete screen
-	FacesContext _context = FacesContext.getCurrentInstance();	
-	OutputPanel outView = (OutputPanel)_context.getViewRoot().findComponent("form1:idContingut");
+		//Delete screen
+		FacesContext _context = FacesContext.getCurrentInstance();	
+		OutputPanel outView = (OutputPanel)_context.getViewRoot().findComponent("form1:idContingut");
 	
-	//System.out.println("Llista main: " + outView.getChildren());
+		//System.out.println("Llista main: " + outView.getChildren());
 	
-	//System.out.println("Nom vista: " + viewDefault);
+		//System.out.println("Nom vista: " + viewDefault);
 	
-	if (outView.getChildCount() > 0) {
-		
-		System.out.println("Esborra component del contingut");
-		
-		outView.getChildren().clear();
-	}
-	
-	//Action view
-	ActionViewRole actionViewRole = new ActionViewRole();
-	actionViewRole.setMenuItem(pMenuItem);
-	actionViewRole.setRole(ctx.getActiveRol());
-	
-	List<Action> lstActionView = 
-	ctx.getConnControl().findObjects(actionViewRole).stream()
-	.map(ActionViewRole::getAction)
-	.collect(Collectors.toList());
-	
-	//Create object
-	if (null == obj) {
-		
-		obj = ReflectionUtilsEdu.createObject(pMenuItem.getClassName().getDescription());
-		
-	}
-	
-	//Default View
-	if (pMenuItem.getViewType().equals("default")) {
-				
-		Integer numberView = ctx.numberView()+1;
-		ViewFacadeEdu view = new DefaultViewEdu();
-		view.setCtx(ctx);
-		view.setBase((T) obj);
-		view.execute(lang, numberView, lstActionView);
-		outView.getChildren().add(view.getOutPanel());
-		
-		System.out.println("Afegeix outputpanel + vista: " + numberView);
-		ctx.setView(numberView, view);
-				
-	}	
-	
-	
-}
-
-/**
-public void closedScreen() {
-	
-	Base _obj = ctx.getView(ctx.numberView()).getBase();
-	
-	if (null != _obj && ctx.numberView() > 1){
-		
-		//FacesContext _context = FacesContext.getCurrentInstance();
-		
-		//OutputPanel outView = (OutputPanel)_context.getViewRoot().findComponent("form1:idContingut");
-		
 		if (outView.getChildCount() > 0) {
-			
-			
-			System.out.println("Esborra 2 component del contingu eixir");
-			
+		
+			System.out.println("Esborra component del contingut");
+		
 			outView.getChildren().clear();
-			
 		}
+	
+		//Action view
+		ActionViewRole actionViewRole = new ActionViewRole();
+		actionViewRole.setMenuItem(pMenuItem);
+		actionViewRole.setRole(ctx.getActiveRol());
+	
+		List<Action> lstActionView = 
+				ctx.getConnControl().findObjects(actionViewRole).stream()
+				.map(ActionViewRole::getAction)
+				.collect(Collectors.toList());
+	
+		//Create object
+		if (null == obj) {
 		
-		ctx.deleteView();
-		outView.getChildren().add(ctx.getView(ctx.numberView()).getOutPanel());
-	}
-}*/
-
-
-/**
-public void carregaMenuLateral (String pId, String pValor) {
-	 
-
-    //Actualiza panel informaci� del programa
-	programaActual.setValue(entitatActual + " - " + pValor);
-    
-	programa = entitatActual + " - " + pValor;
-	
-	menuLateral = new DefaultMenuModel();
-	
-	
-    //Load of menu items
-    Set<MenuItem> listMenuItem = new TreeSet<MenuItem>();
-    ActionViewRole actionViewRole = new ActionViewRole();
-  		
-    for (Base b : ctx.getLoadMenuItems(pId)) {
-  			
-    	actionViewRole = (ActionViewRole)b;
-    	listMenuItem.add(actionViewRole.getMenuItem());
-
-    }
-    
-    //Registra en el log el nom del programa seleccionat
-    if (listMenuItem.size() > 0){
-			
-    	ctx.setRolDefault(actionViewRole.getRole());
-    	ctx.getLog().changeProgram(actionViewRole.getRole().getProgram().getDescription());
+			obj = ReflectionUtilsEdu.createObject(pMenuItem.getClassName().getDescription());
 		
-    }
-  
-    //Seleccioa si es pare  o fill
-    for (MenuItem vr: listMenuItem){
-			
-			
-    	System.out.println("MENU ITEM NODE: " + vr.getTypenode());
-			
-    	if (vr.getTypenode().equals("c") && vr.getParent() == null ){
-					
-    		//Calls the method loadChild
-    		menuLateral.addElement(PFPanelMenu.itemFill(vr, actionViewRole.getRole().getId()));
-    		
-    	}
-					
-    	else if (vr.getTypenode().equals("p") && vr.getParent() == null ) {
-								
-		  //Calls the method loadParent
-    		menuLateral.addElement(PFPanelMenu.itemPare(vr, listMenuItem, actionViewRole.getRole().getId()));
-    		
-    	}			
-  }
-
-    menuLateral.generateUniqueIds();
-    System.out.println("Elements MENU ITEM : " + menuLateral.getElements().size() );	    
-		
-}
-
-
-public void carregaVista (String pId, String pValor) throws SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException{
+		}
 	
-	if (pId == null) return;
-	
-	programaActual.setValue(programa + " - " + pValor);
-	
-	//Find all Action view role
-	List<Base> loadActionView = ctx.getLoadActionsView(pId);
-	
-	InterceptorVista interceptor = new InterceptorVista();
-	ctx.borraTotesVistes();
-	interceptor.carregaVista(loadActionView, ctx, 1);
-	
-}
-
-
-public ContextAction getCtx() {
-	return ctx;
-}
-
-public void setCtx(ContextAction ctx) {
-	this.ctx = ctx;
-}
-
-public HtmlOutputText getProgramaActual() {
-	
-	//La primera vegada carrega la entitat 
-	entitatActual = MessagesTypes.msgGenerals("aplicacioActual") +  MessagesTypes.msgGenerals(ctx.getUser().getEntityDefault());
+		//Default View
+		//if (pMenuItem.getViewType().equals("default")) {
+		if (pMenuItem.getType()==1) {
 				
-	return JSFComponents.HtmlOutputText01(MessagesTypes.msgGenerals("aplicacioActual") +  MessagesTypes.msgGenerals(ctx.getUser().getEntityDefault())); 
-
-}
-
-public void setProgramaActual(HtmlOutputText programaActual) {
+			Integer numberView = ctx.numberView()+1;
+			ViewFacadeEdu view = new DefaultViewEdu();
+			view.setCtx(ctx);
+			view.setBase((T) obj);
+			view.execute(lang, numberView, lstActionView);
+			outView.getChildren().add(view.getOutPanel());
+		
+			System.out.println("Afegeix outputpanel + vista: " + numberView);
+			ctx.setView(numberView, view);
+				
+		}	
 	
-	this.programaActual = programaActual;
-}
-*/
+	
+	}
+
+
 }

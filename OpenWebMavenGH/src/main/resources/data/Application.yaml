@@ -69,35 +69,31 @@ menuItems:
   # In program control, only ADMIN rol can access, so no need to show actions, using default actions
   #    as the only user that belongs both to entities and default actions can access menus.
   #----------------------------------------------------------------------------------------------------------------------------------
-  - { program: control , className: openadmin.model.control.Administracion,                 icon: fa-folder,   viewType: submenu,
+  - { program: control , description: System Administration,     icon: fa-folder,   type: submenu,
                #---------------------------------------------------------------------------------------------------------------------
                menuItems: [ { className: openadmin.model.control.EntityAdm,                 icon: fa-university                      } ,
                             { className: openadmin.model.control.User,                      icon: fa-user                            } ,
                             { className: openadmin.model.control.Program,                   icon: fa-gears                           } ,
                             { className: openadmin.model.control.Access,                    icon: fa-key,                            } ,
-                            { className: openadmin.model.control.MenuItem,                  icon: fa-th-list,  viewType: custom      } ,
-                            { className: openadmin.model.control.ActionViewRole,            icon: fa-th-list                         } , 
+                            { className: openadmin.model.control.MenuItem,                  icon: fa-th-list,  type: custom          } ,
+                            { className: openadmin.model.control.ActionViewRole,            icon: fa-th-list,                        } , 
                             { className: openadmin.model.control.Role,                      icon: fa-graduation-cap,                  
                                          #------------------------------------------------------------------------------------------
                                          actions: [ { name: dni,       roles: [ ADMIN] } ]
                                          #------------------------------------------------------------------------------------------ 
                             },
-                            { className: openadmin.util.configuration.FirstControlLoadYAML, icon: fa-upload,   viewType: action, defaultActions: false, 
-                                         parameter: dataLoad, roles: [ ADMIN]  
-                            }  
+                            { className: openadmin.util.configuration.FirstControlLoadYAML, icon: fa-upload,   type: action, defaultActions: false, 
                                          #------------------------------------------------------------------------------------------
-                                    #     actions: [ { name: dataLoad,  roles: [ ADMIN] , type: 1 } ]
+                                         actions: [ { name: dataLoad,  roles: [ ADMIN] } ]
                                          #------------------------------------------------------------------------------------------
-                                    #} ] }
-                         ]             
-    }                      
+                            } ] }
   #----------------------------------------------------------------------------------------------------------------------------------
-  - { program: policia,  className: openadmin.model.control.Administracion1,     icon: fa-gear,     viewType: submenu,
+  - { program: policia,  description: Police,                     icon: fa-gear,     type: submenu,
                #---------------------------------------------------------------------------------------------------------------------
                menuItems: [ { className: openadmin.model.police.Agent,           icon: fa-user,           } ,
                             { className: openadmin.model.police.Vehicles,        icon: fa-car,            } ] }
   #----------------------------------------------------------------------------------------------------------------------------------
-  - {                    className: openadmin.model.control.Administracion2,     icon: fa-calendar, viewType: submenu,     
+  - {                    description: Police Interventions,                      icon: fa-calendar, type: submenu,     
                #---------------------------------------------------------------------------------------------------------------------
                menuItems: [ { className: openadmin.model.police.Actions,         icon: fa-user,           defaultActions: true,  
                                          #------------------------------------------------------------------------------------------
@@ -106,12 +102,12 @@ menuItems:
                                          #------------------------------------------------------------------------------------------             
                             } ] }
   #----------------------------------------------------------------------------------------------------------------------------------
-  - { program: tercers,  className: openadmin.model.control.Administracion3,   icon: fa-gear,     viewType: submenu,
+  - { program: tercers,  description: Persons,                                 icon: fa-gear,     type: submenu,
                #---------------------------------------------------------------------------------------------------------------------
                menuItems: [ { className: openadmin.model.tercer.Persona,         icon: fa-file,           defaultActions: true } ] } 
    
   #----------------------------------------------------------------------------------------------------------------------------------
-  - { program: vehicles, className: openadmin.model.control.Administracion4,   icon: fa-gear,     viewType: submenu,
+  - { program: vehicles, description: Vehicles,                        icon: fa-gear,     type: submenu,
                #---------------------------------------------------------------------------------------------------------------------
                menuItems: [ { className: openadmin.model.vehicle.Marca,          icon: fa-file,           defaultActions: true } ] } 
                 

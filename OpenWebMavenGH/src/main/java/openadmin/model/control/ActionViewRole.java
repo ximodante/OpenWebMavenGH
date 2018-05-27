@@ -64,15 +64,22 @@ public class ActionViewRole extends Audit implements Base, java.io.Serializable 
 	/** attribute that contain the relationship with view*/
 	@Getter @Setter
 	@ManyToOne
-	@JoinColumn(name = "accio", nullable= false)
+	//@JoinColumn(name = "accio", nullable= false)
+	@JoinColumn(name = "accio")
 	@Search(nameObjects= "MenuItem:ActionClass")
 	private Action action;
 	
 	/** Getters and setters*/	
 	public void setDescription(String pDescription) {
-				
+		/*		
 		if( null != getMenuItem() ||null !=  getAction() || null != getRole())
-			this.description = getRole().getId() + "_" + getMenuItem().getId() + "_" + getAction().getId() ;
+			this.description = ""+ getRole().getId() + "_" + getMenuItem().getId() + "_" + getAction().getId() ;
+		*/
+		this.description = ""+ getRole().getId() + "_" + getMenuItem().getId() + "_" ;
+		
+		if (this.getAction()==null) this.description = this.description + "null"; 
+		else this.description = this.description + + getAction().getId();		
+		 
 	}
 	
 }
