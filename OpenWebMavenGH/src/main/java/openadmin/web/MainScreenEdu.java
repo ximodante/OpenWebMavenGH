@@ -50,17 +50,12 @@ public class MainScreenEdu implements Serializable {
 	// Atributs
 	private static final long serialVersionUID = 6081501L;
 	
-	private HtmlOutputText programaActual;
-	
 	private EntityAdm activeEntity;
 	
 	//private Role activeRol;
 	
 	List<Access> lstAccess;
 	
-	Set<EntityAdm> entities; //EDU
-	PFMenuBarEdu pfMenuBar; //edu
-
 	/** Field that contain the connection*/
 	@Inject
 	private ContextActionEdu ctx;
@@ -74,18 +69,10 @@ public class MainScreenEdu implements Serializable {
 	@Getter @Setter
 	private MenuModel  menuLateral;
 	
-	private boolean visualiza = false;
 	
 	//Fi atributs
 
-	/**
-	@PostConstruct
-    public void init() {
-		System.out.println("Inicializando.....");
-		getMenuBar();
-		System.out.println("Se acabo la inicializacion..........");
-	}
-	*/
+	
 	///////////////////////////////////////////////////////////////////
 	//                    Per generar el menu horizontal
 	///////////////////////////////////////////////////////////////////
@@ -93,46 +80,44 @@ public class MainScreenEdu implements Serializable {
  	 * @return Menubar
  	 */		
 	public MenuModel  getMenuBar() {
-		System.out.println("CTX1=" + ctx.toString());
-		//if (menuBar==null ) {
-			menuBar = new DefaultMenuModel();
 		
-			//PFMenuBarEdu pfMenuBar = new PFMenuBarEdu(lang);
-			pfMenuBar = new PFMenuBarEdu(lang);
+		menuBar = new DefaultMenuModel();
+		
+		PFMenuBarEdu pfMenuBar = new PFMenuBarEdu(lang);
 
-			// ***************   Genera el submenu de les aplicacions ********************
+		// ***************   Genera el submenu de les aplicacions ********************
 
-			Set<EntityAdm> entities = ctx.getMapEntityAccess().keySet();		
+		Set<EntityAdm> entities = ctx.getMapEntityAccess().keySet();		
 					
-			//if there are two o more entities
-			if (entities.size() > 1) {
+		//if there are two o more entities
+		if (entities.size() > 1) {
 			 
-				menuBar.addElement(pfMenuBar.menuEntities("entities", entities));
+			menuBar.addElement(pfMenuBar.menuEntities("entities", entities));
 			 
 							 
-			}
+		}
 		
-			if (null == activeEntity)  activeEntity = entities.stream().findFirst().get();
+		if (null == activeEntity)  activeEntity = entities.stream().findFirst().get();
 			
-			lstAccess = ctx.getMapEntityAccess().get(activeEntity);
+		lstAccess = ctx.getMapEntityAccess().get(activeEntity);
 				
-			//If there is an program
-			if (lstAccess.size() == 1) {
+		//If there is one program
+		if (lstAccess.size() == 1) {
 					
-				Access vaccess = lstAccess.stream().findFirst().get();
+			Access vaccess = lstAccess.stream().findFirst().get();
 					
-				loadMenuItems(vaccess.getRole().getId(), vaccess.getProgram().getId());
+			loadMenuItems(vaccess.getRole().getId(), vaccess.getProgram().getId());
 				
-			} else menuBar.addElement(pfMenuBar.menuPrograms("programs", lstAccess));
+		} else menuBar.addElement(pfMenuBar.menuPrograms("programs", lstAccess));
 				 
 			 
-			menuBar.generateUniqueIds();
+		menuBar.generateUniqueIds();
 			
-			return menuBar;
+		return menuBar;
 		
-		}
+	}
 
-     public void selectActiveEntity(Long pEntity){
+    public void selectActiveEntity(Long pEntity){
 		
 		EntityAdm pEntityAdm = new EntityAdm();
 		pEntityAdm.setId(pEntity);
@@ -141,9 +126,12 @@ public class MainScreenEdu implements Serializable {
 		getMenuBar();
 		
 		//Actualitzar el context
+		ctx.connEntityDefault(activeEntity.getConn(), pEntity);
 	}
 	
 	public void loadMenuItems(long pRol, long pProgram) {
+		
+		ctx.getConnControl().setUser(ctx.getUser());
 		
 		menuLateral = new DefaultMenuModel();
 		
@@ -212,8 +200,6 @@ public class MainScreenEdu implements Serializable {
 	public void loadScreen(long pMenuItem) 
 		throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 	
-		System.out.println("Model directe");
-	
 		if (ctx.numberView() > 0) ctx.deleteAllView();
 	
 		MenuItem menuItem = new MenuItem();
@@ -238,7 +224,8 @@ public class MainScreenEdu implements Serializable {
 	
 		//Objecte a crear
 		@SuppressWarnings("unchecked")
-		T obj = (T) ReflectionUtilsEdu.createObject(menuItem.getClassName().getDescription());
+		//T obj = (T) ReflectionUtilsEdu.createObject(menuItem.getClassName().getDescription());
+		T obj = (T) ReflectionUtilsEdu.createObject(menuItem.getClassName().getFullName());
 	
 		//Find object if is instance
 		if (null != _obj){
@@ -281,10 +268,6 @@ public class MainScreenEdu implements Serializable {
 		FacesContext _context = FacesContext.getCurrentInstance();	
 		OutputPanel outView = (OutputPanel)_context.getViewRoot().findComponent("form1:idContingut");
 	
-		//System.out.println("Llista main: " + outView.getChildren());
-	
-		//System.out.println("Nom vista: " + viewDefault);
-	
 		if (outView.getChildCount() > 0) {
 		
 			System.out.println("Esborra component del contingut");
@@ -305,13 +288,14 @@ public class MainScreenEdu implements Serializable {
 		//Create object
 		if (null == obj) {
 		
-			obj = ReflectionUtilsEdu.createObject(pMenuItem.getClassName().getDescription());
+			//obj = ReflectionUtilsEdu.createObject(pMenuItem.getClassName().getDescription());
+			obj = ReflectionUtilsEdu.createObject(pMenuItem.getClassName().getFullName());
 		
 		}
 	
-		//Default View
+		//Default View type=2
 		//if (pMenuItem.getViewType().equals("default")) {
-		if (pMenuItem.getType()==1) {
+		if (pMenuItem.getType()==2) {
 				
 			Integer numberView = ctx.numberView()+1;
 			ViewFacadeEdu view = new DefaultViewEdu();

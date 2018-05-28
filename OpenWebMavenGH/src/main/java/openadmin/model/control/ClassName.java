@@ -66,6 +66,14 @@ public class ClassName extends Audit implements Base, java.io.Serializable {
 		
 		this.description = pDescription;
 	}
+	
+	/**gets canonical name of the class
+	 * 
+	 * @return
+	 */
+	public String getFullName() {
+		return this.pack + "." + this.description;
+	}
 
 	
 }
