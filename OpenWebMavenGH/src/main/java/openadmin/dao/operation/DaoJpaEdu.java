@@ -36,9 +36,12 @@ import openadmin.util.reflection.ReflectionField;
  * Author Alfred Oliver
 */
 @SuppressWarnings("unchecked")
-public class DaoJpaEdu implements DaoOperationFacadeEdu, Serializable{
+//If a DAO , session or sessionfactory implements serializable then 
+//  errors for loading sessions from persistent storage are raised!!
+//public class DaoJpaEdu implements DaoOperationFacadeEdu, Serializable{
+public class DaoJpaEdu implements DaoOperationFacadeEdu { 
 	
-	private static final long serialVersionUID = 20180101;
+	//private static final long serialVersionUID = 20180101;
 
 	/**Field that contain one list of Base objects */
 	//private List <Base> listObjects = null;
