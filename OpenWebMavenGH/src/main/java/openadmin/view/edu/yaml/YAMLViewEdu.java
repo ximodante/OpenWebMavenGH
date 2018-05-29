@@ -36,6 +36,9 @@ public class YAMLViewEdu implements Serializable{
 	private List<YAMLPanelEdu> panels= null; // panels in the view
 	
 	@Getter @Setter
+	private List<YAMLListPanelEdu> listPanels= null; // panels in the view
+	
+	@Getter @Setter
 	private List<YAMLTabEdu> tabs= null;     // tabs in the view
 	
 	@Getter @Setter
@@ -49,6 +52,9 @@ public class YAMLViewEdu implements Serializable{
 	private List<YAMLEventEdu> panelEvents= null; 
 	
 	@Getter @Setter
+	private List<YAMLEventEdu> listPanelEvents= null; 
+	
+	@Getter @Setter
 	private List<YAMLEventEdu> tabEvents= null; 
 	
 	@Getter @Setter
@@ -60,6 +66,9 @@ public class YAMLViewEdu implements Serializable{
 	
 	@Getter @Setter
 	private List<YAMLActionEdu> panelActions= null; 
+	
+	@Getter @Setter
+	private List<YAMLActionEdu> listPanelActions= null; 
 	
 	@Getter @Setter
 	private List<YAMLActionEdu> tabActions= null; 
@@ -87,15 +96,20 @@ public class YAMLViewEdu implements Serializable{
 		CollectionUtilsEdu.updateListFields(panelActions, attrNames, attrValues1);
 		CollectionUtilsEdu.updateListFields(panelEvents,  attrNames, attrValues1);
 		
+		//1. ListPanels actions and events
+		Object[] attrValues2= {ElementTypeEdu.PANEL };
+		CollectionUtilsEdu.updateListFields(listPanelActions, attrNames, attrValues2);
+		CollectionUtilsEdu.updateListFields(listPanelEvents,  attrNames, attrValues2);
+				
 		//2. Tabs actions and events
-		Object[] attrValues2= {ElementTypeEdu.TAB };
-		CollectionUtilsEdu.updateListFields(tabActions, attrNames, attrValues2);
-		CollectionUtilsEdu.updateListFields(tabEvents,  attrNames, attrValues2);
+		Object[] attrValues3= {ElementTypeEdu.TAB };
+		CollectionUtilsEdu.updateListFields(tabActions, attrNames, attrValues3);
+		CollectionUtilsEdu.updateListFields(tabEvents,  attrNames, attrValues3);
 		
-		//3. Fields actions and events
-		Object[] attrValues3= {ElementTypeEdu.FIELD };
-		CollectionUtilsEdu.updateListFields(fieldActions, attrNames, attrValues3);
-		CollectionUtilsEdu.updateListFields(fieldEvents,  attrNames, attrValues3);
+		//4. Fields actions and events
+		Object[] attrValues4= {ElementTypeEdu.FIELD };
+		CollectionUtilsEdu.updateListFields(fieldActions, attrNames, attrValues4);
+		CollectionUtilsEdu.updateListFields(fieldEvents,  attrNames, attrValues4);
 		 
 	}
 	
@@ -116,7 +130,7 @@ public class YAMLViewEdu implements Serializable{
 	}
 	
 	/**
-	 * Return field events of a field
+	 * Return events of a field
 	 * @param fieldName
 	 * @return
 	 */
@@ -157,6 +171,30 @@ public class YAMLViewEdu implements Serializable{
 	public List<YAMLActionEdu> getPanelActions (String panelName) {
 		return panelActions.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(panelName))
+				.collect(Collectors.toList());
+	}
+	
+	/******************************************************************
+	 * 3. LIST PANELS (Collections)
+	 ******************************************************************/
+	/**
+	 * Return events of a list panel
+	 * @param lpanelName
+	 * @return
+	 */
+	public List<YAMLEventEdu> getListPanelEvents (String lPanelName) {
+		return panelEvents.stream()
+				.filter(e-> e.getElement().equalsIgnoreCase(lPanelName))
+				.collect(Collectors.toList());
+	}
+	/**
+	 * Return actions for the list panel
+	 * @param panelName
+	 * @return
+	 */
+	public List<YAMLActionEdu> getListPanelActions (String lPanelName) {
+		return panelActions.stream()
+				.filter(e-> e.getElement().equalsIgnoreCase(lPanelName))
 				.collect(Collectors.toList());
 	}
 	

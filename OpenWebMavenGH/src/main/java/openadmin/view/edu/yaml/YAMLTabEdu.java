@@ -1,7 +1,7 @@
 package openadmin.view.edu.yaml;
 
 import java.io.Serializable;
-
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +20,7 @@ public class YAMLTabEdu  implements Serializable{
 	private String name=null; //tab name
 	
 	@Getter @Setter
-	private String klass= null; // detail (for instance lines of a invoice)
+	private List<String> panels = null; // Each tab has a panel or a listPanel
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

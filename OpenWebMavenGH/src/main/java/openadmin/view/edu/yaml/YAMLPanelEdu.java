@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /** Panel in a View
+ * A panel can has collection and we should supply the class
  * 
  * @author eduard
  *
@@ -19,9 +20,6 @@ public class YAMLPanelEdu  implements Serializable{
 
 	@Getter @Setter
 	private String name=null; //panel name
-	
-	@Getter @Setter
-	private String klass=null; // detail (for instance lines of a invoice)
 	
 	@Getter @Setter
 	private List<List<String>> lines= null; // lines of the panel, each line has a list of fields

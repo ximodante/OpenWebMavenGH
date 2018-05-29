@@ -7,12 +7,13 @@
 #-------------------------------------------------------------------------------------------
 # 1. General Info
 name: testView 
-lines:                                            # Only panels or tabs   
-    - [ pnlmain ]  
-    - [ pnl01, pnl02 ]                              # 2 panels in a line ??
-    - [ tabinvoices ]
-    - [ tabpayments ]
+lines:                                            # Only panels, linePanels or tabs   
+    - [ pnlmain           ]                       # 1 panel                 in 1 line
+    - [ tab01, tab02      ]                       # 2 tabs                  in 1 line 
+    - [ pnl03, lpnhistory ]                       # 1 panel and 1 linePanel in 1 line
+    
 #-------------------------------------------------------------------------------------------
+
 #2. Panel definition
 panels:
   - name: pnlmain                                     # main panel 
@@ -20,42 +21,63 @@ panels:
     - [ fld01, fld02 ]  
     - [ fld03, fld04 ]                              
     #--------------------------------------                  
-  - name: pnl01                                       # anothe panel 
+  - name: pnl01                                       # another panel 
     lines:
-    - [ fld06, fld07, fld08, fld09 ]                  # fields displayed in line 2
-    - [ fld10, fld11, fld12, fld13 ]                  # fields displayed in line 3
-    #--------------------------------------
-  - name: pnl02  
-    klass: Address                                    # a panel with an array ( a detail class (adresses for a person)
+    - [ fld06, fld07, fld08, fld09 ]                  # fields displayed in line 1
+    - [ fld10, fld11, fld12, fld13 ]                  # fields displayed in line 2
+    #--------------------------------------                  
+  - name: pnl02                                       # another panel 
+    lines:
+    - [ fld14 ]                                       # fields displayed in line 1
+    - [ fld15 ]                                       # fields displayed in line 2
+    - [ fld16, fld17 ]                                # fields displayed in line 3
+    #--------------------------------------                  
+  - name: pnl03                                       # another panel 
+    lines:
+    - [ fld18 ]                                       # fields displayed in line 1
+ #-------------------------------------------------------------------------------------------
+
+ #3: List Panels thar has collection
+listPanels:   
+  - { name: lpnadress,   field: addresses }           # a panel with an array ( a detail class (adresses for a person)
+  - { name: lpnvehicle,  field: vehicles  }           # a panel with an array ( a detail class (vehicles for a person)
+  - { name: lpnhistory,  field: history   }           # a panel with an array ( a detail class (historic changes for a person)
 #---------------------------------------------------------------------------------------------  
-#3. Tab definition
+
+#4. Tab definition
 tabs:
-  - { name: tabinvoices   , klass: Invoice }                     # detail of invoices
-  - { name: tabpayments   , klass: Payment }                     # detail of payments
+  - { name: tab01   , panels: [ pnl01,     lpn02      ] }        # 2 tabs containing 2 panels
+  - { name: tab02   , panels: [ lpnadress, lpnvehicle ] }        # 2 Tabs containing 2 listPanels
 
 #---------------------------------------------------------------------------------------------
-#4. Additional info of Fields
+
+#5. Additional info of Fields
 fields:
   - { name: fld01, editor: TextEditor } 
   - { name: fld02, editor: Keyboard }  
 
 #---------------------------------------------------------------------------------------------
-#5. Events definition (form, panel, tab and field events)
+
+#6. Events definition (form, panel, tab and field events)
 formEvents:
   - { event: onresize, action: class01.action01 }
   
 panelEvents: 
   - { event: onresize, element: pnlmain,     action: class01.action02, refresh: [fld01,fld02] }
   - { event: onresize, element: pnl01,       action: class01.action03 }
- 
+
+listPanelEvents: 
+  - { event: onresize, element: lpnadress,   action: class01.action02, refresh: [fld01,fld02] }
+  
 tabEvents: 
-  - { event: onresize, element: tabinvoices, action: class02.action01, refresh: [fld02,fld03] }
+  - { event: onresize, element: tab01,       action: class02.action01, refresh: [fld02,fld03] }
   
 fieldEvents:
   - { event: onblur,   element: fld02,       action: class03.action01, refresh: [fld01,fld02] }
   
 #---------------------------------------------------------------------------------------------
-#6. Action definition (form, panel, tab and field events)
+
+#7. Action definition (form, panel, tab and field events)
 formActions:
   - { name: Save,      action: class05.action01, icon: icon1.jpg, roles:[app1.admin, app1.aux]}
   - { name: Cancel,    action: class05.action02, icon: icon2.jpg, roles:[app1.admin, app1.aux] }
@@ -66,8 +88,11 @@ panelActions:
   - { name: Refresh,   element: pnlmain,     action: class05.action01, icon: icon1.jpg, refresh: [fld01,fld02], roles:[app1.admin, app1.aux] } 
   - { name: SendEmail, element: pnl01,       action: class01.action03, icon: icon3.jpg, refresh: [fld01,fld02], roles:[app1.admin, app1.aux] }
 
+ListPanelActions:  
+  - { name: Refresh,   element: pnlmain,     action: class05.action01, icon: icon1.jpg, refresh: [fld01,fld02], roles:[app1.admin, app1.aux] } 
+
 tabActions: 
-  - { name: Edit,      element: tabinvoices, action: class02.action01, refresh: [fld02,fld03], roles:[app1.admin, app1.aux] }
+  - { name: Edit,      element: tab01,       action: class02.action01, refresh: [fld02,fld03], roles:[app1.admin, app1.aux] }
 
 fieldActions:
   - { name: Shift,     element: fld02,       action: class03.action01, refresh: [fld01,fld02], roles:[app1.admin] }
