@@ -33,8 +33,9 @@ public class YAMLActionEdu  implements Serializable{
 	@Getter @Setter 
 	private ButtonType button=ButtonType.Button;
 	
+	// Elements to refresh with ajax (fields, tabs, panels etc)
 	@Getter @Setter
-	private List<String> fields= null; 
+	private List<String> refresh= null; 
 	
 	@Getter @Setter
 	private List<String>roles=null;

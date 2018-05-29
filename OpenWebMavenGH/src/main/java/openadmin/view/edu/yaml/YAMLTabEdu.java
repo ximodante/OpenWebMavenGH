@@ -17,10 +17,10 @@ public class YAMLTabEdu  implements Serializable{
 	private static final long serialVersionUID = 20180204L;
 	
 	@Getter @Setter
-	private String name=null; //view name
+	private String name=null; //tab name
 	
 	@Getter @Setter
-	private String klass= null; 
+	private String klass= null; // detail (for instance lines of a invoice)
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

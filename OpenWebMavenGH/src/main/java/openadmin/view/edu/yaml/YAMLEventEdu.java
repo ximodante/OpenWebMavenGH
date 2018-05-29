@@ -26,9 +26,10 @@ public class YAMLEventEdu  implements Serializable{
 	@Getter @Setter
 	private String action= null; 
 	
+	// Elements to refresh with ajax (fields, tabs, panels etc)
 	@Getter @Setter
-	private List<String> fields= null; 
-	
+	private List<String> refresh= null; 
+		
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 

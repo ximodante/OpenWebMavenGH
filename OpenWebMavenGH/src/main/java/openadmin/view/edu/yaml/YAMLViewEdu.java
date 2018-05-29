@@ -26,6 +26,12 @@ public class YAMLViewEdu implements Serializable{
 	@Getter @Setter
 	private String name=null; //view name
 	
+	//----- 1. Distribution of components
+	@Getter @Setter
+	private List<List<String>> lines= null; // Distribution of panels and tabs
+	
+	
+	//----- 2. Components
 	@Getter @Setter
 	private List<YAMLPanelEdu> panels= null; // panels in the view
 	
@@ -35,7 +41,7 @@ public class YAMLViewEdu implements Serializable{
 	@Getter @Setter
 	private List<YAMLFieldEdu> fields= null; // all the fields in the view
 	
-	//----- Events
+	//----- 3. Events
 	@Getter @Setter
 	private List<YAMLEventEdu> formEvents= null; 
 	
@@ -48,7 +54,7 @@ public class YAMLViewEdu implements Serializable{
 	@Getter @Setter
 	private List<YAMLEventEdu> fieldEvents= null; 
 	
-	//----- Actions
+	//----- 4. Actions
 	@Getter @Setter
 	private List<YAMLActionEdu> formActions= null; 
 	
