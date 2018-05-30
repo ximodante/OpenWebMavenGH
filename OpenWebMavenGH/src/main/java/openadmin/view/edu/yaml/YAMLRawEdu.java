@@ -16,7 +16,7 @@ public class YAMLRawEdu extends LinkedHashMap<String, Object>{
 	private static final long serialVersionUID = 20180204L;
 	/**
 	@Override
-	public String toString() {
+	public String toString() {  
 		String a="";
 		this.keySet()
 			.stream()

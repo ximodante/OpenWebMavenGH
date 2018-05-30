@@ -24,7 +24,7 @@ public class YAMLActionEdu  implements Serializable{
 	@Getter @Setter
 	private ElementTypeEdu elementType= ElementTypeEdu.FORM; 
 	
-	@Getter @Setter
+	@Getter @Setter  
 	private String action= null; //class.method
 	
 	@Getter @Setter

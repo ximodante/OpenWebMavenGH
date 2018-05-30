@@ -12,7 +12,7 @@ import lombok.ToString;
  *
  */
 @ToString
-public class YAMLTabEdu  implements Serializable{
+public class YAMLTabEdu  implements Serializable{  
 
 	private static final long serialVersionUID = 20180204L;
 	

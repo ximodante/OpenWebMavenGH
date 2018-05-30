@@ -5,7 +5,7 @@
 #     http://sangsoonam.github.io/2017/03/13/yaml-vs-json.html
 #     http://yaml.org/spec/1.2/spec.html
 #-------------------------------------------------------------------------------------------
-# 1. General Info
+# 1. General Info  
 name: testView 
 lines:                                            # Only panels, linePanels or tabs   
     - [ pnlmain           ]                       # 1 panel                 in 1 line
@@ -91,7 +91,7 @@ panelActions:
 ListPanelActions:  
   - { name: Refresh,   element: pnlmain,     action: class05.action01, icon: icon1.jpg, refresh: [fld01,fld02], roles:[app1.admin, app1.aux] } 
 
-tabActions: 
+tabActions:  
   - { name: Edit,      element: tab01,       action: class02.action01, refresh: [fld02,fld03], roles:[app1.admin, app1.aux] }
 
 fieldActions:

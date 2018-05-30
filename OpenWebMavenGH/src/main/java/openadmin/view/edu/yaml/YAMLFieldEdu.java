@@ -13,7 +13,7 @@ public class YAMLFieldEdu  implements Serializable{
 	private static final long serialVersionUID = 20180204L;
 	
 	@Getter @Setter
-	private String name=null; 
+	private String name=null;  
 	
 	@Getter @Setter
 	private EditorTypeEdu editor= null; 

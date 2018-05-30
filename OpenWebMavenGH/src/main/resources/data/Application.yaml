@@ -15,7 +15,7 @@
 #programs:
 #  - { description: control,   icon: ui-icon-newwin }  
 #  - { description: policia,   icon: ui-icon-newwin }
-#  - { description: tercers,   icon: ui-icon-newwin }
+#  - { description: tercers,   icon: ui-icon-newwin }  
 #---------------------------------------------------------------------------------------------  
 # 3. USERS
 users: 

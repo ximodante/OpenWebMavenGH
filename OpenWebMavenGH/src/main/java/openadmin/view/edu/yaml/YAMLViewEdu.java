@@ -130,7 +130,7 @@ public class YAMLViewEdu implements Serializable{
 	}
 	
 	/**
-	 * Return events of a field
+	 * Return events of a field 
 	 * @param fieldName
 	 * @return
 	 */
@@ -200,7 +200,7 @@ public class YAMLViewEdu implements Serializable{
 	
 
 	/******************************************************************
-	 * 3. TABS
+	 * 4. TABS
 	 ******************************************************************/
 	/**
 	 * Return tab events of a tab

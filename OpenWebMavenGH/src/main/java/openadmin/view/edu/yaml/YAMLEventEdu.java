@@ -18,7 +18,7 @@ public class YAMLEventEdu  implements Serializable{
 	private EventTypeEdu event=null; 
 	
 	@Getter @Setter
-	private String element= "form"; 
+	private String element= "form";  
 	
 	@Getter @Setter
 	private ElementTypeEdu elementType= ElementTypeEdu.FORM; 

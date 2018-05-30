@@ -16,7 +16,7 @@ public class YAMLListPanelEdu implements Serializable{
 	@Getter @Setter
 	private String field = null; // Attrribute that is a collection of a class
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {  
 		// TODO Auto-generated method stub
 
 	}
