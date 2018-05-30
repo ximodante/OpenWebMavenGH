@@ -1,0 +1,8 @@
+.ui-panel, div.ui-state-hover {
+	margin: 10px;
+	width:350px;
+}
+			
+.ui-dashboard-column {
+	width:370px;
+}
