@@ -11,8 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import openadmin.model.yamlview.ElementTypeEdu;
 import openadmin.util.edu.CollectionUtilsEdu;
-import openadmin.view.edu.ElementTypeEdu;
 
 /**
  * A custom view

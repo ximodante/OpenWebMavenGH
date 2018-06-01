@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import openadmin.view.edu.EditorTypeEdu;
+import openadmin.model.yamlview.EditorTypeEdu;
 
 @SuppressWarnings("serial")
 @NoArgsConstructor

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package openadmin.view.edu;
+package openadmin.model.yamlview;
 
 /**
  * List of current editors in primefaces

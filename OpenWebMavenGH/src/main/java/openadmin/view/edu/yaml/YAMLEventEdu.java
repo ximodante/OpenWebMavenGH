@@ -7,8 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import openadmin.view.edu.ElementTypeEdu;
-import openadmin.view.edu.EventTypeEdu;
+import openadmin.model.yamlview.ElementTypeEdu;
+import openadmin.model.yamlview.EventTypeEdu;
 
 @SuppressWarnings("serial")
 @NoArgsConstructor

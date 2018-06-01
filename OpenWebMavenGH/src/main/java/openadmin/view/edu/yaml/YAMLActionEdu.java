@@ -6,8 +6,8 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import openadmin.view.edu.ButtonType;
-import openadmin.view.edu.ElementTypeEdu;
+import openadmin.model.yamlview.ButtonType;
+import openadmin.model.yamlview.ElementTypeEdu;
 
 @SuppressWarnings("serial")
 @ToString

@@ -1,4 +1,4 @@
-package openadmin.view.edu;
+package openadmin.model.yamlview;
 
 public enum ButtonType {
 	Button,

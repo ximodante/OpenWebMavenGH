@@ -1,4 +1,4 @@
-package openadmin.view.edu;
+package openadmin.model.yamlview;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package openadmin.view.edu;
+package openadmin.model.yamlview;
 
 /**
  * See https://www.w3schools.com/jsref/dom_obj_event.asp
