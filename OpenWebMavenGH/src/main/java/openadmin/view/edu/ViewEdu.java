@@ -1,35 +1,22 @@
 package openadmin.view.edu;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-public class ViewEdu {
+@SuppressWarnings("serial")
+@NoArgsConstructor
+@ToString
+public class ViewEdu extends ComponentEdu {
 
-	@Getter @Setter
-	private String name=null; //view name
-	
 	@Getter @Setter 
-	private String rsbName=null; // Resource Bundle Key
+	private String rsbundle=null; // Resource Bundle Key
 	
 	@Getter @Setter
-	private List<PanelEdu> lstPanels=new ArrayList<PanelEdu>(); // detail of the panels included in the view
-	
-	@Getter @Setter
-	private List<TabEdu> lstTabs=new ArrayList<TabEdu>(); // detail of the tabs included in the view
-		
-	@Getter @Setter
-	private List<ActionEdu> lstActions=new ArrayList<ActionEdu>(); // detail of the actions included in the view
-	
-	@Getter @Setter
-	private List<EventEdu> lstEvents=new ArrayList<EventEdu>(); // detail of the events included in the view
+	private List<List<ComponentEdu>> lines= null; // Distribution of panels and tabs (and maybe fields)
 	
 	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

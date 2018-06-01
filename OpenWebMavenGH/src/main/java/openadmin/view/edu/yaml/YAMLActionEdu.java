@@ -9,10 +9,9 @@ import lombok.ToString;
 import openadmin.view.edu.ButtonType;
 import openadmin.view.edu.ElementTypeEdu;
 
+@SuppressWarnings("serial")
 @ToString
 public class YAMLActionEdu  implements Serializable{
-
-	private static final long serialVersionUID = 20180204L;
 
 	@Getter @Setter
 	private String name=null; 

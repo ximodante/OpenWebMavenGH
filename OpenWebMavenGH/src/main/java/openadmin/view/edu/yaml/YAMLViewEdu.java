@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import openadmin.util.edu.CollectionUtilsEdu;
@@ -18,17 +19,26 @@ import openadmin.view.edu.ElementTypeEdu;
  * @author eduard
  *
  */
+@SuppressWarnings("serial")
+@NoArgsConstructor
 @ToString
 public class YAMLViewEdu implements Serializable{
-
-	private static final long serialVersionUID = 20180204L;
 
 	@Getter @Setter
 	private String name=null; //view name
 	
+	@Getter @Setter
+	private String description=null; //Header of the view
+	
+	@Getter @Setter
+	private String klass=null; // Full name ofClass to display
+	
+	@Getter @Setter
+	private String rsbundle=null; // Name of the resource bundle for i18n
+		
 	//----- 1. Distribution of components
 	@Getter @Setter
-	private List<List<String>> lines= null; // Distribution of panels and tabs
+	private List<List<String>> lines= null; // Distribution of panels and tabs (and maybe fields)
 	
 	
 	//----- 2. Components

@@ -7,6 +7,9 @@
 #-------------------------------------------------------------------------------------------
 # 1. General Info  
 name: testView 
+description: View example
+klass: openadmin.model.control.Action
+rsbundle: my_resource_bundle                      # Resource bundle for translation
 lines:                                            # Only panels, linePanels or tabs   
     - [ pnlmain           ]                       # 1 panel                 in 1 line
     - [ tab01, tab02      ]                       # 2 tabs                  in 1 line 
@@ -16,38 +19,48 @@ lines:                                            # Only panels, linePanels or t
 
 #2. Panel definition
 panels:
-  - name: pnlmain                                     # main panel 
+  - name: pnlmain                                     # main panel
+    description: Main Panel 
     lines:                                            # fields displayed in lines   
     - [ fld01, fld02 ]  
     - [ fld03, fld04 ]                              
     #--------------------------------------                  
-  - name: pnl01                                       # another panel 
+  - name: pnl01                                       # another panel
+    description: another panel 
     lines:
     - [ fld06, fld07, fld08, fld09 ]                  # fields displayed in line 1
     - [ fld10, fld11, fld12, fld13 ]                  # fields displayed in line 2
     #--------------------------------------                  
-  - name: pnl02                                       # another panel 
+  - name: pnl02                                       # another panel
+    description: another panel 2 
     lines:
     - [ fld14 ]                                       # fields displayed in line 1
     - [ fld15 ]                                       # fields displayed in line 2
     - [ fld16, fld17 ]                                # fields displayed in line 3
     #--------------------------------------                  
-  - name: pnl03                                       # another panel 
+  - name: pnl03                                       # another panel
+    description: another panel 3 
     lines:
     - [ fld18 ]                                       # fields displayed in line 1
  #-------------------------------------------------------------------------------------------
 
  #3: List Panels thar has collection
-listPanels:   
-  - { name: lpnadress,   field: addresses }           # a panel with an array ( a detail class (adresses for a person)
-  - { name: lpnvehicle,  field: vehicles  }           # a panel with an array ( a detail class (vehicles for a person)
-  - { name: lpnhistory,  field: history   }           # a panel with an array ( a detail class (historic changes for a person)
+listPanels:                                           # a panel with an array ( a detail class (adresses for a person)
+  - name: lpnadress   
+    description: Address list 
+    klass: openadmin.model.control.Address 
+    fields: [fld021, fld022, fld023, fld024]         
+    #---------------------------------------------------
+  - name: lpnvehicle                                  # a panel with an array ( a detail class (vehicles for a person)
+    description: Vehiclwe list
+    klass: openadmin.model.control.Vehicles
+    fields: [fld031, fld032]                         
 #---------------------------------------------------------------------------------------------  
 
 #4. Tab definition
 tabs:
-  - { name: tab01   , panels: [ pnl01,     lpn02      ] }        # 2 tabs containing 2 panels
-  - { name: tab02   , panels: [ lpnadress, lpnvehicle ] }        # 2 Tabs containing 2 listPanels
+  - { name: tab01   , containers: [ pnl01,     lpn02      ] }        # 2 tabs containing 2 panels
+  - { name: tab02   , containers: [ lpnadress, lpnvehicle ] }        # 2 Tabs containing 2 listPanels
 
 #---------------------------------------------------------------------------------------------
 

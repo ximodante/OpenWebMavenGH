@@ -3,15 +3,15 @@ package openadmin.view.edu.yaml;
 import java.io.Serializable;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import openadmin.view.edu.EditorTypeEdu;
 
+@SuppressWarnings("serial")
+@NoArgsConstructor
 @ToString
 public class YAMLFieldEdu  implements Serializable{
-
-	private static final long serialVersionUID = 20180204L;
-	
 	@Getter @Setter
 	private String name=null;  
 	

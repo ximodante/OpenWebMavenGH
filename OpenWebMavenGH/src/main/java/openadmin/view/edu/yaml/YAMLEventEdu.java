@@ -4,15 +4,16 @@ import java.io.Serializable;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import openadmin.view.edu.ElementTypeEdu;
 import openadmin.view.edu.EventTypeEdu;
 
+@SuppressWarnings("serial")
+@NoArgsConstructor
 @ToString
 public class YAMLEventEdu  implements Serializable{
-
-	private static final long serialVersionUID = 20180204L;
 
 	@Getter @Setter
 	private EventTypeEdu event=null; 

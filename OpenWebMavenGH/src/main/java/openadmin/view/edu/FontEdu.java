@@ -11,11 +11,10 @@ import lombok.Setter;
  * @author eduard
  *
  */
+@SuppressWarnings("serial")
 @NoArgsConstructor
 public class FontEdu implements Serializable{
 	
-	private static final long serialVersionUID = 20180203L;
-
 	@Getter @Setter
 	private String name=null;
 	
