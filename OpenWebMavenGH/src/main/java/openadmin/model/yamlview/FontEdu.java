@@ -11,6 +11,7 @@ import lombok.Setter;
  * @author eduard
  *
  */
+// Not used!!!!!!!
 @SuppressWarnings("serial")
 @NoArgsConstructor
 public class FontEdu implements Serializable{

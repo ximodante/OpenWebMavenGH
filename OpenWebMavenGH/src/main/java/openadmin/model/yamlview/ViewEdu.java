@@ -20,7 +20,7 @@ import lombok.ToString;
  *
  */
 @Entity
-@Table(name = "yamlvista", schema = "yaml"//, 
+@Table(name = "yamlvista", schema = "control"//, 
        //uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "row","column" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
@@ -28,7 +28,7 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 @NoArgsConstructor
 @ToString
-public class ViewEdu extends ComponentEdu {
+public class ViewEdu extends YamlComponent {
 
 	@Getter @Setter 
 	private String rsbundle=null; // Resource Bundle Key
@@ -39,7 +39,7 @@ public class ViewEdu extends ComponentEdu {
 	    cascade = CascadeType.ALL, 
 	    orphanRemoval = true
 	)
-	private List<ComponentEdu> children= null; // Distribution of panels and tabs (and maybe fields)
+	private List<YamlComponent> children= null; // Distribution of panels and tabs (and maybe fields)
 	
 	
 }

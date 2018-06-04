@@ -72,6 +72,13 @@
       
       <class>openadmin.model.control.User              </class>
       
+      <!-- YAML VIEW Classes  -->
+      <class>openadmin.model.yaml.YamlAction           </class>
+      <class>openadmin.model.yaml.YamlComponent        </class>
+      <class>openadmin.model.yaml.YamlEvent            </class>
+      <class>openadmin.model.yaml.YamlAction           </class>
+      <class>openadmin.model.yaml.YamlAction           </class>
+      
       
       
       <exclude-unlisted-classes>true</exclude-unlisted-classes>

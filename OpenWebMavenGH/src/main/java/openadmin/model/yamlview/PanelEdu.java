@@ -13,9 +13,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
+/**
+ * Simple container of fields and other containers
+ * @author eduard
+ *
+ */
 @Entity
-@Table(name = "yamlpanel", schema = "yaml"//, 
+@Table(name = "yamlpanel", schema = "control"//, 
        //uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "row","column" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
@@ -23,7 +27,7 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 @NoArgsConstructor
 @ToString
-public class PanelEdu extends ComponentEdu{
+public class PanelEdu extends YamlComponent{
 
 	@Getter @Setter
 	@OneToMany(
@@ -31,6 +35,6 @@ public class PanelEdu extends ComponentEdu{
 	    cascade = CascadeType.ALL, 
 	    orphanRemoval = true
 	)
-	private List<ComponentEdu> children= null; // Distribution of panels and tabs (and maybe fields)
+	private List<YamlComponent> children= null; // Distribution of panels and tabs (and maybe fields)
 	
 }

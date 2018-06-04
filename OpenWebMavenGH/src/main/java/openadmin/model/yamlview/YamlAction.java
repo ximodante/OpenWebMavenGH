@@ -28,13 +28,13 @@ import openadmin.model.Base;
 import openadmin.model.control.ClassName;
 
 @Entity
-@Table(name = "yamlevent", schema = "yaml", 
-       uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "klass","method" })//,
+@Table(name = "yamlaction", schema = "control", 
+       uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "name" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
 @Audited
 @ToString @NoArgsConstructor @SuppressWarnings("serial")
-public class EventEdu extends Audit implements Base, Serializable{
+public class YamlAction extends Audit implements Base, Serializable{
 	
 	/** attribute that contain the identifier*/
 	@Getter @Setter
@@ -52,7 +52,7 @@ public class EventEdu extends Audit implements Base, Serializable{
 	@Getter @Setter
 	@ManyToOne
 	@JoinColumn(name = "pare", nullable= false)
-	private ComponentEdu parent; // Component that creates the event
+	private YamlComponent parent; // Component that has produces the action
 		
 	@Getter @Setter
 	@ManyToOne
@@ -68,8 +68,17 @@ public class EventEdu extends Audit implements Base, Serializable{
 	private List<String> lstAffectedIds=new ArrayList<String>(); // Ids of the the affected components
 	
 	@Getter @Setter
+	private String icon=null; //Button icon
+	
+	@Getter @Setter
 	@Column(name= "tipus", unique = true)
-	private EventTypeEdu type=EventTypeEdu.onclick; 
+	private ButtonType type=ButtonType.Button; 
+	
+	@Getter @Setter
+	@Size(max = 30)
+	@NotNull
+	@Column(name= "nom", unique = true)
+	private String name=null; //descripcio
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

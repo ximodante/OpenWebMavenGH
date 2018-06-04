@@ -17,14 +17,14 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "yamField", schema = "yaml", 
-       uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "klass","method" })//,
+@Table(name = "yamField", schema = "control" //, 
+       //uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "attribute" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
 @Audited
 @ToString @NoArgsConstructor @SuppressWarnings("serial")
 
-public class FieldEdu extends ComponentEdu{
+public class FieldEdu extends YamlComponent{
 	
 	/**
 	 *  Size attributtes, are defined by annotations in the model

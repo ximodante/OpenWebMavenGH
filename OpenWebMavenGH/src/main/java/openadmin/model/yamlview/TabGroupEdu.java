@@ -20,13 +20,13 @@ import lombok.ToString;
  *
  */
 @Entity
-@Table(name = "yamltabgroup", schema = "yaml" //, 
+@Table(name = "yamltabgroup", schema = "control" //, 
        //uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "row","column" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
 @Audited
 @ToString @NoArgsConstructor @SuppressWarnings("serial")
-public class TabGroupEdu extends ComponentEdu {
+public class TabGroupEdu extends YamlComponent {
 	
 	@Getter @Setter
 	@OneToMany(

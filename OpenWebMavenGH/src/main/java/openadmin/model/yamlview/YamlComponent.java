@@ -39,7 +39,7 @@ import openadmin.model.control.MenuItem;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "Component_Type")
-@Table(name = "yamlcomponent", schema = "yaml" , 
+@Table(name = "yamlcomponent", schema = "control" , 
        uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "nom", })//,
        //indexes = {@Index (name = "idx_usuari_entityadm", columnList = "usuari, entityAdm")})
 )
@@ -47,7 +47,7 @@ import openadmin.model.control.MenuItem;
 @SuppressWarnings("serial")
 @NoArgsConstructor
 @ToString
-public class ComponentEdu extends Audit implements Base, Serializable{
+public class YamlComponent extends Audit implements Base, Serializable{
 	/** attribute that contain the identifier*/
 	@Getter @Setter
 	@Id
@@ -82,7 +82,7 @@ public class ComponentEdu extends Audit implements Base, Serializable{
 	@ManyToOne
 	@JoinColumn(name="padre")
 	@NoSql
-	private ComponentEdu parent=null; // Parent component container
+	private YamlComponent parent=null; // Parent component container
 	
 	@Getter @Setter
 	@OneToMany(
@@ -90,7 +90,7 @@ public class ComponentEdu extends Audit implements Base, Serializable{
 	    cascade = CascadeType.ALL, 
 	    orphanRemoval = true
 	)
-	private List<ActionEdu> lstActions=new ArrayList<ActionEdu>(); // detail of the Actions included in the tab
+	private List<YamlAction> lstActions=new ArrayList<YamlAction>(); // detail of the Actions included in the tab
 	
 	@Getter @Setter
 	@OneToMany(
@@ -98,6 +98,6 @@ public class ComponentEdu extends Audit implements Base, Serializable{
 	    cascade = CascadeType.ALL, 
 	    orphanRemoval = true
 	)
-	private List<EventEdu> lstEvents=new ArrayList<EventEdu>();
+	private List<YamlEvent> lstEvents=new ArrayList<YamlEvent>();
 
 }
