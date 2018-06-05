@@ -32,9 +32,5 @@ public class YAMLVwEvent  implements IYAMLElement<EventTypeEdu>, Serializable{
 	@Getter @Setter
 	private List<String> refresh= null; 
 		
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
 
 }

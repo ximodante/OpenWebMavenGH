@@ -57,7 +57,7 @@ public class YVwEvent extends Audit implements Base, Serializable{
 	@Getter @Setter
 	@ManyToOne
 	@JoinColumn(name = "clase", nullable= false)
-	private ClassName klass=null; //class that has the method to execute
+	private ClassName className=null; //class that has the method to execute
 	
 	@Getter @Setter
 	@NotNull
@@ -71,9 +71,4 @@ public class YVwEvent extends Audit implements Base, Serializable{
 	@Column(name= "tipus", unique = true)
 	private EventTypeEdu type=EventTypeEdu.onclick; 
 	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

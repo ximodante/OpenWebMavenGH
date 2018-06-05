@@ -57,7 +57,7 @@ public class YVwAction extends Audit implements Base, Serializable{
 	@Getter @Setter
 	@ManyToOne
 	@JoinColumn(name = "clase", nullable= false)
-	private ClassName klass=null; //class that has the method to execute
+	private ClassName className=null; //class that has the method to execute
 	
 	@Getter @Setter
 	@NotNull

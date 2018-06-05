@@ -30,8 +30,10 @@ import openadmin.model.control.Program;
 import openadmin.model.control.Role;
 import openadmin.model.control.User;
 import openadmin.model.yamlview.ElementTypeEdu;
+import openadmin.model.yamlview.YVwAction;
 import openadmin.model.yamlview.YVwComponent;
 import openadmin.model.yamlview.YVwEvent;
+import openadmin.model.yamlview.YVwListPanel;
 import openadmin.model.yamlview.YVwPanel;
 import openadmin.model.yamlview.YVwView;
 import openadmin.util.configuration.yaml.YAMLUser;
@@ -233,46 +235,6 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		 
 	}
 	
-	private void setViewInfo() {
-		this.yView.setRow((byte)-1);
-		this.yView.setCol((byte)-1);
-		this.yView.setName(this.name);
-		this.yView.setDescription(this.description);
-		this.yView.setParent(null);
-		this.yView.setRsbundle(this.rsbundle);
-		this.yView.setClassName(this.getClassName(this.klass));
-		this.yView.setLstActions(this.getFormActions(""));
-		this.yView.setLstEvents(this.getFormEvents(""));
-		this.yView.setChildren(this.getListComponents(this.lines));
-	}
-	
-	/**
-	 * Return a list of components defined in Lines definition
-	 * @param myLines
-	 * @return
-	 */
-	private List<YVwComponent> getListComponents(List<List<String>> myLines) {
-		List<YVwComponent> myComps= new ArrayList<>();
-		byte row=0; byte col=0;
-		for (List<String> line: myLines) {
-			for (String comp: line) {
-				myComps.add(this.getComponent(comp, row, col));
-				col++;
-			}
-			row++;
-			col=0;
-		}
-		return myComps;
-	}
-	
-	/** 
-	 * Gets a ClassName class from its description
-	 * @param name
-	 * @return
-	 */
-	private ClassName getClassName(String name) {
-		return this.connection.findObjectPK(new ClassName(name));
-	}
 	
 	/******************************************************************
 	 * 4.2. HELPERS For getting children components information:
@@ -426,32 +388,23 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	 * 4.2.5 HELPERS for transformations
 	 *****************************************************************/
 	/**
-	 * Get a Component at a grid position x,y
-	 * @param comp
-	 * @param x
-	 * @param y
+	 * Fill DB View attributes
 	 */
-	private YVwComponent getComponent(String comp, byte row, byte col) {
-		
-		YVwComponent myComp=null;
-		String compType=comp.trim().substring(0, 3).toLowerCase();
-		switch (compType) {
-        	
-			case "pnl":	myComp = getVwPanel(comp,row,col);     break;
-        	
-        	case "lpn":	myComp = getVwListPanel(comp,row,col); break;
-        	
-        	case "tab":	myComp = getVwTabGroup(comp,row,col);  break;
-        	
-        	case "fld":	myComp = getVwField(comp,row,col);     break;
-        		
-        	default:
-                throw new IllegalArgumentException("Invalid component type: " + compType);
-        }
-		return myComp;
+	private void setViewInfo() {
+		this.yView.setRow((byte)-1);
+		this.yView.setCol((byte)-1);
+		this.yView.setName(this.name);
+		this.yView.setDescription(this.description);
+		this.yView.setParent(null);
+		this.yView.setRsbundle(this.rsbundle);
+		this.yView.setClassName(this.getClassName(this.klass));
+		this.yView.setLstActions(this.getActions("", ElementTypeEdu.FORM));
+		this.yView.setLstEvents(this.getEvents("", ElementTypeEdu.FORM));
+		this.yView.setChildren(this.getListComponents(this.lines));
 	}
+	
 	/**
-	 * Gets a panel at a grip x,y position
+	 * Gets a panel at a grip x,y position for DB persistence
 	 * @param comp
 	 * @param x
 	 * @param y
@@ -466,11 +419,111 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		yP.setDescription(ymlP.getDescription());
 		//yP.setParent(this.yView); // Not necessary. JPA manages this
 		yP.setClassName(this.yView.getClassName());
-		yP.setLstActions(this.geActions(comp));
-		yP.setLstEvents(this.getEvents(comp));
-		yP.getChildren().
+		yP.setLstActions(this.getActions(comp, ElementTypeEdu.PANEL));
+		yP.setLstEvents(this.getEvents(comp, ElementTypeEdu.PANEL));
+		yP.setChildren(this.getListComponents(ymlP.getLines()));
 		return yP;
 	}
+	
+	/**
+	 * Gets a panel at a grip x,y position for DB persistence
+	 * @param comp
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private YVwPanel getVwListPanel (String comp, byte row, byte col) {
+		YVwListPanel yP= new YVwListPanel();
+		YAMLVwPanel ymlP=this.getPanel(comp).get();
+		yP.setRow(row);
+		yP.setCol(col);
+		yP.setName(ymlP.getName());
+		yP.setDescription(ymlP.getDescription());
+		//yP.setParent(this.yView); // Not necessary. JPA manages this
+		yP.setClassName(this.yView.getClassName());
+		yP.setLstActions(this.getActions(comp, ElementTypeEdu.LISTPANEL));
+		yP.setLstEvents(this.getEvents(comp, ElementTypeEdu.PANEL));
+		yP.setChildren(this.getListComponents(ymlP.getLines()));
+		return yP;
+	}
+	
+	/**
+	 * Return a list of components defined in Lines definition
+	 * @param myLines
+	 * @return
+	 */
+	private List<YVwComponent> getListComponents(List<List<String>> myLines) {
+		List<YVwComponent> myComps= new ArrayList<>();
+		byte row=0; byte col=0;
+		for (List<String> line: myLines) {
+			for (String comp: line) {
+				myComps.add(this.getComponent(comp, row, col));
+				col++;
+			}
+			row++;
+			col=0;
+		}
+		return myComps;
+	}
+	
+	/** 
+	 * Gets a ClassName class from its description
+	 * @param name
+	 * @return
+	 */
+	private ClassName getClassName(String name) {
+		return this.connection.findObjectPK(new ClassName(name));
+	}
+	
+	private ElementTypeEdu getElType(String compName) {
+		ElementTypeEdu myComp=ElementTypeEdu.FORM;
+		String compType=comp.trim().substring(0, 3).toLowerCase();
+		switch (compType) {
+    		case "pnl":	myComp = ElementTypeEdu.PANEL;     break;
+    		case "lpn":	myComp = ElementTypeEdu.LISTPANEL; break;
+    		case "tab":	myComp = ElementTypeEdu.TAB;       break;
+    	   	case "fld":	myComp = ElementTypeEdu.FIELD;     break;
+    	   	default:    myComp=  ElementTypeEdu.FORM;      break;
+    
+		return myComp;
+		
+	}
+		
+	/**
+	 * Get a Component at a grid position x,y
+	 * @param comp
+	 * @param x
+	 * @param y
+	 */
+	private YVwComponent getComponent(String comp, byte row, byte col) {
+		
+		YVwComponent myComp=null;
+		String compType=comp.trim().substring(0, 3).toLowerCase();
+		switch (compType) {
+        	case "pnl":	myComp = getVwPanel(comp,row,col);     break;
+        	case "lpn":	myComp = getVwListPanel(comp,row,col); break;
+        	case "tab":	myComp = getVwTabGroup(comp,row,col);  break;
+        	case "fld":	myComp = getVwField(comp,row,col);     break;
+        	default:
+                throw new IllegalArgumentException("Invalid component type: " + compType); break;
+        }
+		return myComp;
+	}
+	
+	
+	private List<YVwEvent> getEvents (String compName, ElementTypeEdu elType ) {
+		List<YAMLVwEvent> lstYamE=null;
+		switch (elType) {
+			case FORM:      lstYamE=this.getFormEvents();              break;
+			case PANEL:     lstYamE=this.getPanelEvents(compName);     break;
+			case LISTPANEL: lstYamE=this.getListPanelEvents(compName); break;
+			case TAB:       lstYamE=this.getTabEvents(compName);       break;
+			case FIELD:     lstYamE=this.getFieldEvents(compName);     break;
+			default:        throw new IllegalArgumentException("Invalid component type: " + elType);
+		}
+		return getEvents (lstYamE);
+	}
+	
 	/**
 	 * Convert from YAMVwEvents to YVwEvents 
 	 * @param ymlEvents
@@ -481,10 +534,11 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		for (YAMLVwEvent ymlE: ymlEvents) {
 			YVwEvent myEvent=new YVwEvent();
 			String[]s=StringUtils.split(ymlE.getAction(), ".");
-			myEvent.setKlass(this.getClassName(s[0]));
+			myEvent.setClassName(this.getClassName(s[0]));
 			myEvent.setMethod(s[1]);
 			//myEvent.setParent(parent); //NOt necessary, already defined by JPA
 			myEvent.setDescription(ymlE.getElementType().toString()+"-"+ymlE.getElement());
+			myEvent.setLstAffectedIds(ymlE.getRefresh());
 			myEvents.add(myEvent);
 		}	
 		return myEvents;
@@ -492,6 +546,43 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	}
 	
 
+	private List<YVwAction> getActions (String compName, ElementTypeEdu elType ) {
+		List<YAMLVwAction> lstYamA=null;
+		switch (elType) {
+			case FORM:      lstYamA=this.getFormActions();              break;
+			case PANEL:     lstYamA=this.getPanelActions(compName);     break;
+			case LISTPANEL: lstYamA=this.getListPanelActions(compName); break;
+			case TAB:       lstYamA=this.getTabActions(compName);       break;
+			case FIELD:     lstYamA=this.getFieldActions(compName);     break;
+			default:        throw new IllegalArgumentException("Invalid component type: " + elType);
+		}
+		return getActions (lstYamA);
+	}
+	
+	/**
+	 * Convert from YAMVwEvents to YVwEvents 
+	 * @param ymlEvents
+	 * @return
+	 */
+	private List<YVwAction> getActions (List<YAMLVwAction> ymlActions ) {
+		List<YVwAction> myActions= new ArrayList<>();
+		for (YAMLVwAction ymlE: ymlActions) {
+			YVwAction myAction=new YVwAction();
+			String[]s=StringUtils.split(ymlE.getAction(), ".");
+			myAction.setClassName(this.getClassName(s[0]));
+			myAction.setMethod(s[1]);
+			//myAction.setParent(parent); //NOt necessary, already defined by JPA
+			myAction.setDescription(ymlE.getElementType().toString()+"-"+ymlE.getElement());
+			myAction.setLstAffectedIds(ymlE.getRefresh());
+			myAction.setIcon(ymlE.getIcon());
+			myAction.setType(ymlE.getButton());
+			myAction.setName(ymlE.getName());
+			myActions.add(myAction);
+		}	
+		return myActions;
+		
+	}
+	
 	/******************************************************************
 	 * 10. ERROR CHECKING 
 	 ******************************************************************/
