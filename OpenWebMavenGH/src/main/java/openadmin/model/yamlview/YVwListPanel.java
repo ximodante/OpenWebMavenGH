@@ -1,18 +1,15 @@
 package openadmin.model.yamlview;
 
-import java.util.List;
 
-import javax.persistence.CascadeType;
+
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.envers.Audited;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -29,14 +26,6 @@ import lombok.ToString;
 )
 @Audited
 @SuppressWarnings("serial")
-public class ListPanelEdu extends YamlComponent {
-	
-	@Getter @Setter
-	@OneToMany(
-		mappedBy = "parent", 
-	    cascade = CascadeType.ALL, 
-	    orphanRemoval = true
-	)
-	private List<YamlComponent> children= null; // Distribution of panels and tabs (and maybe fields)
-	
+public class YVwListPanel extends YVwContainer {
+
 }

@@ -12,7 +12,7 @@ klass: openadmin.model.control.Action
 rsbundle: my_resource_bundle                      # Resource bundle for translation
 lines:                                            # Only panels, linePanels or tabs   
     - [ pnlmain           ]                       # 1 panel                 in 1 line
-    - [ tab01, tab02      ]                       # 2 tabs                  in 1 line 
+    - [ tab01, tab02      ]                       # 2 tabs groups                 in 1 line 
     - [ pnl03, lpnhistory ]                       # 1 panel and 1 linePanel in 1 line
     
 #-------------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ panels:
     - [ fld18 ]                                       # fields displayed in line 1
  #-------------------------------------------------------------------------------------------
 
- #3: List Panels thar has collection
+ #3: List Panels that has collection
 listPanels:                                           # a panel with an array ( a detail class (adresses for a person)
   - name: lpnadress   
     description: Address list 
@@ -59,7 +59,7 @@ listPanels:                                           # a panel with an array ( 
 
 #4. Tab definition
 tabs:
-  - { name: tab01   , containers: [ pnl01,     lpn02      ] }        # 2 tabs containing 2 panels
+  - { name: tab01   , containers: [ pnl01,     lpn02      ] }        # 1 Tabgroup containing 2 tabspanels
   - { name: tab02   , containers: [ lpnadress, lpnvehicle ] }        # 2 Tabs containing 2 listPanels
 
 #---------------------------------------------------------------------------------------------
@@ -73,20 +73,20 @@ fields:
 
 #6. Events definition (form, panel, tab and field events)
 formEvents:
-  - { event: onresize, action: class01.action01 }
+  - { name: onresize, action: class01.action01 }
   
 panelEvents: 
-  - { event: onresize, element: pnlmain,     action: class01.action02, refresh: [fld01,fld02] }
-  - { event: onresize, element: pnl01,       action: class01.action03 }
+  - { name: onresize, element: pnlmain,     action: class01.action02, refresh: [fld01,fld02] }
+  - { name: onresize, element: pnl01,       action: class01.action03 }
 
 listPanelEvents: 
-  - { event: onresize, element: lpnadress,   action: class01.action02, refresh: [fld01,fld02] }
+  - { name: onresize, element: lpnadress,   action: class01.action02, refresh: [fld01,fld02] }
   
 tabEvents: 
-  - { event: onresize, element: tab01,       action: class02.action01, refresh: [fld02,fld03] }
+  - { name: onresize, element: tab01,       action: class02.action01, refresh: [fld02,fld03] }
   
 fieldEvents:
-  - { event: onblur,   element: fld02,       action: class03.action01, refresh: [fld01,fld02] }
+  - { name: onblur,   element: fld02,       action: class03.action01, refresh: [fld01,fld02] }
   
 #---------------------------------------------------------------------------------------------
 

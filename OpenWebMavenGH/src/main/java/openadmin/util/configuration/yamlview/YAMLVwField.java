@@ -1,4 +1,4 @@
-package openadmin.view.edu.yaml;
+package openadmin.util.configuration.yamlview;
 
 import java.io.Serializable;
 
@@ -7,11 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import openadmin.model.yamlview.EditorTypeEdu;
+import openadmin.model.yamlview.EventTypeEdu;
 
 @SuppressWarnings("serial")
 @NoArgsConstructor
 @ToString
-public class YAMLFieldEdu  implements Serializable{
+public class YAMLVwField  implements IYAMLElement<String>,  Serializable{
 	@Getter @Setter
 	private String name=null;  
 	

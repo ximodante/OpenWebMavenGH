@@ -12,8 +12,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-
-import openadmin.view.edu.yaml.YAMLViewEdu;
+import openadmin.util.configuration.yamlview.YAMLViewLoad;
 
 public class YAMLUtilsEdu {
 	private static ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -36,7 +35,7 @@ public class YAMLUtilsEdu {
 	
 	public static void main(String[] args) throws JsonProcessingException {
 		//YAMLRawEdu yr=null;
-		YAMLViewEdu yv=null;
+		YAMLViewLoad yv=null;
 		//Object obj=null;
 		try {
 			
@@ -49,7 +48,7 @@ public class YAMLUtilsEdu {
 			
 				start = Instant.now();
 				//yr = YAMLFileToObject(in, YAMLRawEdu.class);
-				yv = YAMLFileToObject(in, YAMLViewEdu.class);
+				yv = YAMLFileToObject(in, YAMLViewLoad.class);
 				end = Instant.now();
 				System.out.println("YAML File to object "+Duration.between(start, end)); // prints PT1M3.553S
 			

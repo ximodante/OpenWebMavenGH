@@ -25,6 +25,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -45,9 +46,9 @@ import openadmin.model.control.MenuItem;
 )
 @Audited
 @SuppressWarnings("serial")
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 @ToString
-public class YamlComponent extends Audit implements Base, Serializable{
+public class YVwComponent extends Audit implements Base, Serializable{
 	/** attribute that contain the identifier*/
 	@Getter @Setter
 	@Id
@@ -82,7 +83,7 @@ public class YamlComponent extends Audit implements Base, Serializable{
 	@ManyToOne
 	@JoinColumn(name="padre")
 	@NoSql
-	private YamlComponent parent=null; // Parent component container
+	private YVwComponent parent=null; // Parent component container
 	
 	@Getter @Setter
 	@OneToMany(
@@ -90,7 +91,7 @@ public class YamlComponent extends Audit implements Base, Serializable{
 	    cascade = CascadeType.ALL, 
 	    orphanRemoval = true
 	)
-	private List<YamlAction> lstActions=new ArrayList<YamlAction>(); // detail of the Actions included in the tab
+	private List<YVwAction> lstActions=new ArrayList<YVwAction>(); // detail of the Actions included in the tab
 	
 	@Getter @Setter
 	@OneToMany(
@@ -98,6 +99,7 @@ public class YamlComponent extends Audit implements Base, Serializable{
 	    cascade = CascadeType.ALL, 
 	    orphanRemoval = true
 	)
-	private List<YamlEvent> lstEvents=new ArrayList<YamlEvent>();
+	private List<YVwEvent> lstEvents=new ArrayList<YVwEvent>();
 
+	
 }

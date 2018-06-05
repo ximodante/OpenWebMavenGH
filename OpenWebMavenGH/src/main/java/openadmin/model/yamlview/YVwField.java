@@ -1,11 +1,8 @@
 package openadmin.model.yamlview;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,7 +21,7 @@ import lombok.ToString;
 @Audited
 @ToString @NoArgsConstructor @SuppressWarnings("serial")
 
-public class FieldEdu extends YamlComponent{
+public class YVwField extends YVwComponent{
 	
 	/**
 	 *  Size attributtes, are defined by annotations in the model

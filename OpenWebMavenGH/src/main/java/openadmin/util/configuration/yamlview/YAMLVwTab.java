@@ -1,4 +1,4 @@
-package openadmin.view.edu.yaml;
+package openadmin.util.configuration.yamlview;
 
 import java.io.Serializable;
 import java.util.List;
@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import openadmin.model.yamlview.EventTypeEdu;
 /**
  * Tab elements (subviews)
  * @author eduard
@@ -15,7 +16,7 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 @NoArgsConstructor
 @ToString
-public class YAMLTabEdu  implements Serializable{  
+public class YAMLVwTab  implements IYAMLElement<String>, Serializable{  
 
 	@Getter @Setter
 	private String name=null; //tab name

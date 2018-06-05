@@ -22,7 +22,7 @@ import lombok.ToString;
  *
  */
 @Entity
-@Table(name = "yamlpanel", schema = "control"//, 
+@Table(name = "yamltabelement", schema = "control"//, 
 //uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "row","column" })//,
 //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
@@ -30,7 +30,7 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 @NoArgsConstructor
 @ToString
-public class TabElementEdu extends YamlComponent{
+public class YVwTabElement extends YVwComponent{
 
 	@Getter @Setter
 	@OneToMany(
@@ -38,6 +38,6 @@ public class TabElementEdu extends YamlComponent{
 		cascade = CascadeType.ALL, 
 		orphanRemoval = true
 	)
-	private List<YamlComponent> children= null; // Distribution of panels and tabs (and maybe fields)
+	private List<YVwComponent> children= null; // Distribution of panels and tabs (and maybe fields)
 
 }

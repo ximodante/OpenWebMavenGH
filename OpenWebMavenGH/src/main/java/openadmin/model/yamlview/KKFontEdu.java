@@ -14,7 +14,7 @@ import lombok.Setter;
 // Not used!!!!!!!
 @SuppressWarnings("serial")
 @NoArgsConstructor
-public class FontEdu implements Serializable{
+public class KKFontEdu implements Serializable{
 	
 	@Getter @Setter
 	private String name=null;

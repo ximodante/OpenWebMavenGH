@@ -73,11 +73,16 @@
       <class>openadmin.model.control.User              </class>
       
       <!-- YAML VIEW Classes  -->
-      <class>openadmin.model.yaml.YamlAction           </class>
-      <class>openadmin.model.yaml.YamlComponent        </class>
-      <class>openadmin.model.yaml.YamlEvent            </class>
-      <class>openadmin.model.yaml.YamlAction           </class>
-      <class>openadmin.model.yaml.YamlAction           </class>
+      <class>openadmin.model.yaml.YVwAction            </class>
+      <class>openadmin.model.yaml.YVwComponent         </class>
+      <class>openadmin.model.yaml.YVwEvent             </class>
+      <class>openadmin.model.yaml.YVwField             </class>
+      <class>openadmin.model.yaml.YVwListPanel         </class>
+       
+      <class>openadmin.model.yaml.YVwPanel             </class>
+      <class>openadmin.model.yaml.YVwTabelement        </class>
+      <class>openadmin.model.yaml.YVwTabGroup          </class>
+      <class>openadmin.model.yaml.YVwView              </class>
       
       
       

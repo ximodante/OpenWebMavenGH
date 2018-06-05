@@ -1,4 +1,4 @@
-package openadmin.view.edu.yaml;
+package openadmin.util.configuration.yamlview;
 
 import java.io.Serializable;
 import java.util.List;
@@ -11,7 +11,7 @@ import openadmin.model.yamlview.ElementTypeEdu;
 
 @SuppressWarnings("serial")
 @ToString
-public class YAMLActionEdu  implements Serializable{
+public class YAMLVwAction  implements IYAMLElement<String>, Serializable{
 
 	@Getter @Setter
 	private String name=null; 

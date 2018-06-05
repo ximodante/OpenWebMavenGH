@@ -1,10 +1,7 @@
 package openadmin.model.yamlview;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+
 import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
@@ -28,18 +25,9 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 @NoArgsConstructor
 @ToString
-public class ViewEdu extends YamlComponent {
+public class YVwView extends YVwContainer {
 
 	@Getter @Setter 
 	private String rsbundle=null; // Resource Bundle Key
-	
-	@Getter @Setter
-	@OneToMany(
-		mappedBy = "parent", 
-	    cascade = CascadeType.ALL, 
-	    orphanRemoval = true
-	)
-	private List<YamlComponent> children= null; // Distribution of panels and tabs (and maybe fields)
-	
 	
 }

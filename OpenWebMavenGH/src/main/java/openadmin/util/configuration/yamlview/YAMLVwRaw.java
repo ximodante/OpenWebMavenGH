@@ -1,4 +1,4 @@
-package openadmin.view.edu.yaml;
+package openadmin.util.configuration.yamlview;
 
 import java.io.IOException;
 //import java.lang.invoke.MethodHandles;
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import openadmin.util.edu.YAMLUtilsEdu;
 
 
-public class YAMLRawEdu extends LinkedHashMap<String, Object>{
+public class YAMLVwRaw extends LinkedHashMap<String, Object>{
 
 	private static final long serialVersionUID = 20180204L;
 	/**
@@ -35,16 +35,16 @@ public class YAMLRawEdu extends LinkedHashMap<String, Object>{
 		return "Result="+ a;
 	}
 	
-	public YAMLRawEdu getMapProp(String key) throws JsonParseException, JsonMappingException, IOException {
+	public YAMLVwRaw getMapProp(String key) throws JsonParseException, JsonMappingException, IOException {
 		// Gets this class 
 		//Class<?> klass=MethodHandles.lookup().lookupClass();
 		//return YAMLUtilsEdu.YAMLStringToObject(key, klass);
-		return YAMLUtilsEdu.YAMLStringToObject(key, YAMLRawEdu.class);
+		return YAMLUtilsEdu.YAMLStringToObject(key, YAMLVwRaw.class);
 	}
 	
-	public YAMLRawEdu[] getMapArrayProp(String key) throws JsonParseException, JsonMappingException, IOException {
+	public YAMLVwRaw[] getMapArrayProp(String key) throws JsonParseException, JsonMappingException, IOException {
 		
-		return YAMLUtilsEdu.YAMLStringToObject(key, YAMLRawEdu[].class);
+		return YAMLUtilsEdu.YAMLStringToObject(key, YAMLVwRaw[].class);
 	}
 	
 	public static void main(String[] args) {

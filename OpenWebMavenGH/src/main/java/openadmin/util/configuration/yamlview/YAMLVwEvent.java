@@ -1,4 +1,4 @@
-package openadmin.view.edu.yaml;
+package openadmin.util.configuration.yamlview;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,10 +13,11 @@ import openadmin.model.yamlview.EventTypeEdu;
 @SuppressWarnings("serial")
 @NoArgsConstructor
 @ToString
-public class YAMLEventEdu  implements Serializable{
+public class YAMLVwEvent  implements IYAMLElement<EventTypeEdu>, Serializable{
 
 	@Getter @Setter
-	private EventTypeEdu event=null; 
+	//private EventTypeEdu event=null; 
+	private EventTypeEdu name=null;
 	
 	@Getter @Setter
 	private String element= "form";  

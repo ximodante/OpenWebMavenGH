@@ -31,11 +31,20 @@ import openadmin.util.configuration.TypeLanguages;
 import openadmin.util.edu.YAMLUtilsEdu;
 import openadmin.util.lang.LangTypeEdu;
 
-
+/**
+ * Transforms a YAML file
+ * @author eduard
+ *
+ */
+@SuppressWarnings("serial")
 @ToString
 public class YAMLControlLoad implements Serializable{
 
-	private static final long serialVersionUID = 20180204L;
+	
+	
+	/************************************************************
+	 * 1. YAML File structure
+	 ************************************************************/
 	
 	@Getter @Setter
 	private List<YAMLUser> users= null;        // Users
@@ -52,6 +61,11 @@ public class YAMLControlLoad implements Serializable{
 	@Getter @Setter
 	private List<YAMLMenuItem> menuItems= null;         // Programs
 
+	
+	/************************************************************
+	 * 2. Helper structure
+	 ************************************************************/
+	
 	
 	@Getter
 	private HashMap<String,User>cUsers=null;
@@ -466,7 +480,7 @@ public class YAMLControlLoad implements Serializable{
 	// ========================================
 	// 3. Error detection
 	// ========================================
-	/**
+	
 		
 	// Error detection A: Duplicates
 	/**
