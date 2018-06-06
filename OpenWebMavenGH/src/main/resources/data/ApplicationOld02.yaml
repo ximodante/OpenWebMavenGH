@@ -25,50 +25,48 @@ users:
   - { description: pepet , password: pepet,     fullName: Pepet de Prova,       identifier: 00000002B, language: es, dateBegin: 2018-01-01 }
 #---------------------------------------------------------------------------------------------  
 # 4. ROLE 
-#  Only these roles are available for there programs
 roles:    # Combination of applications and roles 
-  - { names: [admin],                        programs: [ control] }
-  - { names: [admin, del, edit, new, look],  programs: [ policia,  tercers, vehicles ] }
-  - { names: [look],                         programs: [ tercers] } 
+  - { names: [ADMIN],                         programs: [ control] }
+  - { names: [ADMIN, A-USER, B-USER, C-USER], programs: [ policia,  tercers, vehicles ] }
+  - { names: [OTHER],                         programs: [ tercers] } 
 #---------------------------------------------------------------------------------------------  
 # 5. ACCESS to programs in entities                        
 entities: 
   #---------------------------------------------------------------------------------------------------------------
   - { name: control,    conn: control_post,    icon: fa-cog,         theme: control,  
   #---------------------------------------------------------------------------------------------------------------
-            programs: [ { name: control,       icon: fa-cog,   alloweds: [ { role: admin,    users: [root, alfred] } ] } ] }
+            programs: [ { name: control,       icon: fa-cog,   alloweds: [ { role: ADMIN,    users: [root, alfred] } ] } ] }
        
   #---------------------------------------------------------------------------------------------------------------
   - { name: town_hall,  conn: ayto_post,       icon: fa-institution, theme: ajuntament,         
   #---------------------------------------------------------------------------------------------------------------
             programs: [ { name: policia,       icon: fa-ambulance,    
-                          alloweds: [ { role: admin,     users: [root, alfred] } ,
-                                      { role: edit,      users: [pol-01]       } ,
-                                      { role: look,      users: [pepet]        } ] } ,
+                          alloweds: [ { role: ADMIN,     users: [root, alfred] } ,
+                                      { role: A-USER,    users: [pol-01]       } ,
+                                      { role: C-USER,    users: [pepet]        } ] } ,
                         #---------------------------------------------------------------------       
                         { name: tercers,   icon: fa-users, 
                         
-                          alloweds: [ { role: look,      users: [root, alfred, pepet] } ] } ,  
+                          alloweds: [ { role: ADMIN,     users: [root, alfred] } ,
+                                      { role: C-USER,    users: [pol-01]       } ,        
+                                      { role: B-USER,    users: [pepet]        } ] } ,  
                         #---------------------------------------------------------------------       
                         { name: vehicles,  icon: fa-users, 
-                          alloweds: [ { role: admin,     users: [root]         } ,
-                                      { role: edit,      users: [alfred]       } , 
-                                      { role: new,       users: [pol-01]       } ,        
-                                      { role: look,      users: [pepet]        } ] } ] }
+                          alloweds: [ { role: ADMIN,     users: [root, alfred] } ,
+                                      { role: C-USER,    users: [pol-01]       } ,        
+                                      { role: B-USER,    users: [pepet]        } ] } ] }
 #---------------------------------------------------------------------------------------------  
-# 6. DEFAULT ACTION parameters values  
-#    6/6/2018: "roleGroup:" replaces "roles:[]"
+# 6. DEFAULT ACTION parameters values
 defaultActions: 
-  - { name: New,    icon: fa-plus,       roleGroup: gnew  }
-  - { name: Edit,   icon: fa-edit,       roleGroup: gedit }
-  - { name: Copy,   icon: fa-copy,       roleGroup: gnew  }
-  - { name: Delete, icon: fa-trash,      roleGroup: gdel  }
-  - { name: Search, icon: fa-binoculars, roleGroup: glook }         
+  - { name: New,    icon: fa-plus,       roles: [ADMIN, A-USER, B-USER]         }
+  - { name: Edit,   icon: fa-edit,       roles: [ADMIN, A-USER]                 }
+  - { name: Copy,   icon: fa-copy,       roles: [ADMIN, A-USER, B-USER]         }
+  - { name: Delete, icon: fa-trash,      roles: [ADMIN, A-USER]                 }
+  - { name: Search, icon: fa-binoculars, roles: [ADMIN, A-USER, B-USER, C-USER] }         
 #---------------------------------------------------------------------------------------------  
 # 7. MENUITEMS (Form & Actions)
-#    6/6/2018: "roleGroup:" replaces "roles:[]" in actions
 menuItems: 
-  # In program control, only admin rol can access, so no need to show actions, using default actions
+  # In program control, only ADMIN rol can access, so no need to show actions, using default actions
   #    as the only user that belongs both to entities and default actions can access menus.
   #----------------------------------------------------------------------------------------------------------------------------------
   - { program: control , description: System_Administration,     icon: fa-folder,   type: submenu,
@@ -81,12 +79,12 @@ menuItems:
                             { className: openadmin.model.control.ActionViewRole,            icon: fa-th-list,                        } , 
                             { className: openadmin.model.control.Role,                      icon: fa-graduation-cap,                  
                                          #------------------------------------------------------------------------------------------
-                                         actions: [ { name: dni,       roleGroup: gadmin } ]
+                                         actions: [ { name: dni,       roles: [ ADMIN] } ]
                                          #------------------------------------------------------------------------------------------ 
                             },
                             { className: openadmin.util.configuration.FirstControlLoadYAML, icon: fa-upload,   type: action, defaultActions: false, 
                                          #------------------------------------------------------------------------------------------
-                                         actions: [ { name: dataLoad,  roleGroup: gadmin } ]
+                                         actions: [ { name: dataLoad,  roles: [ ADMIN] } ]
                                          #------------------------------------------------------------------------------------------
                             } ] }
   #----------------------------------------------------------------------------------------------------------------------------------
@@ -99,8 +97,8 @@ menuItems:
                #---------------------------------------------------------------------------------------------------------------------
                menuItems: [ { className: openadmin.model.police.PolActions,      icon: fa-user,           defaultActions: true,  
                                          #------------------------------------------------------------------------------------------
-                                         actions: [ { name: compulsar, roleGroup: gnew,   icon: fa-bullseye },
-                                                    { name: ok,        roleGroup: glook,  icon: fa-eye      } ]
+                                         actions: [ { name: compulsar, roles: [ ADMIN, A-USER],                 icon: fa-bullseye },
+                                                    { name: ok,        roles: [ ADMIN, A-USER, B-USER, C-USER], icon: fa-eye      } ]
                                          #------------------------------------------------------------------------------------------             
                             } ] }
   #----------------------------------------------------------------------------------------------------------------------------------
@@ -114,16 +112,4 @@ menuItems:
                menuItems: [ { className: openadmin.model.vehicle.Marca,          icon: fa-file,           defaultActions: true } ] } 
                 
                             
-#---------------------------------------------------------------------------------------------  
-#8. Role groups
-#    6/6/2018: New entry 
-#    A role is defined by "program.role".
-#    The program is got from ????
-roleGroups:
-  - { name: gadmin, roles: [admin] }
-  - { name: gdel,   roles: [admin, del ] }
-  - { name: gedit,  roles: [admin, del, edit ] }
-  - { name: gnew,   roles: [admin, del, edit, new ] }
-  - { name: glook,  roles: [admin, del, edit, new, look ] }  
-   
-  
+  #---------------------------------------------------------------------------------------------  

@@ -36,8 +36,9 @@ public class YAMLVwAction  implements IYAMLElement<String>, Serializable{
 	@Getter @Setter
 	private List<String> refresh= null; 
 	
+	// Group of roles that are allowed to execute the action
 	@Getter @Setter
-	private List<String>roles=null;
+	private String roleGroup=null;
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

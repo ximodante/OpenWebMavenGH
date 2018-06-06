@@ -5,69 +5,81 @@
 #     http://sangsoonam.github.io/2017/03/13/yaml-vs-json.html
 #     http://yaml.org/spec/1.2/spec.html
 #-------------------------------------------------------------------------------------------
+#
+#NOMENCLATURE:
+#
+# a. Prefixes :
+#   p_ --> PANEL
+#   l_ --> LISTPANEL
+#   t_ --> TABGROUP or TAB
+#   f_ --> FIELD 
+#
+# b. If a field does not have attribute tag then the attribute is the suffix after "f_"
+#    for instance for "f_year", the attribute is "year" 
+#--------------------------------------------------
 # 1. General Info  
 name: testView 
 description: View example
 klass: openadmin.model.control.Action
 rsbundle: my_resource_bundle                      # Resource bundle for translation
 lines:                                            # Only panels, linePanels or tabs   
-    - [ pnlmain           ]                       # 1 panel                 in 1 line
-    - [ tab01, tab02      ]                       # 2 tabs groups                 in 1 line 
-    - [ pnl03, lpnhistory ]                       # 1 panel and 1 linePanel in 1 line
+    - [ p_main           ]                        # 1 panel                 in 1 line
+    - [ t_01, t_02      ]                         # 2 tabs groups                 in 1 line 
+    - [ p_03, l_history ]                         # 1 panel and 1 linePanel in 1 line
     
 #-------------------------------------------------------------------------------------------
 
 #2. Panel definition
 panels:
-  - name: pnlmain                                     # main panel
+  - name: p_main                                     # main panel
     description: Main Panel 
     lines:                                            # fields displayed in lines   
-    - [ fld01, fld02 ]  
-    - [ fld03, fld04 ]                              
+    - [ f_01, f_02 ]  
+    - [ f_03, f_04 ]                              
     #--------------------------------------                  
-  - name: pnl01                                       # another panel
+  - name: p_01                                       # another panel
     description: another panel 
     lines:
-    - [ fld06, fld07, fld08, fld09 ]                  # fields displayed in line 1
-    - [ fld10, fld11, fld12, fld13 ]                  # fields displayed in line 2
+    - [ f_06, f_07, f_08, f_09 ]                  # fields displayed in line 1
+    - [ f_10, f_11, f_12, f_13 ]                  # fields displayed in line 2
     #--------------------------------------                  
-  - name: pnl02                                       # another panel
+  - name: p_02                                       # another panel
     description: another panel 2 
     lines:
-    - [ fld14 ]                                       # fields displayed in line 1
-    - [ fld15 ]                                       # fields displayed in line 2
-    - [ fld16, fld17 ]                                # fields displayed in line 3
+    - [ f_14 ]                                       # fields displayed in line 1
+    - [ f_15 ]                                       # fields displayed in line 2
+    - [ f_16, f_17 ]                                # fields displayed in line 3
     #--------------------------------------                  
-  - name: pnl03                                       # another panel
+  - name: p_03                                       # another panel
     description: another panel 3 
     lines:
-    - [ fld18 ]                                       # fields displayed in line 1
+    - [ f_18 ]                                       # fields displayed in line 1
  #-------------------------------------------------------------------------------------------
 
  #3: List Panels that has collection
 listPanels:                                           # a panel with an array ( a detail class (adresses for a person)
-  - name: lpnadress   
+  - name: l_adress   
     description: Address list 
     klass: openadmin.model.control.Address 
-    fields: [fld021, fld022, fld023, fld024]         
+    fields: [f_021, f_022, f_023, f_024]         
     #---------------------------------------------------
-  - name: lpnvehicle                                  # a panel with an array ( a detail class (vehicles for a person)
+  - name: l_vehicle                                  # a panel with an array ( a detail class (vehicles for a person)
     description: Vehiclwe list
     klass: openadmin.model.control.Vehicles
-    fields: [fld031, fld032]                         
+    fields: [f_031, f_032]                         
 #---------------------------------------------------------------------------------------------  
 
 #4. Tab definition
 tabs:
-  - { name: tab01   , containers: [ pnl01,     lpn02      ] }        # 1 Tabgroup containing 2 tabspanels
-  - { name: tab02   , containers: [ lpnadress, lpnvehicle ] }        # 2 Tabs containing 2 listPanels
+  - { name: t_01   , containers: [ p_01,     l_02      ] }        # 1 Tabgroup containing 2 tabspanels
+  - { name: t_02   , containers: [ l_adress, l_vehicle ] }        # 2 Tabs containing 2 listPanels
 
 #---------------------------------------------------------------------------------------------
 
 #5. Additional info of Fields
 fields:
-  - { name: fld01, editor: TextEditor } 
-  - { name: fld02, editor: Keyboard }  
+  - { name: f_01, kass: MyClass, attribute: myAttribute01, editor: TextEditor } 
+  - { name: f_02,                attribute: myAttribute02, editor: Keyboard }  
 
 #---------------------------------------------------------------------------------------------
 
@@ -76,41 +88,50 @@ formEvents:
   - { name: onresize, action: class01.action01 }
   
 panelEvents: 
-  - { name: onresize, element: pnlmain,     action: class01.action02, refresh: [fld01,fld02] }
-  - { name: onresize, element: pnl01,       action: class01.action03 }
+  - { name: onresize, element: p_main,     action: class01.action02, refresh: [f_01,f_02] }
+  - { name: onresize, element: p_01,       action: class01.action03 }
 
 listPanelEvents: 
-  - { name: onresize, element: lpnadress,   action: class01.action02, refresh: [fld01,fld02] }
+  - { name: onresize, element: l_adress,   action: class01.action02, refresh: [f_01,f_02] }
   
 tabEvents: 
-  - { name: onresize, element: tab01,       action: class02.action01, refresh: [fld02,fld03] }
+  - { name: onresize, element: t_01,       action: class02.action01, refresh: [f_02,f_03] }
   
 fieldEvents:
-  - { name: onblur,   element: fld02,       action: class03.action01, refresh: [fld01,fld02] }
+  - { name: onblur,   element: f_02,       action: class03.action01, refresh: [f_01,f_02] }
   
 #---------------------------------------------------------------------------------------------
 
 #7. Action definition (form, panel, tab and field events)
 formActions:
-  - { name: Save,      action: class05.action01, icon: icon1.jpg, roles:[app1.admin, app1.aux]}
-  - { name: Cancel,    action: class05.action02, icon: icon2.jpg, roles:[app1.admin, app1.aux] }
-  - { name: SendEmail, action: class05.action03, icon: icon3.jpg, refresh: [fld01,fld02], roles:[app1.admin, app1.aux] }
-  - { name: Insert,    action: class05.action04, icon: icon3.jpg, refresh: [fld01,fld02], roles:[app1.admin, app1.aux] }
+  - { name: Save,      action: class05.action01, icon: icon1.jpg, roleGroup: gnew }
+  - { name: Cancel,    action: class05.action02, icon: icon2.jpg, roleGroup: gadmin }
+  - { name: SendEmail, action: class05.action03, icon: icon3.jpg, refresh: [f_01,f_02], roleGroup: glook }
+  - { name: Insert,    action: class05.action04, icon: icon3.jpg, refresh: [f_01,f_02], roleGroup: gedit  }
   
 panelActions:  
-  - { name: Refresh,   element: pnlmain,     action: class05.action01, icon: icon1.jpg, refresh: [fld01,fld02], roles:[app1.admin, app1.aux] } 
-  - { name: SendEmail, element: pnl01,       action: class01.action03, icon: icon3.jpg, refresh: [fld01,fld02], roles:[app1.admin, app1.aux] }
+  - { name: Refresh,   element: p_main,     action: class05.action01, icon: icon1.jpg, refresh: [f_01,f_02], roleGroup: glook } 
+  - { name: SendEmail, element: p_01,       action: class01.action03, icon: icon3.jpg, refresh: [f_01,f_02], roleGroup: glook }
 
 ListPanelActions:  
-  - { name: Refresh,   element: pnlmain,     action: class05.action01, icon: icon1.jpg, refresh: [fld01,fld02], roles:[app1.admin, app1.aux] } 
+  - { name: Refresh,   element: p_main,     action: class05.action01, icon: icon1.jpg, refresh: [f_01,f_02], roleGroup: glook } 
 
 tabActions:  
-  - { name: Edit,      element: tab01,       action: class02.action01, refresh: [fld02,fld03], roles:[app1.admin, app1.aux] }
+  - { name: Edit,      element: t_01,       action: class02.action01, refresh: [f_02,f_03], roleGroup: glook }
 
 fieldActions:
-  - { name: Shift,     element: fld02,       action: class03.action01, refresh: [fld01,fld02], roles:[app1.admin] }
-  
-  
+  - { name: Shift,     element: f_02,       action: class03.action01, refresh: [f_01,f_02], roleGroup: glook }
+
+#---------------------------------------------------------------------------------------------
+#8. Role groups. 
+#   A role is defined by program.role.
+#   The program is got from ????
+roleGroups:
+  - { name: gadmin, roles: [admin] }
+  - { name: gdel,   roles: [admin, del ] }
+  - { name: gedit,  roles: [admin, del, edit ] }
+  - { name: gnew,   roles: [admin, del, edit, new ] }
+  - { name: glook,  roles: [admin, del, edit, new, look ] }  
   
   
   

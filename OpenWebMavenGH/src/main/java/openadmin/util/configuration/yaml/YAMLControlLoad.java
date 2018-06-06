@@ -28,6 +28,7 @@ import openadmin.model.control.Program;
 import openadmin.model.control.Role;
 import openadmin.model.control.User;
 import openadmin.util.configuration.TypeLanguages;
+import openadmin.util.configuration.yamlview.YAMLVwRoleGroup;
 import openadmin.util.edu.YAMLUtilsEdu;
 import openadmin.util.lang.LangTypeEdu;
 
@@ -60,6 +61,10 @@ public class YAMLControlLoad implements Serializable{
 
 	@Getter @Setter
 	private List<YAMLMenuItem> menuItems= null;         // Programs
+
+	//2018/06/06 Added roleGroup
+	@Getter @Setter
+	private List<YAMLVwRoleGroup> roleGroups= null;         // Programs
 
 	
 	/************************************************************

@@ -28,8 +28,13 @@ public class YAMLAction implements Serializable{
 	@Getter @Setter
 	private byte type =0;            // 0:Default 1: Custom
 		
+	//2018/06/06 removed
+	//@Getter @Setter
+	//private List<String> roles= null;        // Roles
+	
+	//2018/06/06 added
 	@Getter @Setter
-	private List<String> roles= null;        // Roles
+	private String roleGroup= null;        // Roles
 	
 
 

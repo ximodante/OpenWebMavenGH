@@ -63,7 +63,7 @@ public class YVwComponent extends Audit implements Base, Serializable{
 	private String name=null; //
 	
 	@Getter @Setter
-	@Size(max = 50)
+	@Size(max = 80)
 	@NotNull
 	@Column(name= "descripcio", unique = true)
 	private String description=null; //header or tooltiptext

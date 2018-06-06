@@ -33,8 +33,11 @@ import openadmin.model.yamlview.ElementTypeEdu;
 import openadmin.model.yamlview.YVwAction;
 import openadmin.model.yamlview.YVwComponent;
 import openadmin.model.yamlview.YVwEvent;
+import openadmin.model.yamlview.YVwField;
 import openadmin.model.yamlview.YVwListPanel;
 import openadmin.model.yamlview.YVwPanel;
+import openadmin.model.yamlview.YVwTabElement;
+import openadmin.model.yamlview.YVwTabGroup;
 import openadmin.model.yamlview.YVwView;
 import openadmin.util.configuration.yaml.YAMLUser;
 import openadmin.util.edu.CollectionUtilsEdu;
@@ -116,6 +119,9 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	@Getter @Setter
 	private List<YAMLVwAction> fieldActions= null; 
 	
+	@Getter @Setter
+	private List<YAMLVwRoleGroup> roleGroups= null; 
+	
 	
 	/************************************************************
 	 * 2. Helper structure
@@ -194,7 +200,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 			connection.commit();
 			connection.finalize();
 			*/
-		}
+	}
 	// Procedures
 	
 	/******************************************************************
@@ -398,8 +404,8 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		this.yView.setParent(null);
 		this.yView.setRsbundle(this.rsbundle);
 		this.yView.setClassName(this.getClassName(this.klass));
-		this.yView.setLstActions(this.getActions("", ElementTypeEdu.FORM));
-		this.yView.setLstEvents(this.getEvents("", ElementTypeEdu.FORM));
+		this.yView.setLstActions(this.getActions(""));
+		this.yView.setLstEvents(this.getEvents(""));
 		this.yView.setChildren(this.getListComponents(this.lines));
 	}
 	
@@ -419,8 +425,8 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		yP.setDescription(ymlP.getDescription());
 		//yP.setParent(this.yView); // Not necessary. JPA manages this
 		yP.setClassName(this.yView.getClassName());
-		yP.setLstActions(this.getActions(comp, ElementTypeEdu.PANEL));
-		yP.setLstEvents(this.getEvents(comp, ElementTypeEdu.PANEL));
+		yP.setLstActions(this.getActions(comp));
+		yP.setLstEvents(this.getEvents(comp));
 		yP.setChildren(this.getListComponents(ymlP.getLines()));
 		return yP;
 	}
@@ -432,20 +438,77 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	 * @param y
 	 * @return
 	 */
-	private YVwPanel getVwListPanel (String comp, byte row, byte col) {
+	private YVwListPanel getVwListPanel (String comp, byte row, byte col) {
 		YVwListPanel yP= new YVwListPanel();
-		YAMLVwPanel ymlP=this.getPanel(comp).get();
+		YAMLVwListPanel ymlP=this.getListPanel(comp).get();
 		yP.setRow(row);
 		yP.setCol(col);
 		yP.setName(ymlP.getName());
 		yP.setDescription(ymlP.getDescription());
 		//yP.setParent(this.yView); // Not necessary. JPA manages this
-		yP.setClassName(this.yView.getClassName());
-		yP.setLstActions(this.getActions(comp, ElementTypeEdu.LISTPANEL));
-		yP.setLstEvents(this.getEvents(comp, ElementTypeEdu.PANEL));
-		yP.setChildren(this.getListComponents(ymlP.getLines()));
+		yP.setClassName(this.getClassName(ymlP.getKlass()));
+		yP.setLstActions(this.getActions(comp));
+		yP.setLstEvents(this.getEvents(comp));
+		yP.setChildren(this.getListPanelComponents(ymlP.getFields()));
 		return yP;
 	}
+	
+	
+	/**
+	 * Gets a panel at a grid x,y position for DB persistence
+	 * @param comp
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private YVwTabGroup getVwTabGroup (String comp, byte row, byte col) {
+		YVwTabGroup yTG= new YVwTabGroup();
+		YAMLVwTab ymlT=this.getTab(comp).get();
+		yTG.setRow(row);
+		yTG.setCol(col);
+		yTG.setName(ymlT.getName());
+		yTG.setDescription(ymlT.getDescription());
+		//yTG.setParent(this.yView); // Not necessary. JPA manages this
+		yTG.setClassName(this.yView.getClassName());
+		yTG.setLstActions(this.getActions(comp));
+		yTG.setLstEvents(this.getEvents(comp));
+		yTG.setChildren(this.getTabElements(ymlT.getContainers()));
+		return yTG;
+	}
+	
+	/**
+	 * Gets a Field at a grid x,y position for DB persistence
+	 * @param comp
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+	private YVwField getVwField (String comp, byte row, byte col) {
+		YVwField yF= new YVwField();
+		YAMLVwField ymlF=this.getField(comp).get();
+		yF.setRow(row);
+		yF.setCol(col);
+		yF.setName(ymlF.getName());
+		//yF.setParent(this.yView); // Not necessary. JPA manages this
+		
+		if (ymlF.getKlass()==null)
+			yF.setClassName(this.yView.getClassName());
+		else 
+			yF.setClassName(this.getClassName(ymlF.getKlass()));
+		
+		if (ymlF.getAttribute()==null)
+			yF.setAttribute(ymlF.getName().substring(2));
+		else 
+			yF.setAttribute(ymlF.getAttribute());
+			
+		yF.setLstActions(this.getActions(comp));
+		yF.setLstEvents(this.getEvents(comp));
+		yF.setEditor(ymlF.getEditor());
+		yF.setDescription(yF.getClassName().getDescription()+"."+ yF.getAttribute() +"-"+ this.getName());
+		this.setModelAttributes(yF);
+		return yF;
+	}
+	
 	
 	/**
 	 * Return a list of components defined in Lines definition
@@ -466,6 +529,63 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		return myComps;
 	}
 	
+	/**
+	 * Return a list of components of a List panel (collection)
+	 * @param myLines
+	 * @return
+	 */
+	private List<YVwComponent> getListPanelComponents(List<String> myLine) {
+		List<YVwComponent> myComps= new ArrayList<>();
+		byte row=0; byte col=0;
+		for (String comp: myLine) {
+			myComps.add(this.getComponent(comp, row, col));
+			col++;
+		}
+		return myComps;
+	}
+	
+	/**
+	 * Return the Tab elements of a tab group
+	 * @param containers
+	 * @return
+	 */
+	private List<YVwComponent> getTabElements(List<String> containers) {
+		List<YVwComponent> myComps= new ArrayList<>();
+		byte row=0; byte col=0;
+		for (String comp: containers) {
+			myComps.add(this.getTabElement(comp, row, col));
+			col++;
+		}
+		return myComps;
+	}
+	/**
+	 * Defines the components of a Tab element
+	 * @param container
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+	private YVwTabElement getTabElement(String container, byte row, byte col) {
+		YVwTabElement myTab=new YVwTabElement();
+		myTab.setRow(row); //Not important
+		myTab.setCol(col);
+		myTab.setName("tbe_"+ container);
+		myTab.setDescription(myTab.getName());
+		//myTab.setParent(this.yView); // Not necessary. JPA manages this
+		myTab.setClassName(this.yView.getClassName()); // Not important
+		
+		//A tab element has no actions or events 
+		// The child of a tab element is a container that has the events and actions
+		//myTab.setLstActions(this.getActions(comp)); // Not important
+		//myTab.setLstEvents(this.getEvents(comp)); // Not important
+		//There is only one container into a Tab Element
+		List<YVwComponent>lC=new ArrayList<>();
+		lC.add(this.getComponent(container, (byte) 0, (byte)0));
+		myTab.setChildren(lC);
+		
+		return myTab;
+	}
+	
 	/** 
 	 * Gets a ClassName class from its description
 	 * @param name
@@ -475,19 +595,19 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		return this.connection.findObjectPK(new ClassName(name));
 	}
 	
-	private ElementTypeEdu getElType(String compName) {
-		ElementTypeEdu myComp=ElementTypeEdu.FORM;
-		String compType=comp.trim().substring(0, 3).toLowerCase();
+	private ElementTypeEdu getElType(String comp) {
+		ElementTypeEdu myType=ElementTypeEdu.FORM;
+		String compType=comp.trim().substring(0, 2).toLowerCase();
 		switch (compType) {
-    		case "pnl":	myComp = ElementTypeEdu.PANEL;     break;
-    		case "lpn":	myComp = ElementTypeEdu.LISTPANEL; break;
-    		case "tab":	myComp = ElementTypeEdu.TAB;       break;
-    	   	case "fld":	myComp = ElementTypeEdu.FIELD;     break;
-    	   	default:    myComp=  ElementTypeEdu.FORM;      break;
-    
-		return myComp;
-		
+			case "p_":	myType = ElementTypeEdu.PANEL;     break;
+			case "l_":	myType = ElementTypeEdu.LISTPANEL; break;
+    		case "t_":	myType = ElementTypeEdu.TAB;       break;
+    	   	case "f_":	myType = ElementTypeEdu.FIELD;     break;
+    	   	default:    myType=  ElementTypeEdu.FORM;      break;
+		}
+		return myType;
 	}
+	
 		
 	/**
 	 * Get a Component at a grid position x,y
@@ -496,23 +616,23 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	 * @param y
 	 */
 	private YVwComponent getComponent(String comp, byte row, byte col) {
-		
 		YVwComponent myComp=null;
-		String compType=comp.trim().substring(0, 3).toLowerCase();
-		switch (compType) {
-        	case "pnl":	myComp = getVwPanel(comp,row,col);     break;
-        	case "lpn":	myComp = getVwListPanel(comp,row,col); break;
-        	case "tab":	myComp = getVwTabGroup(comp,row,col);  break;
-        	case "fld":	myComp = getVwField(comp,row,col);     break;
+		ElementTypeEdu elType=getElType(comp);
+		switch (elType) {
+        	case PANEL:	myComp = getVwPanel(comp,row,col);     break;
+        	case LISTPANEL:	myComp = getVwListPanel(comp,row,col); break;
+        	case TAB:	myComp = getVwTabGroup(comp,row,col);  break;
+        	case FIELD:	myComp = getVwField(comp,row,col);     break;
         	default:
-                throw new IllegalArgumentException("Invalid component type: " + compType); break;
+                throw new IllegalArgumentException("Invalid component type: " + elType); 
         }
 		return myComp;
 	}
 	
 	
-	private List<YVwEvent> getEvents (String compName, ElementTypeEdu elType ) {
+	private List<YVwEvent> getEvents (String compName) {
 		List<YAMLVwEvent> lstYamE=null;
+		ElementTypeEdu elType=getElType(compName);
 		switch (elType) {
 			case FORM:      lstYamE=this.getFormEvents();              break;
 			case PANEL:     lstYamE=this.getPanelEvents(compName);     break;
@@ -546,8 +666,9 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	}
 	
 
-	private List<YVwAction> getActions (String compName, ElementTypeEdu elType ) {
+	private List<YVwAction> getActions (String compName) {
 		List<YAMLVwAction> lstYamA=null;
+		ElementTypeEdu elType=getElType(compName);
 		switch (elType) {
 			case FORM:      lstYamA=this.getFormActions();              break;
 			case PANEL:     lstYamA=this.getPanelActions(compName);     break;
@@ -582,6 +703,14 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		return myActions;
 		
 	}
+	/**
+	 * Assign other properties to field, got by annotations in the modeñ
+	 * @param yF
+	 */
+	private void setModelAttributes(YVwField yF) {
+		//Gets other properties obtained by annotations etc.
+	}
+	
 	
 	/******************************************************************
 	 * 10. ERROR CHECKING 
@@ -642,12 +771,12 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		
 	public static void main(String[] args) {
 		
-		YAMLControlLoad yc=null;
+		YAMLViewLoad yv=null;
 		//1. Read YAML File
-		InputStream in = YAMLUtilsEdu.class.getResourceAsStream("/data/Application.yaml");
+		InputStream in = YAMLUtilsEdu.class.getResourceAsStream("/view/prova.yaml");
 		try {
-			yc = YAMLUtilsEdu.YAMLFileToObject(in, YAMLControlLoad.class);
-			System.out.println(yc.toString());
+			yv = YAMLUtilsEdu.YAMLFileToObject(in, YAMLViewLoad.class);
+			System.out.println(yv.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

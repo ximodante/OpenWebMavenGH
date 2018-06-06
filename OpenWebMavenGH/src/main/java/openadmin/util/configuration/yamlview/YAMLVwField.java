@@ -17,6 +17,12 @@ public class YAMLVwField  implements IYAMLElement<String>,  Serializable{
 	private String name=null;  
 	
 	@Getter @Setter
+	private String klass=null;  
+	
+	@Getter @Setter
+	private String attribute=null;  
+	
+	@Getter @Setter
 	private EditorTypeEdu editor= null; 
 	
 	public static void main(String[] args) {
