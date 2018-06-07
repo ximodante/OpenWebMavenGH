@@ -39,7 +39,6 @@ import openadmin.model.yamlview.YVwPanel;
 import openadmin.model.yamlview.YVwTabElement;
 import openadmin.model.yamlview.YVwTabGroup;
 import openadmin.model.yamlview.YVwView;
-import openadmin.util.configuration.yaml.YAMLUser;
 import openadmin.util.edu.CollectionUtilsEdu;
 import openadmin.util.edu.YAMLUtilsEdu;
 
@@ -183,6 +182,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		*/	
 					
 			//5. Delete old configuration
+		    /*
 			connection.deleteOlderThan(ActionViewRole.class, myDate);
 			connection.deleteOlderThan(Access.class        , myDate);
 			connection.deleteOlderThan(Program.class       , myDate);
@@ -192,7 +192,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 			connection.deleteOlderThan(Action.class        , myDate);
 			connection.deleteOlderThan(MenuItem.class      , myDate);
 			connection.deleteOlderThan(ClassName.class     , myDate);
-			
+			*/
 			
 			/**
 			
@@ -781,7 +781,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 			e.printStackTrace();
 		}
 		
-		
+		/*****
 		//2. Display sets
 		System.out.println("Displaying Roles...........");
 		for (String s1: yc.getRoleNames()) System.out.println(s1);
@@ -798,7 +798,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		//4.- Load Control data
 		yc.Init();
 		System.out.println(yc.toString());
-
+	    *****/
 	}
 
 }

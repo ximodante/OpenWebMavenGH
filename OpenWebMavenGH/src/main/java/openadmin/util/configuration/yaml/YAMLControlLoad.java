@@ -128,6 +128,7 @@ public class YAMLControlLoad implements Serializable{
 				//roleNames.add(sRol.trim().toLowerCase());
 				for (String sProg: ymlRol.getPrograms()) {
 					roleNames.add(this.getRoleDescription(sRol, sProg));
+					//System.out.println("ROLES:"+ this.getRoleDescription(sRol, sProg));
 				}
 		}	}
 		return roleNames;
@@ -235,11 +236,19 @@ public class YAMLControlLoad implements Serializable{
 		*/
 	}
 
-	// 2.-1 Set estimated Roles to an Action
-	private void setEstimatedRoles(YAMLAction ymlAct) {
-		if(ymlAct.getEstimatedRoles()==null || ymlAct.getEstimatedRoles().size()<1) 
-			ymlAct.setEstimatedRoles(this.cRoleGroups.get(ymlAct.getRoleGroup()));
-	}
+	// 2.-1 Set estimated Roles to an Action (Knowing th program name)
+	private void setEstimatedRoles(YAMLAction ymlAct, String programName) {
+		
+		if(ymlAct.getEstimatedRoles()==null || ymlAct.getEstimatedRoles().size()<1) {
+			List<String>lRol=new ArrayList<>();
+			System.out.println("Action:"+ymlAct.getName());
+			System.out.println("      Action Role Group:"+ymlAct.getRoleGroup());
+			if (ymlAct.getRoleGroup()!=null && ymlAct.getRoleGroup().trim().length()>1) {
+				for(String rName:this.cRoleGroups.get(ymlAct.getRoleGroup())) 
+					lRol.add(this.getRoleDescription(rName, programName));
+				ymlAct.setEstimatedRoles(lRol);
+	}	}	}
+	
 	
 	//2.0 Get list of role names of a RoleGroup
 	private HashMap<String,List<String>> getRolesFromRoleGroup() {
@@ -334,15 +343,20 @@ public class YAMLControlLoad implements Serializable{
 									myAcc.setUser(this.cUsers.get(sUser));
 									//myAcc.setRole(this.cRoles.get(myProg.getDescription().trim().toLowerCase()+"."+ymlAllow.getRole().trim().toUpperCase()));
 									//myAcc.setRole(this.cRoles.get(ymlAllow.getRole().trim().toUpperCase() + "." + ymlProg.getName().trim().toLowerCase()));
-									myAcc.setRole(this.cRoles.get(this.getRoleDescription(ymlAllow.getRole(), ymlProg.getName())));
-									myAcc.setDescription("");
-									System.out.println("------ACCESS: EntityAdm:" + myEnt.getDescription() + " - User:" + sUser + " - Program:"+ myProg.getDescription() + " - Role:"+ ymlAllow.getRole());
-									this.cAccesses.add(this.connection.persist(myAcc));
 									
+									//if the role exists for this program, this Access will be persisted
+									Role role=this.cRoles.get(this.getRoleDescription(ymlAllow.getRole(), ymlProg.getName()));
+									if (role!=null) {
+										myAcc.setRole(role);
+										myAcc.setDescription("");
+										System.out.println("------ACCESS: EntityAdm:" + myEnt.getDescription() + " - User:" + sUser + " - Program:"+ myProg.getDescription() + " - Role:"+ ymlAllow.getRole());
+										this.cAccesses.add(this.connection.persist(myAcc));
+									}
+									else  System.out.println("------NOT PERSISTING ACCESS: EntityAdm:" + myEnt.getDescription() + " - User:" + sUser + " - Program:"+ myProg.getDescription() + " - Role:"+ ymlAllow.getRole() + " This role does not exist!!!.");
 		
 		
 				
-	}	}	}	}	}	}	}	}
+	}	}	}	}	}	}	}	}	
 	
 	
 	// 2.4 MenuItems & ClassNames & Actions
@@ -451,7 +465,7 @@ public class YAMLControlLoad implements Serializable{
 		//Add other actions
 		if (ymlMenu.getActions() != null) {
 			for (YAMLAction ymlAct: ymlMenu.getActions()) {
-				this.setEstimatedRoles(ymlAct);
+				this.setEstimatedRoles(ymlAct,this.defaultProgram);
 				myParentRoles=this.setMyActions(ymlAct, myClass, myMenu, myParentRoles, false);
 		}	}
 		return myParentRoles;
@@ -462,7 +476,7 @@ public class YAMLControlLoad implements Serializable{
 		if (ymlMenu.isDefaultActions()) {
 			if (this.getDefaultActions() != null) {
 				for (YAMLAction ymlAct: this.getDefaultActions() ) {
-					this.setEstimatedRoles(ymlAct);
+					this.setEstimatedRoles(ymlAct,this.defaultProgram);
 					myParentRoles=this.setMyActions(ymlAct, myClass, myMenu, myParentRoles ,true);
 		}	}	}	
 		return myParentRoles;
@@ -488,7 +502,7 @@ public class YAMLControlLoad implements Serializable{
 		}
 		
 		// Add ActionViewRole
-		this.setEstimatedRoles(ymlAct);
+		this.setEstimatedRoles(ymlAct,this.defaultProgram);
 		//if (ymlAct.getRoles() != null) {
 		if (ymlAct.getEstimatedRoles() != null) {
 			//for (String sRole: ymlAct.getRoles()) {
@@ -496,8 +510,11 @@ public class YAMLControlLoad implements Serializable{
 				//String roleDesc=this.defaultProgram +"."+ sRole.trim().toUpperCase();
 				//String roleDesc=sRole.trim().toUpperCase();
 				//String roleDesc=sRole.trim().toUpperCase() + "." + this.defaultProgram.trim().toLowerCase();
-				String roleDesc=this.getRoleDescription(sRole, this.defaultProgram);
-				Role myRole=this.cRoles.get(roleDesc);
+				//String roleDesc=this.getRoleDescription(sRole, this.defaultProgram);
+				
+				//Only persist actionViewRole if the role exists!!!!
+				//Role myRole=this.cRoles.get(roleDesc);
+				Role myRole=this.cRoles.get(sRole);
 				// If the role exists for this program
 				if (myRole!=null) {
 					ActionViewRole myAVR = new ActionViewRole();
@@ -547,10 +564,7 @@ public class YAMLControlLoad implements Serializable{
 					str[1]=sProgram;
 					if (mySet.add(str)==false)
 						myErrors=myErrors + "\n" + "->Duplicated Rol:" + sRol + "-" + sProgram; 
-				}
-			}
-			
-		}
+		}	}	}
 		return myErrors;
 	}
 	
@@ -627,7 +641,7 @@ public class YAMLControlLoad implements Serializable{
 		if (this.defaultActions!=null) {
 			for( YAMLAction action: this.defaultActions) {
 				Set<String> mySet= new HashSet<String>();
-				this.setEstimatedRoles(action);
+				this.setEstimatedRoles(action,this.defaultProgram);
 				//for (String sRol: action.getRoles()) {
 				for (String sRol: action.getEstimatedRoles()) {
 					String name= sRol.trim().toLowerCase();
@@ -652,8 +666,10 @@ public class YAMLControlLoad implements Serializable{
 			for (YAMLProgram ymlProg: ymlEnt.getPrograms()) {
 				for (YAMLAllowed ymlAllow: ymlProg.getAlloweds()) {
 					//if (! mySet.contains(ymlAllow.getRole().trim().toLowerCase()))
-					if (! mySet.contains(this.getRoleDescription(ymlAllow.getRole(), ymlProg.getName())))
-							myErrors=myErrors + "\n" + "->Rol in Program in EntityAdm NOT defined in Roles:" + ymlEnt.getName() + "-" + ymlProg.getName() + "-" + ymlAllow.getRole();
+					String roleName=this.getRoleDescription(ymlAllow.getRole(), ymlProg.getName());
+					boolean isRolePresent = mySet.contains(roleName);
+					//System.out.println("Verifying Role: " + roleName + " is present:" + isRolePresent);
+					if (! isRolePresent) myErrors=myErrors + "\n" + "->Rol in Program in EntityAdm NOT defined in Roles:" + ymlEnt.getName() + "-" + ymlProg.getName() + "-" + ymlAllow.getRole();
 					
 				}	
 			}
@@ -672,7 +688,7 @@ public class YAMLControlLoad implements Serializable{
 		Set<String> mySet= this.getSimpleRoleNames();
 		if (this.defaultActions !=null) { 
 			for (YAMLAction ymlAct: this.defaultActions) {
-				this.setEstimatedRoles(ymlAct);
+				this.setEstimatedRoles(ymlAct,this.defaultProgram);
 				//for (String sRol: ymlAct.getRoles()) {
 				for (String sRol: ymlAct.getEstimatedRoles()) {
 					// Verify only in simple names of roles
@@ -726,7 +742,7 @@ public class YAMLControlLoad implements Serializable{
 			for (YAMLMenuItem ymlMenu: lMenuItems) {
 				if (ymlMenu.getActions() !=null) {
 					for (YAMLAction ymlAction: ymlMenu.getActions()) {
-						this.setEstimatedRoles(ymlAction);
+						this.setEstimatedRoles(ymlAction,this.defaultProgram);
 						//for (String sRol:ymlAction.getRoles()) {
 						for (String sRol:ymlAction.getEstimatedRoles()) {	
 							if (! roleSet.contains(sRol.trim().toLowerCase())) 
@@ -760,82 +776,97 @@ public class YAMLControlLoad implements Serializable{
 	 * @return
 	 */
 	private String getRoleDescription(String simpleRoleName, String programName) {
-		return simpleRoleName.trim().toUpperCase()+ "." + programName.trim().toLowerCase();
+		//return simpleRoleName.trim().toUpperCase()+ "." + programName.trim().toLowerCase();
+		return simpleRoleName.trim().toLowerCase()+ "." + programName.trim().toLowerCase();
 	}
 	
 	public String checkErrors(boolean verbose) {
+		if (this.cRoleGroups==null) this.cRoleGroups =this.getRolesFromRoleGroup();
 		String s="";
 		if (verbose) s=s+
 			"======================================================\n" +
 			"1. Duplicated Users:\n" + 
 			"======================================================\n";
-		this.DuplicatedUsers(s);
+		s=this.DuplicatedUsers(s);
 		
 		if (verbose) s=s + "\n\n" + 
 			"======================================================\n" +
 			"2. Duplicated Roles:\n" + 
 			"======================================================\n";
-		this.DuplicatedRoles(s);
+		s=this.DuplicatedRoles(s);
 		
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
 			"3. Duplicated EntityAdm:\n" + 
 			"======================================================\n";
-		this.DuplicatedEntities(s);
+		s=this.DuplicatedEntities(s);
 			
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
 			"4. Duplicated EntityProgram:\n" + 
 			"======================================================\n";
-		this.DuplicatedEntityProgram(s);
+		s=this.DuplicatedEntityProgram(s);
 			
 		
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
 			"5. Duplicated EntityProgramUser:\n" + 
 			"======================================================\n";
-		this.DuplicatedEntityProgramUser(s);
+		s=this.DuplicatedEntityProgramUser(s);
 			
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
 			"6. Duplicated DefaultAction:\n" + 
 			"======================================================\n";
-		this.DuplicatedDefaultAction(s);
+		s=this.DuplicatedDefaultAction(s);
 			
 		
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
 			"7. Duplicated DefaultActionRole:\n" + 
 			"======================================================\n";
-		this.DuplicatedDefaultActionRole(s);
+		s=this.DuplicatedDefaultActionRole(s);
 			
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
 			"8. NoEntityProgramRole:\n" + 
 			"======================================================\n";
-		this.NoEntityProgramRole(s);
+		s=this.NoEntityProgramRole(s);
 		
-		if (verbose) s= s + "\n\n" + 
-			"======================================================\n" +
-			"9. NoDefaultActionRole:\n" + 
-			"======================================================\n";
-		this.NoDefaultActionRole(s);
+		//if (verbose) s= s + "\n\n" + 
+		//	"======================================================\n" +
+		//	"9. NoDefaultActionRole:\n" + 
+		//	"======================================================\n";
+		//s=this.NoDefaultActionRole(s);
 			
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
 			"10. NoMenuItemProgram:\n" + 
 			"======================================================\n";
-		this.NoMenuItemProgram(s);
+		s=this.NoMenuItemProgram(s);
 			
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
 			"11. NoMenuItemActionRole:\n" + 
 			"======================================================\n";
-		this.NoMenuItemActionRole(s);
+		s=this.NoMenuItemActionRole(s);
 			
 		return s;
 	}	
 	
+	public String checkWarnings(boolean verbose) {
+		if (this.cRoleGroups==null) this.cRoleGroups =this.getRolesFromRoleGroup();
+		String s="";
+		
+		if (verbose) s= s + "\n\n" + 
+			"======================================================\n" +
+			"9. NoDefaultActionRole:\n" + 
+			"======================================================\n";
+		s=this.NoDefaultActionRole(s);
+			
+			
+		return s;
+	}
 		
 	public static void main(String[] args) {
 		

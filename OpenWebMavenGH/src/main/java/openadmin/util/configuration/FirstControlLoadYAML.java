@@ -61,10 +61,16 @@ public class FirstControlLoadYAML {
 			e.printStackTrace();
 		}
 		
-		if (yc.checkErrors(false).trim().length()>10)
+		if (yc.checkErrors(false).trim().length()>10) {
 			System.out.println(yc.checkErrors(true));
+		    System.out.println(yc.checkWarnings(true));
+		}
 		else {
-		
+			
+			// Show warnings
+			if (yc.checkWarnings(false).trim().length()>10) 
+			    System.out.println(yc.checkWarnings(true));
+			
 		//2. Open BD Connection	
 			LangTypeEdu langType = new LangTypeEdu();
 			langType.changeMessageLog(TypeLanguages.es);
