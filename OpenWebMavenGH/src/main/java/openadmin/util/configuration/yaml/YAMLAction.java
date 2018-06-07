@@ -36,6 +36,10 @@ public class YAMLAction implements Serializable{
 	@Getter @Setter
 	private String roleGroup= null;        // Roles
 	
+	//2018/06/06 added
+	@Getter @Setter
+	private List<String> estimatedRoles= null;        // Roles calculated from roleGroup
+	
 
 
 }

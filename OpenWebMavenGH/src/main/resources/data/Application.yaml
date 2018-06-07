@@ -28,8 +28,8 @@ users:
 #  Only these roles are available for there programs
 roles:    # Combination of applications and roles 
   - { names: [admin],                        programs: [ control] }
-  - { names: [admin, del, edit, new, look],  programs: [ policia,  tercers, vehicles ] }
-  - { names: [look],                         programs: [ tercers] } 
+  - { names: [admin, del, edit, new],        programs: [ policia,  tercers, vehicles ] }
+  - { names: [look],                         programs: [ control,  tercers] } 
 #---------------------------------------------------------------------------------------------  
 # 5. ACCESS to programs in entities                        
 entities: 

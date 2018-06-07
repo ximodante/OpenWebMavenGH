@@ -15,9 +15,9 @@ import java.util.TreeSet;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import openadmin.dao.operation.DaoJpaEdu;
+
 import openadmin.dao.operation.DaoOperationFacadeEdu;
-import openadmin.model.Base;
+
 import openadmin.model.control.Access;
 import openadmin.model.control.Action;
 import openadmin.model.control.ActionViewRole;
@@ -27,10 +27,10 @@ import openadmin.model.control.MenuItem;
 import openadmin.model.control.Program;
 import openadmin.model.control.Role;
 import openadmin.model.control.User;
-import openadmin.util.configuration.TypeLanguages;
+
 import openadmin.util.configuration.yamlview.YAMLVwRoleGroup;
 import openadmin.util.edu.YAMLUtilsEdu;
-import openadmin.util.lang.LangTypeEdu;
+
 
 /**
  * Transforms a YAML file
@@ -99,6 +99,9 @@ public class YAMLControlLoad implements Serializable{
 	@Getter
 	private HashMap<String,ActionViewRole> cActionViewRoles=null;
 	
+	@Getter
+	private HashMap<String,List<String>> cRoleGroups=null;
+	
 	private String defaultProgram="control";
 	
 	private Integer orden=1;
@@ -143,6 +146,7 @@ public class YAMLControlLoad implements Serializable{
 		return roleNames;
 	}
 	
+		
 	
 	/**
 	 * Get all Program Names
@@ -169,11 +173,12 @@ public class YAMLControlLoad implements Serializable{
 		return classNames;
 	}
 	
-	public Set<String> getClassNames() {
+	private Set<String> getClassNames() {
 		Set<String> classNames= new HashSet<String>();
 		classNames=getClassNamesPriv(classNames, this.menuItems);
 		return classNames;
 	}
+	
 	
 	
 	
@@ -198,16 +203,19 @@ public class YAMLControlLoad implements Serializable{
 		//2. Roles
 		this.cRoles=this.getControlRoles();
 		
-		//3. Entity & Program & Access
+		//3. Role Groups
+		this.cRoleGroups =this.getRolesFromRoleGroup();
+		
+		//4. Entity & Program & Access
 		this.EntityAdmProgramAccess();
 		
 		
-		//4. MenuItems & ClassName & Action
+		//5. MenuItems & ClassName & Action
 		this.MenuItemsClassNameActions();
 		
 		
 				
-		//5. Delete old configuration
+		//6. Delete old configuration
 		connection.deleteOlderThan(ActionViewRole.class, myDate);
 		connection.deleteOlderThan(Access.class        , myDate);
 		connection.deleteOlderThan(Program.class       , myDate);
@@ -225,6 +233,22 @@ public class YAMLControlLoad implements Serializable{
 		connection.commit();
 		connection.finalize();
 		*/
+	}
+
+	// 2.-1 Set estimated Roles to an Action
+	private void setEstimatedRoles(YAMLAction ymlAct) {
+		if(ymlAct.getEstimatedRoles()==null || ymlAct.getEstimatedRoles().size()<1) 
+			ymlAct.setEstimatedRoles(this.cRoleGroups.get(ymlAct.getRoleGroup()));
+	}
+	
+	//2.0 Get list of role names of a RoleGroup
+	private HashMap<String,List<String>> getRolesFromRoleGroup() {
+		HashMap<String,List<String>>lRoles=new HashMap<String,List<String>>();
+		if(this.roleGroups !=null) {
+			for (YAMLVwRoleGroup ymlRoleG : this.roleGroups) {
+				lRoles.put(ymlRoleG.getName(),ymlRoleG.getRoles());
+		}	}
+		return lRoles;
 	}
 	
 	//2.1 Control Users -_> ja està
@@ -383,7 +407,8 @@ public class YAMLControlLoad implements Serializable{
 		YAMLAction ymlAct=new YAMLAction();
 		ymlAct.setName("submenu");
 		ymlAct.setGroup(0); // No matter the group value as there is only 1 action
-		ymlAct.setRoles(lRol);
+		//ymlAct.setRoles(lRol);
+		ymlAct.setEstimatedRoles(lRol);
 		myParentRoles= this.setMyActions(ymlAct, myClass, myMenu, myParentRoles, false);
 		
 		return myParentRoles;
@@ -426,6 +451,7 @@ public class YAMLControlLoad implements Serializable{
 		//Add other actions
 		if (ymlMenu.getActions() != null) {
 			for (YAMLAction ymlAct: ymlMenu.getActions()) {
+				this.setEstimatedRoles(ymlAct);
 				myParentRoles=this.setMyActions(ymlAct, myClass, myMenu, myParentRoles, false);
 		}	}
 		return myParentRoles;
@@ -436,6 +462,7 @@ public class YAMLControlLoad implements Serializable{
 		if (ymlMenu.isDefaultActions()) {
 			if (this.getDefaultActions() != null) {
 				for (YAMLAction ymlAct: this.getDefaultActions() ) {
+					this.setEstimatedRoles(ymlAct);
 					myParentRoles=this.setMyActions(ymlAct, myClass, myMenu, myParentRoles ,true);
 		}	}	}	
 		return myParentRoles;
@@ -461,8 +488,11 @@ public class YAMLControlLoad implements Serializable{
 		}
 		
 		// Add ActionViewRole
-		if (ymlAct.getRoles() != null) {
-			for (String sRole: ymlAct.getRoles()) {
+		this.setEstimatedRoles(ymlAct);
+		//if (ymlAct.getRoles() != null) {
+		if (ymlAct.getEstimatedRoles() != null) {
+			//for (String sRole: ymlAct.getRoles()) {
+			for (String sRole: ymlAct.getEstimatedRoles()) {
 				//String roleDesc=this.defaultProgram +"."+ sRole.trim().toUpperCase();
 				//String roleDesc=sRole.trim().toUpperCase();
 				//String roleDesc=sRole.trim().toUpperCase() + "." + this.defaultProgram.trim().toLowerCase();
@@ -581,6 +611,7 @@ public class YAMLControlLoad implements Serializable{
 	public String DuplicatedDefaultAction(String myErrors) {
 		Set<String> mySet= new HashSet<String>();
 		for( YAMLAction action: this.defaultActions) {
+			//this.setEstimatedRoles(action);
 			String name=action.getName().trim().toLowerCase();
 			if (mySet.add(name)==false) 
 				myErrors=myErrors + "\n" + "->Duplicated DefaultAction:" + name;
@@ -596,7 +627,9 @@ public class YAMLControlLoad implements Serializable{
 		if (this.defaultActions!=null) {
 			for( YAMLAction action: this.defaultActions) {
 				Set<String> mySet= new HashSet<String>();
-				for (String sRol: action.getRoles()) {
+				this.setEstimatedRoles(action);
+				//for (String sRol: action.getRoles()) {
+				for (String sRol: action.getEstimatedRoles()) {
 					String name= sRol.trim().toLowerCase();
 					if (mySet.add(name)==false) 
 						myErrors=myErrors + "\n" + "->Duplicated DefaultAction Role:" + action.getName() + "-" + sRol;
@@ -639,7 +672,9 @@ public class YAMLControlLoad implements Serializable{
 		Set<String> mySet= this.getSimpleRoleNames();
 		if (this.defaultActions !=null) { 
 			for (YAMLAction ymlAct: this.defaultActions) {
-				for (String sRol: ymlAct.getRoles()) {
+				this.setEstimatedRoles(ymlAct);
+				//for (String sRol: ymlAct.getRoles()) {
+				for (String sRol: ymlAct.getEstimatedRoles()) {
 					// Verify only in simple names of roles
 					if (! mySet.contains(sRol.trim().toLowerCase()))
 						myErrors=myErrors + "\n" + "->Role in DefaultActions NOT defined in Roles:" + 
@@ -691,7 +726,9 @@ public class YAMLControlLoad implements Serializable{
 			for (YAMLMenuItem ymlMenu: lMenuItems) {
 				if (ymlMenu.getActions() !=null) {
 					for (YAMLAction ymlAction: ymlMenu.getActions()) {
-						for (String sRol:ymlAction.getRoles()) {
+						this.setEstimatedRoles(ymlAction);
+						//for (String sRol:ymlAction.getRoles()) {
+						for (String sRol:ymlAction.getEstimatedRoles()) {	
 							if (! roleSet.contains(sRol.trim().toLowerCase())) 
 								myErrors=myErrors + "\n" + "->Roles in Actions in MenuItems NOT defined in Roles:" + 
 										ymlMenu.getDescription() +"-" + ymlMenu.getClassName() +  "-" + 
