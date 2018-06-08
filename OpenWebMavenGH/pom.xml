@@ -19,6 +19,10 @@
     <maven.compiler.target>10</maven.compiler.target>
     
     <hibernate.version>5.2.16.Final</hibernate.version>
+    <jaxb.version>2.3.0</jaxb.version>
+    <activation.version>1.2.0</activation.version>
+    <jackson.version>2.9.5</jackson.version>
+    
   </properties>
   
   <dependencies>
@@ -34,16 +38,7 @@
 	  <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/temaestany.jar</systemPath>
     </dependency>
      
-    <!--  TOMCAT Servlet-api -->
-    <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-servlet-api -->
-    <!-- 
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-servlet-api</artifactId>
-      <version>9.0.1</version>
-    </dependency>
-    -->
-    
+        
     <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -62,7 +57,7 @@
     
     
        
-    <!--  JSF 2.3.3 OracleImplementation -->
+    <!-- 2018-03-29 JSF Mojarra 2.4.0 -->
     <!-- https://mvnrepository.com/artifact/org.glassfish/javax.faces -->
     <dependency>
       <groupId>org.glassfish</groupId>
@@ -86,25 +81,7 @@
       <version>1.0.10</version>
     </dependency>
 
-	<!-- https://mvnrepository.com/artifact/org.primefaces.themes/casablanca -->
-    <!-- 
-    <dependency>
-      <groupId>org.primefaces.themes</groupId>
-      <artifactId>casablanca</artifactId>
-      <version>1.0.10</version>
-    </dependency>
-	-->
-    
-    
-    <!-- https://mvnrepository.com/artifact/org.primefaces.extensions/all-themes -->
-    <!-- 
-    <dependency>
-      <groupId>org.primefaces.extensions</groupId>
-      <artifactId>all-themes</artifactId>
-      <version>1.0.8</version>
-      <type>pom</type>
-    </dependency>
-    -->    
+	
     <!-- Weld CDI for Tomcat with all dependencies included (does not fulfill all capabilities !!!) -->
     <dependency>
       <groupId>org.jboss.weld.servlet</groupId>
@@ -113,16 +90,7 @@
     </dependency>
     
         
-    <!-- Validation API Optional -->
-    <!-- 
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-      <version>2.0.0.Final</version>
-    </dependency>
-     -->
-         
-     
+       
     <!-- JPA & Postgres -->
     <!-- Javassist required by Hibernate in some computers -->
     <!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
@@ -157,6 +125,12 @@
       <scope>test</scope>
     </dependency>
     
+     <!-- Hibernate Bean Validator Optional -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>6.0.9.Final</version>
+    </dependency>  
     
     <!-- POSTGRES XUNGO!!!!!!! -->
     <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
@@ -166,21 +140,7 @@
       <version>42.2.2</version>
     </dependency>  
      
-    <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-    <!-- 
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>9.4.1211</version>
-    </dependency>
-    --> 
-    
-    <!-- Hibernate Bean Validator Optional -->
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>6.0.9.Final</version>
-    </dependency>  
+         
     
     <!--  Lombok for setters and getters -->
     <dependency>
@@ -251,66 +211,74 @@
     </dependency>
     
     <!--BEGIN Java 9 references to JEE  not included in JDK9-->
-    
+    <!-- 2017-07 JAXB API -->
     <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>2.3.0</version>
+      <version>${jaxb.version}</version>
     </dependency>
     
+    <!-- 2017-08 JAXB Implementation -->
     <!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl -->
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <version>2.3.0</version>
+      <version>${jaxb.version}</version>
     </dependency>
         
+    <!-- 2017-08 Old JAXB Core -->
     <!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-core -->
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-core</artifactId>
-      <version>2.3.0</version>
+      <version>${jaxb.version}</version>
     </dependency>
     
+    <!-- 2017-09-06 Activation API -->
     <!-- https://mvnrepository.com/artifact/javax.activation/javax.activation-api -->
     <dependency>
       <groupId>javax.activation</groupId>
       <artifactId>javax.activation-api</artifactId>
-      <version>1.2.0</version>
+      <version>${activation.version}</version>
     </dependency>
-    
-    
+
+    <!-- 2017-09-06 Activation Implementation -->
+    <!-- https://mvnrepository.com/artifact/com.sun.activation/javax.activation -->
+    <!-- antes no estava i funcionava -->
+    <dependency>
+      <groupId>com.sun.activation</groupId>
+      <artifactId>javax.activation</artifactId>
+      <version>${activation.version}</version>
+    </dependency>
+
     <!-- END Java 9 references to JEE  not included in JDK9-->
 
 
 
+
     <!-- YAML (and JSON And XML ) dependencies -->
+    <!-- 2018-03-26 Jackson Databind -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.9.5</version>
+      <version>${jackson.version}</version>
     </dependency>
     
+    <!-- 2018-03-26 Jackson Dataformat YAML -->
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>
-      <version>2.9.5</version>
+      <version>${jackson.version}</version>
     </dependency>
     
+    <!-- 2018-03-26 Jackson Dataformat XML -->
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-xml</artifactId>
-      <version>2.9.5</version>
+      <version>${jackson.version}</version>
     </dependency>
     
-    <!-- already included
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.7</version>
-    </dependency>
-    -->
     <!-- END YAML dependencies -->
     
 	<!--    
