@@ -243,7 +243,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	
 	
 	/******************************************************************
-	 * 4.2. HELPERS For getting children components information:
+	 * 4.2. HELPERS For getting children components information: 
 	 ******************************************************************/
 	
 	/******************************************************************
