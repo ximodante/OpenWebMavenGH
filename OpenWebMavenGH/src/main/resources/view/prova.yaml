@@ -6,7 +6,10 @@
 #     http://yaml.org/spec/1.2/spec.html
 #-------------------------------------------------------------------------------------------
 #
-#NOMENCLATURE:
+# IMPORTANT:
+#  A YAML Screen defined here, should be defined previously in a MenuItem that points to it.!!!!!
+#
+# NOMENCLATURE:
 #
 # a. Prefixes :
 #   p_ --> PANEL
@@ -21,6 +24,7 @@
 name: testView 
 description: View example
 klass: openadmin.model.control.Action
+program: control
 rsbundle: my_resource_bundle                      # Resource bundle for translation
 lines:                                            # Only panels, linePanels or tabs   
     - [ p_main           ]                        # 1 panel                 in 1 line

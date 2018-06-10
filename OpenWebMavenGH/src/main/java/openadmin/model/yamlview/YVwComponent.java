@@ -39,9 +39,12 @@ import openadmin.model.control.MenuItem;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "Component_Type")
+//@DiscriminatorColumn(name = "Component_Type")
 @Table(name = "yamlcomponent", schema = "control" , 
-       uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "nom", })//,
+       uniqueConstraints = { 
+    		   @UniqueConstraint(columnNames =  { "pare", "fila","columna" }),
+    		   @UniqueConstraint(columnNames =  { "pare", "nom" })
+       }
        //indexes = {@Index (name = "idx_usuari_entityadm", columnList = "usuari, entityAdm")})
 )
 @Audited
@@ -59,7 +62,7 @@ public class YVwComponent extends Audit implements Base, Serializable{
 	//the caption of a container or component)
 	@Getter @Setter
 	@Size(max = 25)
-	@JoinColumn(name = "nom", nullable= false)
+	@Column(name = "nom", nullable= false)
 	private String name=null; //
 	
 	@Getter @Setter
@@ -74,20 +77,23 @@ public class YVwComponent extends Audit implements Base, Serializable{
 	private ClassName className;
 	
 	@Getter @Setter
+	@Column(name= "fila") 
 	private byte row=0; // Or line
 	
 	@Getter @Setter
+	@Column(name= "columna")
 	private byte col=0; // Column or possition in a line
 	
 	@Getter @Setter
 	@ManyToOne
-	@JoinColumn(name="padre")
-	@NoSql
+	@JoinColumn(name="pare")
+	//@NoSql
 	private YVwComponent parent=null; // Parent component container
 	
 	@Getter @Setter
 	@OneToMany(
 		mappedBy = "parent", 
+		//mappedBy = "pare",
 	    cascade = CascadeType.ALL, 
 	    orphanRemoval = true
 	)
@@ -96,6 +102,7 @@ public class YVwComponent extends Audit implements Base, Serializable{
 	@Getter @Setter
 	@OneToMany(
 		mappedBy = "parent", 
+		//mappedBy = "pare",	
 	    cascade = CascadeType.ALL, 
 	    orphanRemoval = true
 	)

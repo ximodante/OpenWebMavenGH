@@ -181,7 +181,10 @@ public class YAMLControlLoad implements Serializable{
 	}
 	
 	
-	
+    private String favIcon(String favIconName) {
+    	if (favIconName.length()>1) return "fa " + favIconName;
+    	else return favIconName;
+    }
 	
 	// ======================================================
 	// 2. Control classes extraction and populate to DB
@@ -241,8 +244,8 @@ public class YAMLControlLoad implements Serializable{
 		
 		if(ymlAct.getEstimatedRoles()==null || ymlAct.getEstimatedRoles().size()<1) {
 			List<String>lRol=new ArrayList<>();
-			System.out.println("Action:"+ymlAct.getName());
-			System.out.println("      Action Role Group:"+ymlAct.getRoleGroup());
+			//System.out.println("Action:"+ymlAct.getName());
+			//System.out.println("      Action Role Group:"+ymlAct.getRoleGroup());
 			if (ymlAct.getRoleGroup()!=null && ymlAct.getRoleGroup().trim().length()>1) {
 				for(String rName:this.cRoleGroups.get(ymlAct.getRoleGroup())) 
 					lRol.add(this.getRoleDescription(rName, programName));
@@ -322,7 +325,7 @@ public class YAMLControlLoad implements Serializable{
 				// Add EntityAdm
 				EntityAdm myEnt=new EntityAdm(ymlEnt.getName().trim().toLowerCase());
 				myEnt.setConn(ymlEnt.getConn());
-				myEnt.setIcon(ymlEnt.getIcon());
+				myEnt.setIcon(this.favIcon(ymlEnt.getIcon()));
 				myEnt.setTheme(ymlEnt.getTheme());
 				this.cEntityAdms.put(myEnt.getDescription(), this.connection.persist(myEnt));
 				
@@ -331,7 +334,7 @@ public class YAMLControlLoad implements Serializable{
 						
 						// Add program
 						Program myProg=new Program (ymlProg.getName().trim().toLowerCase());
-						myProg.setIcon(ymlProg.getIcon());
+						myProg.setIcon(this.favIcon(ymlProg.getIcon()));
 						this.cPrograms.put(myProg.getDescription(), this.connection.persist(myProg));
 						
 						if(ymlProg.getAlloweds() !=null) {
@@ -349,7 +352,7 @@ public class YAMLControlLoad implements Serializable{
 									if (role!=null) {
 										myAcc.setRole(role);
 										myAcc.setDescription("");
-										System.out.println("------ACCESS: EntityAdm:" + myEnt.getDescription() + " - User:" + sUser + " - Program:"+ myProg.getDescription() + " - Role:"+ ymlAllow.getRole());
+										//System.out.println("------ACCESS: EntityAdm:" + myEnt.getDescription() + " - User:" + sUser + " - Program:"+ myProg.getDescription() + " - Role:"+ ymlAllow.getRole());
 										this.cAccesses.add(this.connection.persist(myAcc));
 									}
 									else  System.out.println("------NOT PERSISTING ACCESS: EntityAdm:" + myEnt.getDescription() + " - User:" + sUser + " - Program:"+ myProg.getDescription() + " - Role:"+ ymlAllow.getRole() + " This role does not exist!!!.");
@@ -394,12 +397,13 @@ public class YAMLControlLoad implements Serializable{
 		
 		// Add MenuItems
 		myMenu.setClassName(myClass);
-		myMenu.setIcon(ymlMenu.getIcon());
+		myMenu.setIcon(this.favIcon(ymlMenu.getIcon()));
 		myMenu.setParent(parent);
 		myMenu.setOrden(this.orden++);
 		myMenu.setType(ymlMenu.getNodeType());
 		myMenu.setDescription(ymlMenu.getDescription());
 		
+		//System.out.println("Submenu:"+ myMenu.getDescription());
 		this.cMenuItems.put(myMenu.getDescription(), this.connection.persist(myMenu));
 		
 		
@@ -446,15 +450,18 @@ public class YAMLControlLoad implements Serializable{
 			this.cClassNames.put(myClass.getDescription(), this.connection.persist(myClass));
 		}
 		
+		
 		// Add MenuItems
 		myMenu.setClassName(myClass);
-		myMenu.setIcon(ymlMenu.getIcon());
+		myMenu.setIcon(this.favIcon(ymlMenu.getIcon()));
 		myMenu.setParent(parent);
 		myMenu.setOrden(this.orden++);
 		myMenu.setType(ymlMenu.getNodeType());
 		myMenu.setDescription(ymlMenu.getDescription().trim());
 		
 		if (myMenu.getDescription().length()==0) myMenu.setDescription(myClass.getDescription());
+		
+		//System.out.println("   menu:"+ myMenu.getDescription());
 		this.cMenuItems.put(myMenu.getDescription(), this.connection.persist(myMenu));
 		
 		// Add default actions only if viewType is not action nor submenu
@@ -493,7 +500,7 @@ public class YAMLControlLoad implements Serializable{
 			myAct.setDescription((myClass.getDescription().trim() + "_" + ymlAct.getName()).trim().toLowerCase());
 			myAct.setClassName(myClass);
 			myAct.setGrup(ymlAct.getGroup());
-			myAct.setIcon(ymlAct.getIcon());
+			myAct.setIcon(this.favIcon(ymlAct.getIcon()));
 			
 			if (isDefaultAction) myAct.setType((byte)0); // Default action
 			else myAct.setType((byte)1);                 // Not default Action 
@@ -650,6 +657,31 @@ public class YAMLControlLoad implements Serializable{
 				}	
 			}
 		}	
+		return myErrors;
+	}
+	
+	/**
+	 * Detects duplicated menu Items description
+	 * @param myErrors
+	 * @return
+	 */
+	public String DuplicatedMenuItemDescriptions(String myErrors) {
+		Set<String> mySet= new HashSet<String>();
+		return getDupMenuItem(myErrors, this.menuItems, mySet,0);
+	}
+	
+	private String getDupMenuItem(String myErrors, List<YAMLMenuItem> myMenus, Set<String> mySet, int level) {
+		if (myMenus!=null) {	
+			
+			for( YAMLMenuItem myMenu: myMenus) {
+				String myDesc=myMenu.getDescription().trim().toLowerCase();
+				if (myDesc.length()==0) myDesc=myMenu.getClassSimpleName().toLowerCase();	
+				//System.out.println(""+level+" " + myDesc);
+				if (mySet.add(myDesc)==false) 
+					myErrors=myErrors + "\n" + "->Duplicated MenuItem Description:" +level + "--->"+ myDesc + "->" + myMenu.getClassName() + ":"+ myMenu.getDescription();
+				if (myMenu.getMenuItems()!=null)
+				myErrors=myErrors + getDupMenuItem(myErrors, myMenu.getMenuItems(), mySet, ++level);	
+		}	}	
 		return myErrors;
 	}
 	
@@ -850,6 +882,12 @@ public class YAMLControlLoad implements Serializable{
 			"11. NoMenuItemActionRole:\n" + 
 			"======================================================\n";
 		s=this.NoMenuItemActionRole(s);
+		
+		if (verbose) s= s + "\n\n" + 
+			"======================================================\n" +
+			"12. Duplicated Menu Items:\n" + 
+			"======================================================\n";
+		s=this.DuplicatedMenuItemDescriptions(s);
 			
 		return s;
 	}	

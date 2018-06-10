@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,7 +30,7 @@ import openadmin.model.control.ClassName;
 
 @Entity
 @Table(name = "yamlaction", schema = "control", 
-       uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "name" })//,
+       uniqueConstraints = @UniqueConstraint(columnNames =  { "pare", "descripcio" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
 @Audited
@@ -65,6 +66,7 @@ public class YVwAction extends Audit implements Base, Serializable{
 	private String method=null; //method from the class to execute
 		
 	@Getter @Setter
+	@ElementCollection
 	private List<String> lstAffectedIds=new ArrayList<String>(); // Ids of the the affected components
 	
 	@Getter @Setter

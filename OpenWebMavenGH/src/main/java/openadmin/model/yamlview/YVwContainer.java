@@ -20,9 +20,9 @@ import lombok.ToString;
 
 
 @Entity
-@Table(name = "yamlcontainer", schema = "control", 
-       uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "row","column" })//,
-       //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
+@Table(name = "yamlcontainer", schema = "control" //, 
+       //uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "row","column" },
+       //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")
 )
 @Audited
 @ToString @NoArgsConstructor @AllArgsConstructor

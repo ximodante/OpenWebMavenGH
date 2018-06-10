@@ -56,7 +56,20 @@ public class PFPanelMenuEdu implements Serializable {
 		 
 		 DefaultMenuItem item = new DefaultMenuItem(langType.msgGenerals(pMenuItem.getDescription())); 
 		 		 
-		 item.setIcon("ui-icon-newwin");
+		 //item.setIcon("ui-icon-newwin " + pMenuItem.getIcon());
+		 //item.setIcon( pMenuItem.getIcon()+ " fa fa-user");
+		 
+		 //item.setIcon(" <span class=\"fa-stack fa-2x\"> " +
+		 //                  " <i class=\"fas fa-camera fa-stack-1x\"></i> " + 
+		 //                  " <i class=\"fas fa-ban fa-stack-2x\" style=\"color:Tomato\"></i> " +  
+		 //              " </span>");
+		 //item.setIcon(" <i class=\"fas fa-camera fa-stack-1x\"></i> " + 
+		 //	  	      " <i class=\"fas fa-ban fa-stack-2x\" style=\"color:Tomato\"></i> ");
+		 
+		 //item.setIcon(" fas fa-camera fa-stack-1x " + 
+		 //	          " fas fa-ban fa-stack-2x ");
+	 
+		 item.setIcon( pMenuItem.getIcon());
 		 item.setId("ida" + pMenuItem.getDescription());
 		 item.setCommand("#{main.loadScreen(" + pMenuItem.getId() + ")}");
 		 item.setUpdate("form1:idContingut");

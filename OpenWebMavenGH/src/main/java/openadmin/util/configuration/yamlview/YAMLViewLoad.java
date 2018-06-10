@@ -7,8 +7,10 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import openadmin.dao.operation.DaoOperationFacadeEdu;
+import openadmin.model.Base;
 import openadmin.model.control.Access;
 import openadmin.model.control.Action;
 import openadmin.model.control.ActionViewRole;
@@ -63,7 +66,11 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	private String description=null; //Header of the view
 	
 	@Getter @Setter
-	private String klass=null; // Full name ofClass to display
+	private String klass=null; // Full name of Class to display
+	
+	@Getter @Setter
+	private String program=null; // Description of the program
+	
 	
 	@Getter @Setter
 	private String rsbundle=null; // Name of the resource bundle for i18n
@@ -125,6 +132,37 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	/************************************************************
 	 * 2. Helper structure
 	 ************************************************************/
+	/**
+	 * Fictitious Action View Role:
+	 * It only represents an instance containing:
+	 *   1. ClassName that points the component
+	 *   2. Action: A null fictitious action for yamlViews
+	 *   3. Role: each of the roles allowed to access this yaml window
+	 *   4. MenuItem (located by ClassName and type==4)
+	 * 	 
+	 **/
+	
+	private HashMap<String,ActionViewRole> cActionViewRoles=null;
+	
+	private Program myProgram=new Program();
+	
+	private MenuItem myMenuItem=new MenuItem();
+	
+	private ClassName myClassName= new ClassName();
+	
+	private Action myAction = new Action();
+	
+	//Roles the program myProgram can be accesses
+	private Map<String,Role> myProgramRoles = new HashMap<>();
+	
+	//Roles that can access this YAM VIEW
+	private Map<String, Role> myRoles = new HashMap<>();
+		
+	//RolesGroups that can access this YAM VIEW
+	private Set<String> myRoleGroups = new HashSet<>();
+	
+	
+	
 	@Setter
 	private DaoOperationFacadeEdu connection = null; 	
 	
@@ -166,8 +204,10 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		this.setViewInfo();
 		
 		// 3. for each line let's get the components
+		this.getControlInfo();
 		
-				
+		//4 Persist my fictitious action
+		this.connection.persist(myAction);		
 		/*
 		//2. Roles
 			this.cRoles=this.getControlRoles();
@@ -241,6 +281,66 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		 
 	}
 	
+	
+	private void getControlInfo() {
+		//1. Define the Classname
+		String myStr=StringUtils.substringAfterLast(this.klass, ".").trim();
+		myClassName.setDescription(myStr);
+		myClassName=this.connection.findObjectDescription(myClassName);
+		
+		myStr=StringUtils.substringBeforeLast(this.klass, ".").trim();
+		myClassName.setPack(myStr);
+		
+		//2. Define MenuItem
+		myMenuItem.setDescription(myClassName.getDescription());;
+		myMenuItem=this.connection.findObjectDescription(myMenuItem);
+		
+		//3. Define a fictitious action
+		myAction.setDescription(myClassName.getDescription().trim() + "_yamlview" );
+		myAction.setClassName(myClassName);
+		myAction.setGrup(0);  //No matter what group is!
+		myAction.setIcon("");
+		myAction.setType((byte)1); //Not a default action but doesn't matter
+		myAction=this.connection.persist(myAction);
+		
+		//4. Define program
+		myProgram.setDescription(this.program.trim().toLowerCase());
+		myProgram=this.connection.findObjectDescription(myProgram);
+		
+		//5. Get roles that access this program
+		myStr="SELECT e FROM Programa e " + 
+		      "WHERE e.description LIKE'%." + myProgram.getDescription() + "'";
+		
+		for(Base role: this.connection.findObjectPersonalized2(myStr))
+			myProgramRoles.put(StringUtils.substringBefore(role.getDescription(), "."),(Role) role);
+		
+		//6. Get roles that access this view
+		//6.1 Get Role Groups 
+		if (this.formActions !=null)      for (YAMLVwAction yA: formActions)      this.myRoleGroups.add(yA.getRoleGroup().toLowerCase());
+		if (this.panelActions !=null)     for (YAMLVwAction yA: panelActions)     this.myRoleGroups.add(yA.getRoleGroup().toLowerCase());
+		if (this.listPanelActions !=null) for (YAMLVwAction yA: listPanelActions) this.myRoleGroups.add(yA.getRoleGroup().toLowerCase());
+		if (this.tabActions !=null)       for (YAMLVwAction yA: tabActions)       this.myRoleGroups.add(yA.getRoleGroup().toLowerCase());
+		if (this.fieldActions !=null)     for (YAMLVwAction yA: fieldActions)     this.myRoleGroups.add(yA.getRoleGroup().toLowerCase());
+		
+		//6.2 Only get roles in role group that are allowed in this program
+		if (this.roleGroups != null) 
+			for (YAMLVwRoleGroup rGroup: this.roleGroups) 
+				if (this.myRoleGroups.contains(rGroup.getName().trim().toLowerCase())) 
+					if (rGroup.getRoles() != null) 
+						for(String sRole: rGroup.getRoles())  
+							if (this.myProgramRoles.containsKey(sRole) && ! this.myRoles.containsKey(sRole))  
+								this.myRoles.put(sRole, myProgramRoles.get(sRole));
+		
+		// 7. Generates Action view Role
+		for (Role role: this.myRoles.values()) {
+			ActionViewRole aVR=new ActionViewRole();
+			aVR.setAction(this.myAction);
+			aVR.setMenuItem(this.myMenuItem);
+			aVR.setRole(role);
+			aVR.setDescription("");
+			aVR=this.connection.persist(aVR);
+		}
+	}	
 	
 	/******************************************************************
 	 * 4.2. HELPERS For getting children components information: 
@@ -734,7 +834,63 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		return myErrors;
 	}
 	
+	// ClassName not found
+	public String ClassNameError(int counter, boolean verbose, String myErrors) {
+		if (verbose) myErrors = myErrors +
+				"\n\n" +
+				"======================================================\n" +
+				counter + ". ClassNameErrors :\n" + 
+				"======================================================\n";
+		String longName=myClassName.getPack() + "." + myClassName.getDescription();
+		if (! longName.equals(this.klass))
+			myErrors=myErrors + "\n" + "->No class matches " + this.klass + "<> " + longName;
+		return myErrors;
+	}
 	
+	// MenuItem not found
+	public String MenuItemError(int counter, boolean verbose, String myErrors) {
+		if (verbose) myErrors = myErrors +
+				"\n\n" +
+				"======================================================\n" +
+				counter + ". MenuItemErrors :\n" + 
+				"======================================================\n";
+		String sError="";
+		if (this.myMenuItem == null) sError= sError + "Not found menu item for description " + this.klass;
+		else if (this.myMenuItem.getType()!=4) sError= sError + "type<>4, ";
+		if (sError.length()>0)
+			myErrors=myErrors + "\n" + "->" + sError;
+		return myErrors;
+	}
+	
+	// Action not found
+	public String ActionError(int counter, boolean verbose, String myErrors) {
+		if (verbose) myErrors = myErrors +
+				"\n\n" +
+				"======================================================\n" +
+				counter + ". ActionErrors :\n" + 
+				"======================================================\n";
+		String sError="";
+		if (this.myAction == null) sError= sError + "Action not persisted" + this.klass;
+		else if (this.myMenuItem.getType()!=4) sError= sError + "type<>4, ";
+		if (sError.length()>0)
+			myErrors=myErrors + "\n" + "->" + sError;
+		return myErrors;
+	}
+	
+	// MenuItem not found
+		public String ProgramError(int counter, boolean verbose, String myErrors) {
+		if (verbose) myErrors = myErrors +
+				"\n\n" +
+				"======================================================\n" +
+				counter + ". ProgramErrors :\n" + 
+				"======================================================\n";
+		String sError="";
+		if (this.myProgram == null) sError= sError + "Not found program for description " + this.program;
+		if (sError.length()>0)
+			myErrors=myErrors + "\n" + "->" + sError;
+		return myErrors;
+	}
+		
 
 	public String checkErrors(boolean verbose) {
 		String myErrors="";
@@ -756,7 +912,12 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 			this.Duplicated(this.panelActions     ,"Panel Action"      ,i++,verbose, myErrors) +
 			this.Duplicated(this.listPanelActions ,"List Panel Action" ,i++,verbose, myErrors) +
 			this.Duplicated(this.tabActions       ,"Tab Action"        ,i++,verbose, myErrors) +		
-			this.Duplicated(this.fieldActions     ,"Field Action"      ,i++,verbose, myErrors);
+			this.Duplicated(this.fieldActions     ,"Field Action"      ,i++,verbose, myErrors) + 
+			
+			this.ClassNameError(i++, verbose, myErrors) +
+			this.MenuItemError (i++, verbose, myErrors) + 
+			this.ActionError   (i++, verbose, myErrors) + 
+			this.ProgramError  (i++, verbose, myErrors);
 		
 		/*	
 		if (verbose) myErrors= myErrors + "\n\n" + 

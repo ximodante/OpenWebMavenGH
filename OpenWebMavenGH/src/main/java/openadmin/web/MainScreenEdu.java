@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.component.html.HtmlOutputText;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -247,7 +246,7 @@ public class MainScreenEdu implements Serializable {
 			
 		//ReflectionField refl = new ReflectionField();
 		//T pObejectCopy = refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView()).getMetodo());
-		@SuppressWarnings("unchecked")
+		
 		T pObejectCopy = (T) ReflectionField.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView()).getMetodo());
 	
 		ctx.deleteView();

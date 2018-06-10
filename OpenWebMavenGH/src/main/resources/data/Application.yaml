@@ -93,7 +93,7 @@ menuItems:
   - { program: policia,  description: Police,                     icon: fa-gear,     type: submenu,
                #---------------------------------------------------------------------------------------------------------------------
                menuItems: [ { className: openadmin.model.police.Agent,           icon: fa-user,           } ,
-                            { className: openadmin.model.police.Vehicles,        icon: fa-car,            } ] }
+                            { className: openadmin.model.police.Vehicle,         icon: fa-car,            } ] }
   #----------------------------------------------------------------------------------------------------------------------------------
   - {                    description: Police_Interventions,                      icon: fa-calendar, type: submenu,     
                #---------------------------------------------------------------------------------------------------------------------
@@ -104,12 +104,12 @@ menuItems:
                                          #------------------------------------------------------------------------------------------             
                             } ] }
   #----------------------------------------------------------------------------------------------------------------------------------
-  - { program: tercers,  description: Persons,                                 icon: fa-gear,     type: submenu,
+  - { program: tercers,  description: Persons,                                   icon: fa-gear,     type: submenu,
                #---------------------------------------------------------------------------------------------------------------------
-               menuItems: [ { className: openadmin.model.tercer.Persona,         icon: fa-file,           defaultActions: true } ] } 
+               menuItems: [ { className: openadmin.model.tercer.Persona,         icon: fa-file,     type: yaml   } ] } 
    
   #----------------------------------------------------------------------------------------------------------------------------------
-  - { program: vehicles, description: Vehicles,                        icon: fa-gear,     type: submenu,
+  - { program: vehicles, description: Vehicles,                                  icon: fa-gear,     type: submenu,
                #---------------------------------------------------------------------------------------------------------------------
                menuItems: [ { className: openadmin.model.vehicle.Marca,          icon: fa-file,           defaultActions: true } ] } 
                 
