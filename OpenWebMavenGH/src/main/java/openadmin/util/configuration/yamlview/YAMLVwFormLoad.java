@@ -32,16 +32,17 @@ import openadmin.model.control.MenuItem;
 import openadmin.model.control.Program;
 import openadmin.model.control.Role;
 import openadmin.model.control.User;
-import openadmin.model.yamlview.ElementTypeEdu;
-import openadmin.model.yamlview.YVwAction;
-import openadmin.model.yamlview.YVwComponent;
-import openadmin.model.yamlview.YVwEvent;
-import openadmin.model.yamlview.YVwField;
-import openadmin.model.yamlview.YVwListPanel;
-import openadmin.model.yamlview.YVwPanel;
-import openadmin.model.yamlview.YVwTabElement;
-import openadmin.model.yamlview.YVwTabGroup;
-import openadmin.model.yamlview.YVwView;
+import openadmin.model.yamlform.ElementTypeEdu;
+import openadmin.model.yamlform.YVwAction;
+import openadmin.model.yamlform.YVwComponent;
+import openadmin.model.yamlform.YVwContainer;
+import openadmin.model.yamlform.YVwEvent;
+import openadmin.model.yamlform.YVwField;
+import openadmin.model.yamlform.YVwForm;
+import openadmin.model.yamlform.YVwListPanel;
+import openadmin.model.yamlform.YVwPanel;
+import openadmin.model.yamlform.YVwTabElement;
+import openadmin.model.yamlform.YVwTabGroup;
 import openadmin.util.edu.CollectionUtilsEdu;
 import openadmin.util.edu.YAMLUtilsEdu;
 
@@ -53,12 +54,14 @@ import openadmin.util.edu.YAMLUtilsEdu;
 @SuppressWarnings("serial")
 @NoArgsConstructor
 @ToString
-public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
+//public class YAMLFormLoad implements IYAMLElement<String>, Serializable{
+public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	
 	/************************************************************
 	 * 1. YAML File structure
 	 ************************************************************/
 	
+	/*
 	@Getter @Setter
 	private String name=null; //view name
 	
@@ -67,6 +70,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	
 	@Getter @Setter
 	private String klass=null; // Full name of Class to display
+	*/
 	
 	@Getter @Setter
 	private String program=null; // Description of the program
@@ -169,7 +173,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	/************************************************************
 	 * 3. Persistence Structure
 	 ************************************************************/
-	YVwView yView=new YVwView();
+	YVwForm yView=new YVwForm();
 	
 	/************************************************************
 	 * 4. METHODS
@@ -187,7 +191,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	// Also delete old configuration records from DB
 	// ======================================================
 	public void Init() throws IllegalAccessException, InvocationTargetException, RuntimeException, IntrospectionException {
-		LocalDateTime myDate = LocalDateTime.now();
+		//LocalDateTime myDate = LocalDateTime.now();
 			
 		/**
 		//0. open connection
@@ -200,46 +204,23 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		// 1. Set default values
 		this.setDefaultInfo();
 		
-		// 2. Set view info
+		// 3. Create Fictitious  Action and ActionviewRole to access the menuItem previously created
+		this.getControlInfo(true);
+		
+		
+		// 3. Transform YAML clas structure to DB structure
 		this.setViewInfo();
 		
-		// 3. for each line let's get the components
-		this.getControlInfo();
+		// 4. Persist 
+		this.yView= this.connection.persist(this.yView);
 		
-		//4 Persist my fictitious action
-		this.connection.persist(myAction);		
-		/*
-		//2. Roles
-			this.cRoles=this.getControlRoles();
-			
-			//3. Entity & Program & Access
-			this.EntityAdmProgramAccess();
-			
-			
-			//4. MenuItems & ClassName & Action
-			this.MenuItemsClassNameActions();
-			
-		*/	
-					
-			//5. Delete old configuration
-		    /*
-			connection.deleteOlderThan(ActionViewRole.class, myDate);
-			connection.deleteOlderThan(Access.class        , myDate);
-			connection.deleteOlderThan(Program.class       , myDate);
-			connection.deleteOlderThan(User.class          , myDate);
-			connection.deleteOlderThan(EntityAdm.class     , myDate);
-			connection.deleteOlderThan(Role.class          , myDate);
-			connection.deleteOlderThan(Action.class        , myDate);
-			connection.deleteOlderThan(MenuItem.class      , myDate);
-			connection.deleteOlderThan(ClassName.class     , myDate);
-			*/
-			
-			/**
-			
-			//5. Commit connection
-			connection.commit();
-			connection.finalize();
-			*/
+		
+		
+		/**
+		//5. Commit connection
+		connection.commit();
+		connection.finalize();
+		*/
 	}
 	// Procedures
 	
@@ -281,17 +262,20 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		 
 	}
 	
-	
-	private void getControlInfo() {
-		//1. Define the Classname
-		String myStr=StringUtils.substringAfterLast(this.klass, ".").trim();
+	/**
+	 * Retrieve and save information from model.control package
+	 * @param persist If true creates a new instance of Action and several of ActionViewRole
+	 */
+	private void getControlInfo(boolean persist) {
+		//1. Define the Classname. It must exists as it was declared in a menuitem
+		String myStr=StringUtils.substringAfterLast(this.getKlass(), ".").trim();
 		myClassName.setDescription(myStr);
 		myClassName=this.connection.findObjectDescription(myClassName);
 		
-		myStr=StringUtils.substringBeforeLast(this.klass, ".").trim();
+		myStr=StringUtils.substringBeforeLast(this.getKlass(), ".").trim();
 		myClassName.setPack(myStr);
 		
-		//2. Define MenuItem
+		//2. Define MenuItem. It must exists
 		myMenuItem.setDescription(myClassName.getDescription());;
 		myMenuItem=this.connection.findObjectDescription(myMenuItem);
 		
@@ -301,7 +285,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		myAction.setGrup(0);  //No matter what group is!
 		myAction.setIcon("");
 		myAction.setType((byte)1); //Not a default action but doesn't matter
-		myAction=this.connection.persist(myAction);
+		if (persist) myAction=this.connection.persist(myAction);
 		
 		//4. Define program
 		myProgram.setDescription(this.program.trim().toLowerCase());
@@ -338,7 +322,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 			aVR.setMenuItem(this.myMenuItem);
 			aVR.setRole(role);
 			aVR.setDescription("");
-			aVR=this.connection.persist(aVR);
+			if (persist) aVR=this.connection.persist(aVR);
 		}
 	}	
 	
@@ -499,14 +483,14 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	private void setViewInfo() {
 		this.yView.setRow((byte)-1);
 		this.yView.setCol((byte)-1);
-		this.yView.setName(this.name);
-		this.yView.setDescription(this.description);
+		this.yView.setName(this.getName());
+		this.yView.setDescription(this.getDescription());
 		this.yView.setParent(null);
 		this.yView.setRsbundle(this.rsbundle);
-		this.yView.setClassName(this.getClassName(this.klass));
+		this.yView.setClassName(this.getClassName(this.getKlass()));
 		this.yView.setLstActions(this.getActions(""));
 		this.yView.setLstEvents(this.getEvents(""));
-		this.yView.setChildren(this.getListComponents(this.lines));
+		this.yView.setChildren(this.getListComponents(this.lines, this.yView));
 	}
 	
 	/**
@@ -516,18 +500,23 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	 * @param y
 	 * @return
 	 */
-	private YVwPanel getVwPanel (String comp, byte row, byte col) {
+	private YVwPanel getVwPanel (String comp, byte row, byte col, YVwContainer myParent) {
 		YVwPanel yP= new YVwPanel();
 		YAMLVwPanel ymlP=this.getPanel(comp).get();
 		yP.setRow(row);
 		yP.setCol(col);
 		yP.setName(ymlP.getName());
 		yP.setDescription(ymlP.getDescription());
-		//yP.setParent(this.yView); // Not necessary. JPA manages this
-		yP.setClassName(this.yView.getClassName());
+		
+		//yTG.setParent(this.yView); // Not necessary. JPA manages this
+		yP.setParent(myParent); // Not necessary. JPA manages this
+								
+		if (ymlP.getKlass()==null) yP.setClassName(myParent.getClassName());
+		else yP.setClassName(this.getClassName(ymlP.getKlass()));
+		
 		yP.setLstActions(this.getActions(comp));
 		yP.setLstEvents(this.getEvents(comp));
-		yP.setChildren(this.getListComponents(ymlP.getLines()));
+		yP.setChildren(this.getListComponents(ymlP.getLines(), yP));
 		return yP;
 	}
 	
@@ -538,18 +527,24 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	 * @param y
 	 * @return
 	 */
-	private YVwListPanel getVwListPanel (String comp, byte row, byte col) {
+	private YVwListPanel getVwListPanel (String comp, byte row, byte col, YVwContainer myParent) {
 		YVwListPanel yP= new YVwListPanel();
 		YAMLVwListPanel ymlP=this.getListPanel(comp).get();
 		yP.setRow(row);
 		yP.setCol(col);
 		yP.setName(ymlP.getName());
 		yP.setDescription(ymlP.getDescription());
-		//yP.setParent(this.yView); // Not necessary. JPA manages this
-		yP.setClassName(this.getClassName(ymlP.getKlass()));
+		
+		//yTG.setParent(this.yView); // Not necessary. JPA manages this
+		yP.setParent(myParent); // Not necessary. JPA manages this
+						
+		if (ymlP.getKlass()==null) yP.setClassName(myParent.getClassName());
+		else yP.setClassName(this.getClassName(ymlP.getKlass()));
+		
+				
 		yP.setLstActions(this.getActions(comp));
 		yP.setLstEvents(this.getEvents(comp));
-		yP.setChildren(this.getListPanelComponents(ymlP.getFields()));
+		yP.setChildren(this.getListPanelComponents(ymlP.getFields(), myParent));
 		return yP;
 	}
 	
@@ -561,18 +556,24 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	 * @param y
 	 * @return
 	 */
-	private YVwTabGroup getVwTabGroup (String comp, byte row, byte col) {
+	private YVwTabGroup getVwTabGroup (String comp, byte row, byte col, YVwContainer myParent) {
 		YVwTabGroup yTG= new YVwTabGroup();
 		YAMLVwTab ymlT=this.getTab(comp).get();
 		yTG.setRow(row);
 		yTG.setCol(col);
 		yTG.setName(ymlT.getName());
+		
 		yTG.setDescription(ymlT.getDescription());
+		
 		//yTG.setParent(this.yView); // Not necessary. JPA manages this
-		yTG.setClassName(this.yView.getClassName());
+		yTG.setParent(myParent); // Not necessary. JPA manages this
+				
+		if (ymlT.getKlass()==null) yTG.setClassName(myParent.getClassName());
+		else yTG.setClassName(this.getClassName(ymlT.getKlass()));
+		
 		yTG.setLstActions(this.getActions(comp));
 		yTG.setLstEvents(this.getEvents(comp));
-		yTG.setChildren(this.getTabElements(ymlT.getContainers()));
+		yTG.setChildren(this.getTabElements(ymlT.getContainers(), myParent));
 		return yTG;
 	}
 	
@@ -583,27 +584,27 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	 * @param col
 	 * @return
 	 */
-	private YVwField getVwField (String comp, byte row, byte col) {
+	private YVwField getVwField (String comp, byte row, byte col, YVwContainer myParent) {
 		YVwField yF= new YVwField();
 		YAMLVwField ymlF=this.getField(comp).get();
 		yF.setRow(row);
 		yF.setCol(col);
 		yF.setName(ymlF.getName());
+		
 		//yF.setParent(this.yView); // Not necessary. JPA manages this
+		yF.setParent(myParent); // Not necessary. JPA manages this
 		
-		if (ymlF.getKlass()==null)
-			yF.setClassName(this.yView.getClassName());
-		else 
-			yF.setClassName(this.getClassName(ymlF.getKlass()));
+		if (ymlF !=null && ymlF.getKlass()!=null) yF.setClassName(this.getClassName(ymlF.getKlass())); 
+		else  yF.setClassName(myParent.getClassName());
 		
-		if (ymlF.getAttribute()==null)
-			yF.setAttribute(ymlF.getName().substring(2));
-		else 
-			yF.setAttribute(ymlF.getAttribute());
+		// When
+		if (ymlF !=null & ymlF.getAttribute()!=null) yF.setAttribute(ymlF.getAttribute());
+		else if (Character.isUpperCase(ymlF.getName().charAt(2))) yF.setAttribute(ymlF.getName().substring(3));
+		else yF.setAttribute(ymlF.getName().substring(2)); 
 			
 		yF.setLstActions(this.getActions(comp));
 		yF.setLstEvents(this.getEvents(comp));
-		yF.setEditor(ymlF.getEditor());
+		if (ymlF !=null & ymlF.getEditor()!=null) yF.setEditor(ymlF.getEditor());
 		yF.setDescription(yF.getClassName().getDescription()+"."+ yF.getAttribute() +"-"+ this.getName());
 		this.setModelAttributes(yF);
 		return yF;
@@ -615,12 +616,12 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	 * @param myLines
 	 * @return
 	 */
-	private List<YVwComponent> getListComponents(List<List<String>> myLines) {
+	private List<YVwComponent> getListComponents(List<List<String>> myLines, YVwContainer myParent) {
 		List<YVwComponent> myComps= new ArrayList<>();
 		byte row=0; byte col=0;
 		for (List<String> line: myLines) {
 			for (String comp: line) {
-				myComps.add(this.getComponent(comp, row, col));
+				myComps.add(this.getComponent(comp, row, col, myParent));
 				col++;
 			}
 			row++;
@@ -634,11 +635,11 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	 * @param myLines
 	 * @return
 	 */
-	private List<YVwComponent> getListPanelComponents(List<String> myLine) {
+	private List<YVwComponent> getListPanelComponents(List<String> myLine, YVwContainer myParent) {
 		List<YVwComponent> myComps= new ArrayList<>();
 		byte row=0; byte col=0;
 		for (String comp: myLine) {
-			myComps.add(this.getComponent(comp, row, col));
+			myComps.add(this.getComponent(comp, row, col, myParent));
 			col++;
 		}
 		return myComps;
@@ -649,11 +650,11 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	 * @param containers
 	 * @return
 	 */
-	private List<YVwComponent> getTabElements(List<String> containers) {
+	private List<YVwComponent> getTabElements(List<String> containers, YVwContainer myParent) {
 		List<YVwComponent> myComps= new ArrayList<>();
 		byte row=0; byte col=0;
 		for (String comp: containers) {
-			myComps.add(this.getTabElement(comp, row, col));
+			myComps.add(this.getTabElement(comp, row, col, myParent));
 			col++;
 		}
 		return myComps;
@@ -665,14 +666,20 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	 * @param col
 	 * @return
 	 */
-	private YVwTabElement getTabElement(String container, byte row, byte col) {
+	private YVwTabElement getTabElement(String container, byte row, byte col, YVwContainer myParent) {
 		YVwTabElement myTab=new YVwTabElement();
 		myTab.setRow(row); //Not important
 		myTab.setCol(col);
 		myTab.setName("tbe_"+ container);
 		myTab.setDescription(myTab.getName());
-		//myTab.setParent(this.yView); // Not necessary. JPA manages this
-		myTab.setClassName(this.yView.getClassName()); // Not important
+		
+		//yF.setParent(this.yView); // Not necessary. JPA manages this
+		myTab.setParent(myParent); // Not necessary. JPA manages this
+		
+		//A tab element has no class!!
+		//if (ymlF.getKlass()==null) yF.setClassName(myParent.getClassName());
+		//else yF.setClassName(this.getClassName(ymlF.getKlass()));
+		myTab.setClassName(myParent.getClassName());		
 		
 		//A tab element has no actions or events 
 		// The child of a tab element is a container that has the events and actions
@@ -680,7 +687,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		//myTab.setLstEvents(this.getEvents(comp)); // Not important
 		//There is only one container into a Tab Element
 		List<YVwComponent>lC=new ArrayList<>();
-		lC.add(this.getComponent(container, (byte) 0, (byte)0));
+		lC.add(this.getComponent(container, (byte) 0, (byte)0, myTab));
 		myTab.setChildren(lC);
 		
 		return myTab;
@@ -715,14 +722,14 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	 * @param x
 	 * @param y
 	 */
-	private YVwComponent getComponent(String comp, byte row, byte col) {
+	private YVwComponent getComponent(String comp, byte row, byte col, YVwContainer myParent) {
 		YVwComponent myComp=null;
 		ElementTypeEdu elType=getElType(comp);
 		switch (elType) {
-        	case PANEL:	myComp = getVwPanel(comp,row,col);     break;
-        	case LISTPANEL:	myComp = getVwListPanel(comp,row,col); break;
-        	case TAB:	myComp = getVwTabGroup(comp,row,col);  break;
-        	case FIELD:	myComp = getVwField(comp,row,col);     break;
+        	case PANEL:	    myComp = getVwPanel    (comp,row,col, myParent); break;
+        	case LISTPANEL:	myComp = getVwListPanel(comp,row,col, myParent); break;
+        	case TAB:	    myComp = getVwTabGroup (comp,row,col, myParent); break;
+        	case FIELD:	    myComp = getVwField    (comp,row,col, myParent); break;
         	default:
                 throw new IllegalArgumentException("Invalid component type: " + elType); 
         }
@@ -734,11 +741,11 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		List<YAMLVwEvent> lstYamE=null;
 		ElementTypeEdu elType=getElType(compName);
 		switch (elType) {
-			case FORM:      lstYamE=this.getFormEvents();              break;
-			case PANEL:     lstYamE=this.getPanelEvents(compName);     break;
+			case FORM:      lstYamE=this.getFormEvents     ();         break;
+			case PANEL:     lstYamE=this.getPanelEvents    (compName); break;
 			case LISTPANEL: lstYamE=this.getListPanelEvents(compName); break;
-			case TAB:       lstYamE=this.getTabEvents(compName);       break;
-			case FIELD:     lstYamE=this.getFieldEvents(compName);     break;
+			case TAB:       lstYamE=this.getTabEvents      (compName); break;
+			case FIELD:     lstYamE=this.getFieldEvents    (compName); break;
 			default:        throw new IllegalArgumentException("Invalid component type: " + elType);
 		}
 		return getEvents (lstYamE);
@@ -804,7 +811,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		
 	}
 	/**
-	 * Assign other properties to field, got by annotations in the modeñ
+	 * Assign other properties to field, got by annotations in the model
 	 * @param yF
 	 */
 	private void setModelAttributes(YVwField yF) {
@@ -818,7 +825,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	// Error detection A: Duplicates
 	
 	@SuppressWarnings("rawtypes")
-	public String Duplicated(List<? extends IYAMLElement> myLst, String elemName, 
+	public String Duplicated(List<? extends IYAMLElement> myLst, String elemName,
 			int counter, boolean verbose, String myErrors ) {
 		if (verbose) myErrors = myErrors +
 				"\n\n" +
@@ -842,8 +849,8 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 				counter + ". ClassNameErrors :\n" + 
 				"======================================================\n";
 		String longName=myClassName.getPack() + "." + myClassName.getDescription();
-		if (! longName.equals(this.klass))
-			myErrors=myErrors + "\n" + "->No class matches " + this.klass + "<> " + longName;
+		if (! longName.equals(this.getKlass()))
+			myErrors=myErrors + "\n" + "->No class matches " + this.getKlass() + "<> " + longName;
 		return myErrors;
 	}
 	
@@ -855,7 +862,7 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 				counter + ". MenuItemErrors :\n" + 
 				"======================================================\n";
 		String sError="";
-		if (this.myMenuItem == null) sError= sError + "Not found menu item for description " + this.klass;
+		if (this.myMenuItem == null) sError= sError + "Not found menu item for description " + this.getKlass();
 		else if (this.myMenuItem.getType()!=4) sError= sError + "type<>4, ";
 		if (sError.length()>0)
 			myErrors=myErrors + "\n" + "->" + sError;
@@ -870,14 +877,14 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 				counter + ". ActionErrors :\n" + 
 				"======================================================\n";
 		String sError="";
-		if (this.myAction == null) sError= sError + "Action not persisted" + this.klass;
+		if (this.myAction == null) sError= sError + "Action not persisted" + this.getKlass();
 		else if (this.myMenuItem.getType()!=4) sError= sError + "type<>4, ";
 		if (sError.length()>0)
 			myErrors=myErrors + "\n" + "->" + sError;
 		return myErrors;
 	}
 	
-	// MenuItem not found
+	// Program not found
 		public String ProgramError(int counter, boolean verbose, String myErrors) {
 		if (verbose) myErrors = myErrors +
 				"\n\n" +
@@ -895,6 +902,15 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 	public String checkErrors(boolean verbose) {
 		String myErrors="";
 		int i=0;
+		
+		//1. Set default values of this class
+		try {
+			this.setDefaultInfo();
+		} catch (IllegalAccessException | InvocationTargetException | RuntimeException | IntrospectionException e) {
+			myErrors=myErrors + "Exception:" + e.getMessage();
+			e.printStackTrace();
+		}
+		this.getControlInfo(false);
 		
 		myErrors= myErrors + 
 			this.Duplicated(this.panels           ,"Panel"             ,i++,verbose, myErrors) + 
@@ -932,11 +948,11 @@ public class YAMLViewLoad implements IYAMLElement<String>, Serializable{
 		
 	public static void main(String[] args) {
 		
-		YAMLViewLoad yv=null;
+		YAMLVwFormLoad yv=null;
 		//1. Read YAML File
 		InputStream in = YAMLUtilsEdu.class.getResourceAsStream("/view/prova.yaml");
 		try {
-			yv = YAMLUtilsEdu.YAMLFileToObject(in, YAMLViewLoad.class);
+			yv = YAMLUtilsEdu.YAMLFileToObject(in, YAMLVwFormLoad.class);
 			System.out.println(yv.toString());
 		} catch (IOException e) {
 			e.printStackTrace();

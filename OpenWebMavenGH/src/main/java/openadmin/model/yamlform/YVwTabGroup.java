@@ -1,4 +1,4 @@
-package openadmin.model.yamlview;
+package openadmin.model.yamlform;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;

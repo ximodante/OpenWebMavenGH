@@ -1,4 +1,6 @@
-package openadmin.model.yamlview;
+package openadmin.model.yamlform;
+
+
 
 import javax.persistence.Entity;
 
@@ -6,28 +8,21 @@ import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 /**
- * Main view for yaml definition
+ * Simple container of fields and other containers
  * @author eduard
  *
  */
 @Entity
-@Table(name = "yamlvista", schema = "control"//, 
+@Table(name = "yamlpanel", schema = "control"//, 
        //uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "row","column" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
 @Audited
 @SuppressWarnings("serial")
-@NoArgsConstructor
-@ToString
-public class YVwView extends YVwContainer {
-
-	@Getter @Setter 
-	private String rsbundle=null; // Resource Bundle Key
-	
+@ToString @NoArgsConstructor
+public class YVwPanel extends YVwContainer{
 }

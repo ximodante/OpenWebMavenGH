@@ -1,4 +1,4 @@
-package openadmin.model.yamlview;
+package openadmin.model.yamlform;
 
 public enum ElementTypeEdu {
 	FORM,

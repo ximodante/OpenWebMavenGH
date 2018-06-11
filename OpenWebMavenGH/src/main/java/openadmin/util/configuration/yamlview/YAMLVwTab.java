@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import openadmin.model.yamlview.EventTypeEdu;
+import openadmin.model.yamlform.EventTypeEdu;
 /**
  * Tab elements (subviews)
  * @author eduard
@@ -16,14 +16,17 @@ import openadmin.model.yamlview.EventTypeEdu;
 @SuppressWarnings("serial")
 @NoArgsConstructor
 @ToString
-public class YAMLVwTab  implements IYAMLElement<String>, Serializable{  
 
+public class YAMLVwTab  extends YAMLVwComponent implements IYAMLElement<String>, Serializable{
+
+	/*
 	@Getter @Setter
 	private String name=null; //tab name
 	
 	@Getter @Setter
 	private String description=null; //Header of the tab container
-		
+	*/
+	
 	@Getter @Setter
 	private List<String> containers = null; // Each tab has a panel or a listPanel
 	

@@ -7,21 +7,36 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.Properties;
+
+import org.apache.commons.lang3.StringUtils;
 
 import openadmin.dao.operation.DaoJpaEdu;
 import openadmin.dao.operation.DaoOperationFacadeEdu;
 import openadmin.model.control.User;
-import openadmin.util.configuration.yaml.YAMLControlLoad;
-import openadmin.util.configuration.yamlview.YAMLViewLoad;
+import openadmin.model.yamlform.YVwAction;
+import openadmin.model.yamlform.YVwEvent;
+import openadmin.model.yamlform.YVwField;
+import openadmin.model.yamlform.YVwForm;
+import openadmin.model.yamlform.YVwListPanel;
+import openadmin.model.yamlform.YVwPanel;
+import openadmin.model.yamlform.YVwTabElement;
+import openadmin.model.yamlform.YVwTabGroup;
+import openadmin.util.configuration.yamlview.YAMLVwFormLoad;
 import openadmin.util.edu.FileUtilsEdu;
 import openadmin.util.edu.PropertyUtilsEdu;
 import openadmin.util.edu.YAMLUtilsEdu;
 import openadmin.util.lang.LangTypeEdu;
 
-public class FirstViewLoadYAML {
+/**
+ * ???????? We should load all the forms indicated in the properties file
+ * @author eduard
+ *
+ */
+public class FirstFormLoadYAML {
 
-private static User firstLoadUser = new User("FirstLoader","123456","First Load User");
+	private static User firstLoadUser = new User("FirstLoader","123456","First Load User");
 	
 	private static DaoOperationFacadeEdu connection = null; 	
 	
@@ -36,6 +51,10 @@ private static User firstLoadUser = new User("FirstLoader","123456","First Load 
 	// Folder from src/main/resources where data in csv format is stored
 	private static final String DataFolder = Props.getProperty("data_folder");
 	
+	// Files of YAML View files
+	private static final String YAMLFiles = Props.getProperty("yaml.files");
+		
+	
 	//NO Maven
 	//private static final String fileName = Path + DataFolder + "/" + Props.getProperty("yaml.file");
 		
@@ -49,7 +68,7 @@ private static User firstLoadUser = new User("FirstLoader","123456","First Load 
 	 * @param folder
 	 * @return
 	 */
-	private static File[] getYamlViewFiles(String folder, String suffix) {
+	private static File[] getAllYamlViewFiles(String folder, String suffix) {
 		
 		//No Maven
 		//String folderPath=FileUtilsEdu.getPathFromWebContentFolder(folder);
@@ -66,20 +85,38 @@ private static User firstLoadUser = new User("FirstLoader","123456","First Load 
 		
 	}
 	
+    private static File[] getYamlViewFiles(String folder, String commaFileList) {
+		
+		//No Maven
+		//String folderPath=FileUtilsEdu.getPathFromWebContentFolder(folder);
+		
+		//Maven
+		String folderPath=FileUtilsEdu.getPathFromResourcesFolder(folder);
+		String[] fileNames=StringUtils.split(commaFileList, ',');
+		File[] files=new File[fileNames.length];
+		int i=0;
+		for (String name:fileNames) {
+			files[i]=new File(folderPath +"/"+fileNames[i++].trim());
+		}
+		return files;
+		
+	}
+	
 	public static void dataLoad()
 			throws ClassNotFoundException, IOException, IntrospectionException, InstantiationException, 
 			IllegalAccessException, InvocationTargetException, NoSuchMethodException, RuntimeException {	
 		
-		
-		for (File f:getYamlViewFiles(DataFolder,".yaml")) {
+		LocalDateTime myDate = LocalDateTime.now();
+		//for (File f:getAllYamlViewFiles(DataFolder,".yaml")) {
+		for (File f:getAllYamlViewFiles(DataFolder,YAMLFiles)) {	
 			
-			YAMLViewLoad yv=null;
+			YAMLVwFormLoad yv=null;
 		
 			//1. Read YAML File
 			InputStream in = new FileInputStream(f);
 			try {
 				//yc = YAMLUtilsEdu.YAMLStringToObject(myStr, YAMLControlLoad.class);
-				yv = YAMLUtilsEdu.YAMLFileToObject(in, YAMLViewLoad.class);
+				yv = YAMLUtilsEdu.YAMLFileToObject(in, YAMLVwFormLoad.class);
 				System.out.println(yv.toString());
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -102,6 +139,21 @@ private static User firstLoadUser = new User("FirstLoader","123456","First Load 
 		
 				//4. Persist configuration in DB	
 				yv.Init();
+				
+				//5. Delete old configuration
+				/*
+				connection.deleteOlderThan(YVwAction.class     , myDate);
+				connection.deleteOlderThan(YVwEvent.class      , myDate);
+				connection.deleteOlderThan(YVwField.class      , myDate);
+				connection.deleteOlderThan(YVwTabElement.class , myDate);
+				connection.deleteOlderThan(YVwTabGroup.class   , myDate);
+				connection.deleteOlderThan(YVwListPanel.class  , myDate);
+				connection.deleteOlderThan(YVwListPanel.class  , myDate);
+				connection.deleteOlderThan(YVwPanel.class      , myDate);
+				*/
+				//Cascade deletion !!!!
+				connection.deleteOlderThan(YVwForm.class       , myDate);
+				
 		
 		
 				//5. Close DB Connection	

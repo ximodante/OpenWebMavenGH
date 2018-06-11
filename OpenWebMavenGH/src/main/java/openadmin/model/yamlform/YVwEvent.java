@@ -1,4 +1,4 @@
-package openadmin.model.yamlview;
+package openadmin.model.yamlform;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,13 +29,13 @@ import openadmin.model.Base;
 import openadmin.model.control.ClassName;
 
 @Entity
-@Table(name = "yamlaction", schema = "control", 
-       uniqueConstraints = @UniqueConstraint(columnNames =  { "pare", "descripcio" })//,
+@Table(name = "yamlevent", schema = "control", 
+       uniqueConstraints = @UniqueConstraint(columnNames =  { "pare", "tipus" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
 @Audited
 @ToString @NoArgsConstructor @SuppressWarnings("serial")
-public class YVwAction extends Audit implements Base, Serializable{
+public class YVwEvent extends Audit implements Base, Serializable{
 	
 	/** attribute that contain the identifier*/
 	@Getter @Setter
@@ -53,7 +53,7 @@ public class YVwAction extends Audit implements Base, Serializable{
 	@Getter @Setter
 	@ManyToOne
 	@JoinColumn(name = "pare", nullable= false)
-	private YVwComponent parent; // Component that has produces the action
+	private YVwComponent parent; // Component that creates the event
 		
 	@Getter @Setter
 	@ManyToOne
@@ -70,21 +70,7 @@ public class YVwAction extends Audit implements Base, Serializable{
 	private List<String> lstAffectedIds=new ArrayList<String>(); // Ids of the the affected components
 	
 	@Getter @Setter
-	private String icon=null; //Button icon
-	
-	@Getter @Setter
 	@Column(name= "tipus", unique = true)
-	private ButtonType type=ButtonType.Button; 
+	private EventTypeEdu type=EventTypeEdu.onclick; 
 	
-	@Getter @Setter
-	@Size(max = 30)
-	@NotNull
-	@Column(name= "nom", unique = true)
-	private String name=null; //descripcio
-	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

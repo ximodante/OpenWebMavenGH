@@ -15,12 +15,14 @@
 #   p_ --> PANEL
 #   l_ --> LISTPANEL
 #   t_ --> TABGROUP or TAB
-#   f_ --> FIELD 
+#   f_ --> FIELD --> substring(2) 
+#          f_C --> if "C" is a Capital (UpperCase) leter, it means it is a field from a different class tha main
+#                 substring(3)     
 #
 # b. If a field does not have attribute tag then the attribute is the suffix after "f_"
 #    for instance for "f_year", the attribute is "year" 
 #--------------------------------------------------
-# 1. General Info  
+# 1. Form (General) Info  
 name: testView 
 description: View example
 klass: openadmin.model.control.Action

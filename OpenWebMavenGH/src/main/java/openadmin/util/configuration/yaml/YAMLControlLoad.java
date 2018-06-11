@@ -182,7 +182,7 @@ public class YAMLControlLoad implements Serializable{
 	
 	
     private String favIcon(String favIconName) {
-    	if (favIconName.length()>1) return "fa " + favIconName;
+    	if (favIconName !=null && favIconName.length()>1) return "fa " + favIconName;
     	else return favIconName;
     }
 	

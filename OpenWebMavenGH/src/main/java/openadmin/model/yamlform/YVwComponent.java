@@ -1,4 +1,4 @@
-package openadmin.model.yamlview;
+package openadmin.model.yamlform;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
