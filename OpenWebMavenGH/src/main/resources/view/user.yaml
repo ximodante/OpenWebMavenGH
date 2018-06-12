@@ -23,9 +23,11 @@
 # 1. General Info  
 name: user
 description: user YAML
-klass: openadmin.model.control.user
+klass: openadmin.model.control.User
 program: control
 rsbundle: my_resource_bundle ???                  # Resource bundle for translation
+defaultFormActions: true                          # Get default actions from file _defaultFormActions
+defaultRoleGroups: true                           # Get default role groups from file _defaultRoleGroups
 lines:                                            # Only panels, linePanels or tabs   
     - [ p_main           ]                        # 1 panel                 in 1 line
     - [ t_01             ]                        # 1 tabs groups           in 1 line 
@@ -91,7 +93,7 @@ formActions:
   - { name: Cancel,    action: class05.action02, icon: icon2.jpg, roleGroup: gadmin }
   - { name: SendEmail, action: class05.action03, icon: icon3.jpg, refresh: [f_01,f_02], roleGroup: glook }
   - { name: Insert,    action: class05.action04, icon: icon3.jpg, refresh: [f_01,f_02], roleGroup: gedit  }
-  
+      
 #panelActions:  
 #  - { name: Refresh,   element: p_main,     action: class05.action01, icon: icon1.jpg, refresh: [f_01,f_02], roleGroup: glook } 
 

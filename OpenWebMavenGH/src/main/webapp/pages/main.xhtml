@@ -8,6 +8,8 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 	
 	<h:body>
+	<!-- Edu quitar -->
+	
 	<ui:composition  template="./plantilles/plantilla02.xhtml">
 	
 		<ui:define name="capTipus2">
@@ -23,6 +25,7 @@
      			<div id="contEixir" class="btm4 fixed">
 					
 					<h:commandButton id="btmEixir" action="#{ctx.logout}" image="/resources/icon/exit.png" />
+					<h:commandButton id="btmkkkk" action="#{eduAction.loadYamlForm}"  />
 		
 				</div>				
 			</div>	
@@ -69,5 +72,6 @@
 		</ui:define>
 		
 	</ui:composition>
+	
 	</h:body>
 </html>

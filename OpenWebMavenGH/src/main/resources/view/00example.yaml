@@ -28,6 +28,8 @@ description: View example
 klass: openadmin.model.control.Action
 program: control
 rsbundle: my_resource_bundle                      # Resource bundle for translation
+defaultFormActions: true                          # Get default actions     from file _defaultValues.yaml
+defaultRoleGroups: true                           # Get default role groups from file _defaultValues.yaml
 lines:                                            # Only panels, linePanels or tabs   
     - [ p_main           ]                        # 1 panel                 in 1 line
     - [ t_01, t_02      ]                         # 2 tabs groups                 in 1 line 

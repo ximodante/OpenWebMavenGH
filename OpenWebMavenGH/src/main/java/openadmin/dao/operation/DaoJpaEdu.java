@@ -327,6 +327,7 @@ public class DaoJpaEdu implements DaoOperationFacadeEdu {
 		T new_base = null;
 		
 		String hql="select o from " + obj.getClass().getSimpleName() + " o where o.description like :pDescription";
+		System.out.println("findObjectDescription:"+hql+ "    "+ obj.getDescription());
 		try {
 								
 			lstObjects = em.createQuery(hql)

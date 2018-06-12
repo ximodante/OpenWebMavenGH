@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -69,12 +69,13 @@ public class CollectionUtilsEdu {
 	 * @throws RuntimeException
 	 * @throws IntrospectionException
 	 */
-	public static <T extends Object> void updateListFields(List<T> lst, String[] fields, Object[] values) throws IllegalAccessException, InvocationTargetException, RuntimeException, IntrospectionException {
-		for (T elem: lst) {
-			for (int i=0; i<fields.length; i++) {
-				ReflectionUtilsEdu.setProperty(elem, fields[i], values[i]);
-			}
-		}
+	public static <T extends Object> void updateListFields(List<T> lst, String[] fields, Object[] values) 
+		throws IllegalAccessException, InvocationTargetException, RuntimeException, IntrospectionException {
+		
+		if (lst!=null) 
+			for (T elem: lst) 
+				for (int i=0; i<fields.length; i++) 
+					ReflectionUtilsEdu.setProperty(elem, fields[i], values[i]);
 	}
 
 	public static void main(String[] args) {

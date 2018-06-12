@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,15 +22,12 @@ import lombok.Setter;
 import lombok.ToString;
 import openadmin.dao.operation.DaoOperationFacadeEdu;
 import openadmin.model.Base;
-import openadmin.model.control.Access;
 import openadmin.model.control.Action;
 import openadmin.model.control.ActionViewRole;
 import openadmin.model.control.ClassName;
-import openadmin.model.control.EntityAdm;
 import openadmin.model.control.MenuItem;
 import openadmin.model.control.Program;
 import openadmin.model.control.Role;
-import openadmin.model.control.User;
 import openadmin.model.yamlform.ElementTypeEdu;
 import openadmin.model.yamlform.YVwAction;
 import openadmin.model.yamlform.YVwComponent;
@@ -78,6 +74,12 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	
 	@Getter @Setter
 	private String rsbundle=null; // Name of the resource bundle for i18n
+	
+	@Getter @Setter
+	private boolean defaultFormActions=true;
+	
+	@Getter @Setter
+	private boolean defaultRoleGroups=true;
 		
 	//----- 1. Distribution of components
 	@Getter @Setter
@@ -133,6 +135,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	private List<YAMLVwRoleGroup> roleGroups= null; 
 	
 	
+	
 	/************************************************************
 	 * 2. Helper structure
 	 ************************************************************/
@@ -170,6 +173,11 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	@Setter
 	private DaoOperationFacadeEdu connection = null; 	
 	
+	private boolean updatedDefaultValues=false;
+	
+	@Setter
+	private YAMLDefaultValues defaultValues=null;
+	
 	/************************************************************
 	 * 3. Persistence Structure
 	 ************************************************************/
@@ -190,6 +198,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	// Control classes extraction and populate to DB
 	// Also delete old configuration records from DB
 	// ======================================================
+	
+	
 	public void Init() throws IllegalAccessException, InvocationTargetException, RuntimeException, IntrospectionException {
 		//LocalDateTime myDate = LocalDateTime.now();
 			
@@ -201,23 +211,25 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 		
 		connection.begin();
 		*/
-		// 1. Set default values
+		
+		
+				
+		// 3. Set Other default values
 		this.setDefaultInfo();
 		
-		// 3. Create Fictitious  Action and ActionviewRole to access the menuItem previously created
-		this.getControlInfo(true);
-		
-		
-		// 3. Transform YAML clas structure to DB structure
+		// 4. Create Fictitious  Action and ActionviewRole to access the menuItem previously created
+		this.persistControlInfo();
+				
+		// 5. Transform YAML clas structure to DB structure
 		this.setViewInfo();
 		
-		// 4. Persist 
+		// 6. Persist 
 		this.yView= this.connection.persist(this.yView);
 		
 		
 		
 		/**
-		//5. Commit connection
+		//7. Commit connection
 		connection.commit();
 		connection.finalize();
 		*/
@@ -232,69 +244,92 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @throws IllegalAccessException 
 	 * 
 	 ******************************************************************/
-	private void setDefaultInfo() throws IllegalAccessException, InvocationTargetException, RuntimeException, IntrospectionException {
-		
-		//1. form actions and events
-		String[] attrNames = {"elementType"};
-		Object[] attrValues1= {ElementTypeEdu.FORM };
-		CollectionUtilsEdu.updateListFields(formActions, attrNames, attrValues1);
-		CollectionUtilsEdu.updateListFields(formEvents,  attrNames, attrValues1);
-		
-		//2. Panels actions and events
-		Object[] attrValues2= {ElementTypeEdu.PANEL };
-		CollectionUtilsEdu.updateListFields(panelActions, attrNames, attrValues2);
-		CollectionUtilsEdu.updateListFields(panelEvents,  attrNames, attrValues2);
-		
-		//3. ListPanels actions and events
-		Object[] attrValues3= {ElementTypeEdu.LISTPANEL };
-		CollectionUtilsEdu.updateListFields(listPanelActions, attrNames, attrValues3);
-		CollectionUtilsEdu.updateListFields(listPanelEvents,  attrNames, attrValues3);
+	private void setDefaultInfo() 
+		throws IllegalAccessException, InvocationTargetException, RuntimeException, IntrospectionException {
+		if (!this.updatedDefaultValues) {
+			if (this.defaultValues!=null) {
+				// 1. Load default Form actions
+				if (this.defaultFormActions) {
+					if (this.formActions ==null) this.formActions=this.defaultValues.getFormActions();
+						else this.formActions.addAll(this.defaultValues.getFormActions());
+				}
 				
-		//4. Tabs actions and events
-		Object[] attrValues4= {ElementTypeEdu.TAB };
-		CollectionUtilsEdu.updateListFields(tabActions, attrNames, attrValues4);
-		CollectionUtilsEdu.updateListFields(tabEvents,  attrNames, attrValues4);
+				// 2. Load default Role Groups
+				if (this.defaultRoleGroups) {
+					if (this.roleGroups ==null) this.roleGroups=this.defaultValues.getRoleGroups();
+					else this.roleGroups.addAll(this.defaultValues.getRoleGroups());
+				}
+			}
+			
+			//1. form actions and events
+			String[] attrNames = {"elementType"};
+			Object[] attrValues1= {ElementTypeEdu.FORM };
+			CollectionUtilsEdu.updateListFields(formActions, attrNames, attrValues1);
+			CollectionUtilsEdu.updateListFields(formEvents,  attrNames, attrValues1);
 		
-		//5. Fields actions and events
-		Object[] attrValues5= {ElementTypeEdu.FIELD };
-		CollectionUtilsEdu.updateListFields(fieldActions, attrNames, attrValues5);
-		CollectionUtilsEdu.updateListFields(fieldEvents,  attrNames, attrValues5);
+			//2. Panels actions and events
+			Object[] attrValues2= {ElementTypeEdu.PANEL };
+			CollectionUtilsEdu.updateListFields(panelActions, attrNames, attrValues2);
+			CollectionUtilsEdu.updateListFields(panelEvents,  attrNames, attrValues2);
+		
+			//3. ListPanels actions and events
+			Object[] attrValues3= {ElementTypeEdu.LISTPANEL };
+			CollectionUtilsEdu.updateListFields(listPanelActions, attrNames, attrValues3);
+			CollectionUtilsEdu.updateListFields(listPanelEvents,  attrNames, attrValues3);
+				
+			//4. Tabs actions and events
+			Object[] attrValues4= {ElementTypeEdu.TAB };
+			CollectionUtilsEdu.updateListFields(tabActions, attrNames, attrValues4);
+			CollectionUtilsEdu.updateListFields(tabEvents,  attrNames, attrValues4);
+		
+			//5. Fields actions and events
+			Object[] attrValues5= {ElementTypeEdu.FIELD };
+			CollectionUtilsEdu.updateListFields(fieldActions, attrNames, attrValues5);
+			CollectionUtilsEdu.updateListFields(fieldEvents,  attrNames, attrValues5);
 		 
+			this.setDefaultControlInfo();
+			
+			this.updatedDefaultValues=true;
+			
+		}
 	}
 	
-	/**
-	 * Retrieve and save information from model.control package
-	 * @param persist If true creates a new instance of Action and several of ActionViewRole
-	 */
-	private void getControlInfo(boolean persist) {
+	private void setDefaultControlInfo() {
 		//1. Define the Classname. It must exists as it was declared in a menuitem
 		String myStr=StringUtils.substringAfterLast(this.getKlass(), ".").trim();
 		myClassName.setDescription(myStr);
 		myClassName=this.connection.findObjectDescription(myClassName);
-		
-		myStr=StringUtils.substringBeforeLast(this.getKlass(), ".").trim();
-		myClassName.setPack(myStr);
-		
+				
+		//myStr=StringUtils.substringBeforeLast(this.getKlass(), ".").trim();
+		//myClassName.setPack(myStr);
+				
 		//2. Define MenuItem. It must exists
+		System.out.println("--------------Buscant MenuItems-------");
 		myMenuItem.setDescription(myClassName.getDescription());;
 		myMenuItem=this.connection.findObjectDescription(myMenuItem);
-		
+		//if not a custon form we need to look for a menu item with the same classname and type=4
+		if (myMenuItem.getType()!=4) {
+			myStr="SELECT m FROM MenuItem m " + 
+				  "WHERE m.className.description='" + myClassName.getDescription() + "'" +
+				  "  AND m.type=4";
+			myMenuItem= (MenuItem) this.connection.findObjectPersonalized2(myStr).get(0);
+		}
+				
 		//3. Define a fictitious action
 		myAction.setDescription(myClassName.getDescription().trim() + "_yamlview" );
 		myAction.setClassName(myClassName);
 		myAction.setGrup(0);  //No matter what group is!
 		myAction.setIcon("");
 		myAction.setType((byte)1); //Not a default action but doesn't matter
-		if (persist) myAction=this.connection.persist(myAction);
-		
+				
 		//4. Define program
 		myProgram.setDescription(this.program.trim().toLowerCase());
 		myProgram=this.connection.findObjectDescription(myProgram);
-		
+				
 		//5. Get roles that access this program
-		myStr="SELECT e FROM Programa e " + 
-		      "WHERE e.description LIKE'%." + myProgram.getDescription() + "'";
-		
+		myStr="SELECT e FROM Role e " + 
+			  "WHERE e.description LIKE'%." + myProgram.getDescription() + "'";
+				
 		for(Base role: this.connection.findObjectPersonalized2(myStr))
 			myProgramRoles.put(StringUtils.substringBefore(role.getDescription(), "."),(Role) role);
 		
@@ -314,6 +349,16 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 						for(String sRole: rGroup.getRoles())  
 							if (this.myProgramRoles.containsKey(sRole) && ! this.myRoles.containsKey(sRole))  
 								this.myRoles.put(sRole, myProgramRoles.get(sRole));
+			
+		
+	}	
+
+	/**
+	 * Retrieve and save information from model.control package
+	 * @param persist If true creates a new instance of Action and several of ActionViewRole
+	 */
+	private void persistControlInfo() {
+		myAction=this.connection.persist(myAction);
 		
 		// 7. Generates Action view Role
 		for (Role role: this.myRoles.values()) {
@@ -322,9 +367,10 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 			aVR.setMenuItem(this.myMenuItem);
 			aVR.setRole(role);
 			aVR.setDescription("");
-			if (persist) aVR=this.connection.persist(aVR);
-		}
-	}	
+			aVR=this.connection.persist(aVR);
+	}	}		
+	
+	
 	
 	/******************************************************************
 	 * 4.2. HELPERS For getting children components information: 
@@ -340,7 +386,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private Optional<YAMLVwField> getField(String name) {
-		return fields.stream()
+		if (fields==null) return null;
+		else return fields.stream()
 				.filter(e-> e.getName().equalsIgnoreCase(name))
 				.findFirst();
 	}
@@ -351,7 +398,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwEvent> getFieldEvents (String fieldName) {
-		return fieldEvents.stream()
+		if (fieldEvents==null) return null;
+		else return fieldEvents.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(fieldName))
 				.collect(Collectors.toList());
 	}
@@ -361,7 +409,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwAction> getFieldActions (String fieldName) {
-		return fieldActions.stream()
+		if (fieldActions==null) return null;
+		else return fieldActions.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(fieldName))
 				.collect(Collectors.toList());
 	}
@@ -375,7 +424,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private Optional<YAMLVwPanel> getPanel(String name) {
-		return panels.stream()
+		if (panels==null) return null;
+		else return panels.stream()
 				.filter(e-> e.getName().equalsIgnoreCase(name))
 				.findFirst();
 	}
@@ -386,7 +436,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwEvent> getPanelEvents (String panelName) {
-		return panelEvents.stream()
+		if (panelEvents==null) return null;
+		else return panelEvents.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(panelName))
 				.collect(Collectors.toList());
 	}
@@ -396,7 +447,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwAction> getPanelActions (String panelName) {
-		return panelActions.stream()
+		if (panelActions==null) return null;
+		else return panelActions.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(panelName))
 				.collect(Collectors.toList());
 	}
@@ -410,7 +462,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private Optional<YAMLVwListPanel> getListPanel(String name) {
-		return listPanels.stream()
+		if (listPanels==null) return null;
+		else return listPanels.stream()
 				.filter(e-> e.getName().equalsIgnoreCase(name))
 				.findFirst();
 	}
@@ -420,7 +473,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwEvent> getListPanelEvents (String lPanelName) {
-		return panelEvents.stream()
+		if (panelEvents==null) return null;
+		else return panelEvents.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(lPanelName))
 				.collect(Collectors.toList());
 	}
@@ -430,7 +484,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwAction> getListPanelActions (String lPanelName) {
-		return panelActions.stream()
+		if (panelActions==null) return null;
+		else return panelActions.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(lPanelName))
 				.collect(Collectors.toList());
 	}
@@ -445,7 +500,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private Optional<YAMLVwTab> getTab(String name) {
-		return tabs.stream()
+		if (tabs==null) return null;
+		else return tabs.stream()
 				.filter(e-> e.getName().equalsIgnoreCase(name))
 				.findFirst();
 	}
@@ -456,7 +512,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwEvent> getTabEvents (String tabName) {
-		return tabEvents.stream()
+		if (tabEvents==null) return null;
+		else return tabEvents.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(tabName))
 				.collect(Collectors.toList());
 	}
@@ -466,7 +523,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwAction> getTabActions (String tabName) {
-		return tabActions.stream()
+		if (tabActions==null) return null;
+		else return tabActions.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(tabName))
 				.collect(Collectors.toList());
 	}
@@ -699,19 +757,24 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private ClassName getClassName(String name) {
-		return this.connection.findObjectPK(new ClassName(name));
+		
+		String myStr=StringUtils.substringAfterLast(name, ".");
+		System.out.println("Getting classname from " + name + "  " + myStr );
+		return this.connection.findObjectDescription(new ClassName(myStr));
 	}
 	
 	private ElementTypeEdu getElType(String comp) {
 		ElementTypeEdu myType=ElementTypeEdu.FORM;
-		String compType=comp.trim().substring(0, 2).toLowerCase();
-		switch (compType) {
-			case "p_":	myType = ElementTypeEdu.PANEL;     break;
-			case "l_":	myType = ElementTypeEdu.LISTPANEL; break;
-    		case "t_":	myType = ElementTypeEdu.TAB;       break;
-    	   	case "f_":	myType = ElementTypeEdu.FIELD;     break;
-    	   	default:    myType=  ElementTypeEdu.FORM;      break;
-		}
+		System.out.println("Component:" + comp);
+		if (comp.length()>=2) {
+			String compType=comp.trim().substring(0, 2).toLowerCase();
+			switch (compType) {
+				case "p_":	myType = ElementTypeEdu.PANEL;     break;
+				case "l_":	myType = ElementTypeEdu.LISTPANEL; break;
+				case "t_":	myType = ElementTypeEdu.TAB;       break;
+				case "f_":	myType = ElementTypeEdu.FIELD;     break;
+				default:    myType=  ElementTypeEdu.FORM;      break;
+		}	}
 		return myType;
 	}
 	
@@ -758,16 +821,17 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 */
 	private List<YVwEvent> getEvents (List<YAMLVwEvent> ymlEvents ) {
 		List<YVwEvent> myEvents= new ArrayList<>();
-		for (YAMLVwEvent ymlE: ymlEvents) {
-			YVwEvent myEvent=new YVwEvent();
-			String[]s=StringUtils.split(ymlE.getAction(), ".");
-			myEvent.setClassName(this.getClassName(s[0]));
-			myEvent.setMethod(s[1]);
-			//myEvent.setParent(parent); //NOt necessary, already defined by JPA
-			myEvent.setDescription(ymlE.getElementType().toString()+"-"+ymlE.getElement());
-			myEvent.setLstAffectedIds(ymlE.getRefresh());
-			myEvents.add(myEvent);
-		}	
+		if (ymlEvents!=null) {
+			for (YAMLVwEvent ymlE: ymlEvents) {
+				YVwEvent myEvent=new YVwEvent();
+				String[]s=StringUtils.split(ymlE.getAction(), ".");
+				myEvent.setClassName(this.getClassName(s[0]));
+				myEvent.setMethod(s[1]);
+				//myEvent.setParent(parent); //NOt necessary, already defined by JPA
+				myEvent.setDescription(ymlE.getElementType().toString()+"-"+ymlE.getElement());
+				myEvent.setLstAffectedIds(ymlE.getRefresh());
+				myEvents.add(myEvent);
+		}	}
 		return myEvents;
 		
 	}
@@ -794,19 +858,22 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 */
 	private List<YVwAction> getActions (List<YAMLVwAction> ymlActions ) {
 		List<YVwAction> myActions= new ArrayList<>();
-		for (YAMLVwAction ymlE: ymlActions) {
-			YVwAction myAction=new YVwAction();
-			String[]s=StringUtils.split(ymlE.getAction(), ".");
-			myAction.setClassName(this.getClassName(s[0]));
-			myAction.setMethod(s[1]);
-			//myAction.setParent(parent); //NOt necessary, already defined by JPA
-			myAction.setDescription(ymlE.getElementType().toString()+"-"+ymlE.getElement());
-			myAction.setLstAffectedIds(ymlE.getRefresh());
-			myAction.setIcon(ymlE.getIcon());
-			myAction.setType(ymlE.getButton());
-			myAction.setName(ymlE.getName());
-			myActions.add(myAction);
-		}	
+		if (ymlActions!=null) {
+			for (YAMLVwAction ymlE: ymlActions) {
+				YVwAction myAction=new YVwAction();
+				if (ymlE.getAction()!=null) {
+					String[]s=StringUtils.split(ymlE.getAction(), ".");
+					myAction.setClassName(this.getClassName(s[0]));
+					myAction.setMethod(s[1]);
+				}
+				//myAction.setParent(parent); //NOt necessary, already defined by JPA
+				myAction.setDescription(ymlE.getElementType().toString()+"-"+ymlE.getElement());
+				myAction.setLstAffectedIds(ymlE.getRefresh());
+				myAction.setIcon(ymlE.getIcon());
+				myAction.setType(ymlE.getButton());
+				myAction.setName(ymlE.getName());
+				myActions.add(myAction);
+		}	}
 		return myActions;
 		
 	}
@@ -833,11 +900,12 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 				counter + ". Duplicated " + elemName + "s :\n" + 
 				"======================================================\n";
 		Set<String> mySet= new HashSet<String>();
-		for( IYAMLElement ymlElem: myLst) {
-			String myDesc=ymlElem.getName().toString().trim().toLowerCase();
-			if (mySet.add(myDesc)==false) 
-				myErrors=myErrors + "\n" + "->Duplicated " + elemName + ": " + myDesc;
-		}
+		if (myLst!=null) {
+			for( IYAMLElement ymlElem: myLst) {
+				String myDesc=ymlElem.getName().toString().trim().toLowerCase();
+				if (mySet.add(myDesc)==false) 
+					myErrors=myErrors + "\n" + "->Duplicated " + elemName + ": " + myDesc;
+		}	}
 		return myErrors;
 	}
 	
@@ -863,7 +931,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 				"======================================================\n";
 		String sError="";
 		if (this.myMenuItem == null) sError= sError + "Not found menu item for description " + this.getKlass();
-		else if (this.myMenuItem.getType()!=4) sError= sError + "type<>4, ";
+		else if (+ this.myMenuItem.getType()!=4) sError= sError + "MenuItem.type<>4 ---- Menuitem.type= "+ this.myMenuItem.getType() ;
 		if (sError.length()>0)
 			myErrors=myErrors + "\n" + "->" + sError;
 		return myErrors;
@@ -878,7 +946,6 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 				"======================================================\n";
 		String sError="";
 		if (this.myAction == null) sError= sError + "Action not persisted" + this.getKlass();
-		else if (this.myMenuItem.getType()!=4) sError= sError + "type<>4, ";
 		if (sError.length()>0)
 			myErrors=myErrors + "\n" + "->" + sError;
 		return myErrors;
@@ -899,7 +966,8 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	}
 		
 
-	public String checkErrors(boolean verbose) {
+	public String checkErrors(boolean verbose) 
+		throws IllegalAccessException, InvocationTargetException, RuntimeException, IntrospectionException {
 		String myErrors="";
 		int i=0;
 		
@@ -910,7 +978,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 			myErrors=myErrors + "Exception:" + e.getMessage();
 			e.printStackTrace();
 		}
-		this.getControlInfo(false);
+		this.setDefaultInfo();
 		
 		myErrors= myErrors + 
 			this.Duplicated(this.panels           ,"Panel"             ,i++,verbose, myErrors) + 

@@ -23,6 +23,7 @@ import openadmin.model.yamlform.YVwListPanel;
 import openadmin.model.yamlform.YVwPanel;
 import openadmin.model.yamlform.YVwTabElement;
 import openadmin.model.yamlform.YVwTabGroup;
+import openadmin.util.configuration.yamlview.YAMLDefaultValues;
 import openadmin.util.configuration.yamlview.YAMLVwFormLoad;
 import openadmin.util.edu.FileUtilsEdu;
 import openadmin.util.edu.PropertyUtilsEdu;
@@ -94,51 +95,74 @@ public class FirstFormLoadYAML {
 		String folderPath=FileUtilsEdu.getPathFromResourcesFolder(folder);
 		String[] fileNames=StringUtils.split(commaFileList, ',');
 		File[] files=new File[fileNames.length];
-		int i=0;
-		for (String name:fileNames) {
-			files[i]=new File(folderPath +"/"+fileNames[i++].trim());
-		}
+		for (int i=0; i<fileNames.length; i++) 
+			files[i]=new File(folderPath +"/"+fileNames[i].trim());
+		
 		return files;
 		
 	}
+    /**
+     * Get YAMLDefaultValues from file _defaultValues.yaml
+     * @return
+     */
+    public static YAMLDefaultValues getDefaultValues() {
+    	YAMLDefaultValues yDV=null;
+    	String folderPath=FileUtilsEdu.getPathFromResourcesFolder(DataFolder);
+		File f=new File(folderPath +"/_defaultValues.yaml");
+		try {
+			InputStream in = new FileInputStream(f);
+			yDV = YAMLUtilsEdu.YAMLFileToObject(in, YAMLDefaultValues.class);
+			System.out.println(yDV.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+    	return yDV;
+    }
 	
 	public static void dataLoad()
 			throws ClassNotFoundException, IOException, IntrospectionException, InstantiationException, 
 			IllegalAccessException, InvocationTargetException, NoSuchMethodException, RuntimeException {	
 		
 		LocalDateTime myDate = LocalDateTime.now();
+		YAMLDefaultValues yDV=getDefaultValues();
 		//for (File f:getAllYamlViewFiles(DataFolder,".yaml")) {
-		for (File f:getAllYamlViewFiles(DataFolder,YAMLFiles)) {	
+		for (File f:getYamlViewFiles(DataFolder,YAMLFiles)) {	
 			
-			YAMLVwFormLoad yv=null;
-		
+			YAMLVwFormLoad yf=null;
+		    
 			//1. Read YAML File
 			InputStream in = new FileInputStream(f);
+			
 			try {
-				//yc = YAMLUtilsEdu.YAMLStringToObject(myStr, YAMLControlLoad.class);
-				yv = YAMLUtilsEdu.YAMLFileToObject(in, YAMLVwFormLoad.class);
-				System.out.println(yv.toString());
+				//yf = YAMLUtilsEdu.YAMLStringToObject(myStr, YAMLControlLoad.class);
+				yf = YAMLUtilsEdu.YAMLFileToObject(in, YAMLVwFormLoad.class);
+				yf.setDefaultValues(yDV);
+				
+				System.out.println(yf.toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		
-			if (yv.checkErrors(false).trim().length()>10)
-				System.out.println(yv.checkErrors(true));
+			LangTypeEdu langType = new LangTypeEdu();
+			langType.changeMessageLog(TypeLanguages.es);
+			//1.0- Open connections
+			connection = new DaoJpaEdu(firstLoadUser, "control_post", (short) 0,langType);
+	
+			//3. Assign current connection to YAMLControlLoad
+			yf.setConnection(connection);
+	
+			connection.begin();
+			
+			if (yf.checkErrors(false).trim().length()>10)
+				System.out.println(yf.checkErrors(true));
 			else {
 		
 				//2. Open BD Connection	
-				LangTypeEdu langType = new LangTypeEdu();
-				langType.changeMessageLog(TypeLanguages.es);
-				//1.0- Open connections
-				connection = new DaoJpaEdu(firstLoadUser, "control_post", (short) 0,langType);
-		
-				//3. Assign current connection to YAMLControlLoad
-				yv.setConnection(connection);
-		
-				connection.begin();
+				
 		
 				//4. Persist configuration in DB	
-				yv.Init();
+				yf.Init();
 				
 				//5. Delete old configuration
 				/*
@@ -155,12 +179,12 @@ public class FirstFormLoadYAML {
 				connection.deleteOlderThan(YVwForm.class       , myDate);
 				
 		
-		
-				//5. Close DB Connection	
-				connection.commit();	
-				connection.finalize();
+			}	
+			//5. Close DB Connection	
+			connection.commit();	
+			connection.finalize();
 
-	}	}	}
+	}	}	
 	
 	
 	
