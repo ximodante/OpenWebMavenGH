@@ -40,16 +40,17 @@ import openadmin.model.control.MenuItem;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 //@DiscriminatorColumn(name = "Component_Type")
-@Table(name = "yamlcomponent", schema = "control" , 
-       uniqueConstraints = { 
-    		   @UniqueConstraint(columnNames =  { "pare", "fila","columna" }),
-    		   @UniqueConstraint(columnNames =  { "pare", "nom" })
-       }
+@Table(name = "ymlcomponent", schema = "control" //, 
+       //uniqueConstraints = { 
+       //		   @UniqueConstraint(columnNames =  { "pare", "fila","columna" }),
+    	//	   @UniqueConstraint(columnNames =  { "pare", "nom" })
+       //}
        //indexes = {@Index (name = "idx_usuari_entityadm", columnList = "usuari, entityAdm")})
 )
 @Audited
 @SuppressWarnings("serial")
 @NoArgsConstructor @AllArgsConstructor
+//@ToString(callSuper=true, includeFieldNames=true)
 @ToString
 public class YVwComponent extends Audit implements Base, Serializable{
 	/** attribute that contain the identifier*/
@@ -62,7 +63,7 @@ public class YVwComponent extends Audit implements Base, Serializable{
 	//the caption of a container or component)
 	@Getter @Setter
 	@Size(max = 25)
-	@Column(name = "nom", nullable= false)
+	@Column(name = "nom")
 	private String name=null; //
 	
 	@Getter @Setter

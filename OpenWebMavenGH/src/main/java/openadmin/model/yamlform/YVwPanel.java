@@ -17,12 +17,14 @@ import lombok.ToString;
  *
  */
 @Entity
-@Table(name = "yamlpanel", schema = "control"//, 
+@Table(name = "ymlpanel", schema = "control"//, 
        //uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "row","column" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
 @Audited
 @SuppressWarnings("serial")
-@ToString @NoArgsConstructor
+//@ToString(callSuper=true, includeFieldNames=true)
+@ToString
+@NoArgsConstructor
 public class YVwPanel extends YVwContainer{
 }

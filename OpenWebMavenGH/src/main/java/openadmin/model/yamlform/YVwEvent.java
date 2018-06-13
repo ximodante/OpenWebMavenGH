@@ -29,8 +29,8 @@ import openadmin.model.Base;
 import openadmin.model.control.ClassName;
 
 @Entity
-@Table(name = "yamlevent", schema = "control", 
-       uniqueConstraints = @UniqueConstraint(columnNames =  { "pare", "tipus" })//,
+@Table(name = "ymlevent", schema = "control" //, 
+       //uniqueConstraints = @UniqueConstraint(columnNames =  { "pare", "tipus" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
 @Audited

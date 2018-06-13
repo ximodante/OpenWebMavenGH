@@ -15,12 +15,14 @@ import lombok.ToString;
  *
  */
 @Entity
-@Table(name = "yamltabgroup", schema = "control" //, 
+@Table(name = "ymltabgp", schema = "control" //, 
        //uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "row","column" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
 @Audited
-@ToString @NoArgsConstructor @SuppressWarnings("serial")
+//@ToString(callSuper=true, includeFieldNames=true)
+@ToString
+@NoArgsConstructor @SuppressWarnings("serial")
 public class YVwTabGroup extends YVwContainer {
 		
 }

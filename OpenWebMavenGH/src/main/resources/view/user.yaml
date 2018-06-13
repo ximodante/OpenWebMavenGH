@@ -43,7 +43,6 @@ panels:
     - [ f_description , f_password           ]  
     - [ f_fullName,     f_identifier         ]  
     - [ f_fdateBegin,   f_dateEnd            ]     
-    - [ f_fdateBegin,   f_dateEnd            ]
     - [ f_firma,        f_language, f_active ]                       
     #--------------------------------------                  
  #-------------------------------------------------------------------------------------------
@@ -88,11 +87,11 @@ tabs:
 #---------------------------------------------------------------------------------------------
 
 #7. Action definition (form, panel, tab and field events)
-formActions:
-  - { name: Save,      action: class05.action01, icon: icon1.jpg, roleGroup: gnew }
-  - { name: Cancel,    action: class05.action02, icon: icon2.jpg, roleGroup: gadmin }
-  - { name: SendEmail, action: class05.action03, icon: icon3.jpg, refresh: [f_01,f_02], roleGroup: glook }
-  - { name: Insert,    action: class05.action04, icon: icon3.jpg, refresh: [f_01,f_02], roleGroup: gedit  }
+#formActions:
+#  - { name: Save,      action: class05.action01, icon: icon1.jpg, roleGroup: gnew }
+#  - { name: Cancel,    action: class05.action02, icon: icon2.jpg, roleGroup: gadmin }
+#  - { name: SendEmail, action: class05.action03, icon: icon3.jpg, refresh: [f_01,f_02], roleGroup: glook }
+#  - { name: Insert,    action: class05.action04, icon: icon3.jpg, refresh: [f_01,f_02], roleGroup: gedit  }
       
 #panelActions:  
 #  - { name: Refresh,   element: p_main,     action: class05.action01, icon: icon1.jpg, refresh: [f_01,f_02], roleGroup: glook } 

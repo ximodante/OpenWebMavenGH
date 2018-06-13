@@ -14,7 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "yamField", schema = "control" //, 
+@Table(name = "ymlfield", schema = "control" //, 
        //uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "attribute" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )

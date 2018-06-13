@@ -20,12 +20,14 @@ import lombok.ToString;
 
 
 @Entity
-@Table(name = "yamlcontainer", schema = "control" //, 
+@Table(name = "ymlcontainer", schema = "control" //, 
        //uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "row","column" },
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")
 )
 @Audited
-@ToString @NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
+//@ToString(callSuper=true, includeFieldNames=true)
+@ToString
 @SuppressWarnings("serial")
 public class YVwContainer extends YVwComponent {
 	

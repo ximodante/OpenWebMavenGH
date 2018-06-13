@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+//import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -181,7 +181,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	/************************************************************
 	 * 3. Persistence Structure
 	 ************************************************************/
-	YVwForm yView=new YVwForm();
+	YVwForm yForm=new YVwForm();
 	
 	/************************************************************
 	 * 4. METHODS
@@ -224,7 +224,12 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 		this.setViewInfo();
 		
 		// 6. Persist 
-		this.yView= this.connection.persist(this.yView);
+		System.out.println("----------------------------------------------------");
+		System.out.println(this.yForm.toString());
+		System.out.println("----------------------------------------------------");
+		System.out.println("");
+		System.out.println("");
+		this.yForm= this.connection.persist(this.yForm);
 		
 		
 		
@@ -385,11 +390,12 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @param fieldName
 	 * @return
 	 */
-	private Optional<YAMLVwField> getField(String name) {
-		if (fields==null) return null;
+	private YAMLVwField getField(String name) {
+		if (fields==null || fields.isEmpty()) return null;
 		else return fields.stream()
 				.filter(e-> e.getName().equalsIgnoreCase(name))
-				.findFirst();
+				.findFirst()
+				.get();
 	}
 	
 	/**
@@ -398,7 +404,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwEvent> getFieldEvents (String fieldName) {
-		if (fieldEvents==null) return null;
+		if (fieldEvents==null || fieldEvents.isEmpty()) return null;
 		else return fieldEvents.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(fieldName))
 				.collect(Collectors.toList());
@@ -409,7 +415,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwAction> getFieldActions (String fieldName) {
-		if (fieldActions==null) return null;
+		if (fieldActions==null || fieldActions.isEmpty()) return null;
 		else return fieldActions.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(fieldName))
 				.collect(Collectors.toList());
@@ -423,11 +429,12 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @param paneldName
 	 * @return
 	 */
-	private Optional<YAMLVwPanel> getPanel(String name) {
-		if (panels==null) return null;
+	private YAMLVwPanel getPanel(String name) {
+		if (panels==null || panels.isEmpty()) return null;
 		else return panels.stream()
 				.filter(e-> e.getName().equalsIgnoreCase(name))
-				.findFirst();
+				.findFirst()
+				.get();
 	}
 	
 	/**
@@ -436,7 +443,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwEvent> getPanelEvents (String panelName) {
-		if (panelEvents==null) return null;
+		if (panelEvents==null || panelEvents.isEmpty()) return null;
 		else return panelEvents.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(panelName))
 				.collect(Collectors.toList());
@@ -447,7 +454,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwAction> getPanelActions (String panelName) {
-		if (panelActions==null) return null;
+		if (panelActions==null || panelActions.isEmpty()) return null;
 		else return panelActions.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(panelName))
 				.collect(Collectors.toList());
@@ -461,11 +468,12 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @param paneldName
 	 * @return
 	 */
-	private Optional<YAMLVwListPanel> getListPanel(String name) {
-		if (listPanels==null) return null;
+	private YAMLVwListPanel getListPanel(String name) {
+		if (listPanels==null || listPanels.isEmpty()) return null;
 		else return listPanels.stream()
 				.filter(e-> e.getName().equalsIgnoreCase(name))
-				.findFirst();
+				.findFirst()
+				.get();
 	}
 	/**
 	 * Return events of a list panel
@@ -473,7 +481,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwEvent> getListPanelEvents (String lPanelName) {
-		if (panelEvents==null) return null;
+		if (panelEvents==null || panelEvents.isEmpty()) return null;
 		else return panelEvents.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(lPanelName))
 				.collect(Collectors.toList());
@@ -484,7 +492,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwAction> getListPanelActions (String lPanelName) {
-		if (panelActions==null) return null;
+		if (panelActions==null || panelActions.isEmpty()) return null;
 		else return panelActions.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(lPanelName))
 				.collect(Collectors.toList());
@@ -499,11 +507,12 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @param paneldName
 	 * @return
 	 */
-	private Optional<YAMLVwTab> getTab(String name) {
-		if (tabs==null) return null;
+	private YAMLVwTab getTab(String name) {
+		if (tabs==null || tabs.isEmpty()) return null;
 		else return tabs.stream()
 				.filter(e-> e.getName().equalsIgnoreCase(name))
-				.findFirst();
+				.findFirst()
+				.get();
 	}
 	
 	/**
@@ -512,7 +521,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwEvent> getTabEvents (String tabName) {
-		if (tabEvents==null) return null;
+		if (tabEvents==null || tabEvents.isEmpty()) return null;
 		else return tabEvents.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(tabName))
 				.collect(Collectors.toList());
@@ -523,7 +532,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @return
 	 */
 	private List<YAMLVwAction> getTabActions (String tabName) {
-		if (tabActions==null) return null;
+		if (tabActions==null || tabActions.isEmpty()) return null;
 		else return tabActions.stream()
 				.filter(e-> e.getElement().equalsIgnoreCase(tabName))
 				.collect(Collectors.toList());
@@ -539,16 +548,18 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * Fill DB View attributes
 	 */
 	private void setViewInfo() {
-		this.yView.setRow((byte)-1);
-		this.yView.setCol((byte)-1);
-		this.yView.setName(this.getName());
-		this.yView.setDescription(this.getDescription());
-		this.yView.setParent(null);
-		this.yView.setRsbundle(this.rsbundle);
-		this.yView.setClassName(this.getClassName(this.getKlass()));
-		this.yView.setLstActions(this.getActions(""));
-		this.yView.setLstEvents(this.getEvents(""));
-		this.yView.setChildren(this.getListComponents(this.lines, this.yView));
+		this.yForm.setRow((byte)-1);
+		this.yForm.setCol((byte)-1);
+		this.yForm.setName(this.getName());
+		//this.yForm.setDescription(this.getDescription());
+		//Get the same description as menuItem
+		this.yForm.setDescription(this.myMenuItem.getDescription());
+		this.yForm.setParent(null);
+		this.yForm.setRsbundle(this.rsbundle);
+		this.yForm.setClassName(this.getClassName(this.getKlass()));
+		this.yForm.setLstActions(this.getActions("", this.yForm));
+		this.yForm.setLstEvents(this.getEvents("",this.yForm));
+		this.yForm.setChildren(this.getListComponents(this.lines, this.yForm));
 	}
 	
 	/**
@@ -560,21 +571,29 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 */
 	private YVwPanel getVwPanel (String comp, byte row, byte col, YVwContainer myParent) {
 		YVwPanel yP= new YVwPanel();
-		YAMLVwPanel ymlP=this.getPanel(comp).get();
+		YAMLVwPanel ymlP=this.getPanel(comp);
 		yP.setRow(row);
 		yP.setCol(col);
-		yP.setName(ymlP.getName());
-		yP.setDescription(ymlP.getDescription());
-		
-		//yTG.setParent(this.yView); // Not necessary. JPA manages this
+		if (ymlP==null) {
+			yP.setName(comp);
+			//yP.setDescription(comp);
+			yP.setClassName(myParent.getClassName());
+			yP.setChildren(null);
+		} else {
+			yP.setName(ymlP.getName());
+			//yP.setDescription(ymlP.getDescription());
+			if (ymlP.getKlass()==null) yP.setClassName(myParent.getClassName());
+			else yP.setClassName(this.getClassName(ymlP.getKlass()));
+			yP.setChildren(this.getListComponents(ymlP.getLines(), yP));
+		}	
+		//yTG.setParent(this.yForm); // Not necessary. JPA manages this
 		yP.setParent(myParent); // Not necessary. JPA manages this
-								
-		if (ymlP.getKlass()==null) yP.setClassName(myParent.getClassName());
-		else yP.setClassName(this.getClassName(ymlP.getKlass()));
 		
-		yP.setLstActions(this.getActions(comp));
-		yP.setLstEvents(this.getEvents(comp));
-		yP.setChildren(this.getListComponents(ymlP.getLines(), yP));
+		yP.setDescription(myParent.getDescription() +"-" + comp);						
+		
+		yP.setLstActions(this.getActions(comp, yP));
+		yP.setLstEvents(this.getEvents(comp, yP));
+		
 		return yP;
 	}
 	
@@ -587,22 +606,29 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 */
 	private YVwListPanel getVwListPanel (String comp, byte row, byte col, YVwContainer myParent) {
 		YVwListPanel yP= new YVwListPanel();
-		YAMLVwListPanel ymlP=this.getListPanel(comp).get();
+		YAMLVwListPanel ymlP=this.getListPanel(comp);
 		yP.setRow(row);
 		yP.setCol(col);
-		yP.setName(ymlP.getName());
-		yP.setDescription(ymlP.getDescription());
-		
-		//yTG.setParent(this.yView); // Not necessary. JPA manages this
+		if (ymlP==null) {
+			yP.setName(comp);
+			//yP.setDescription(comp);
+			yP.setClassName(myParent.getClassName());
+			yP.setChildren(null);
+		} else {
+			yP.setName(ymlP.getName());
+			//yP.setDescription(ymlP.getDescription());
+			if (ymlP.getKlass()==null) yP.setClassName(myParent.getClassName());
+			else yP.setClassName(this.getClassName(ymlP.getKlass()));
+			yP.setChildren(this.getListPanelComponents(ymlP.getFields(), myParent));
+		}
+		//yTG.setParent(this.yForm); // Not necessary. JPA manages this
 		yP.setParent(myParent); // Not necessary. JPA manages this
-						
-		if (ymlP.getKlass()==null) yP.setClassName(myParent.getClassName());
-		else yP.setClassName(this.getClassName(ymlP.getKlass()));
 		
-				
-		yP.setLstActions(this.getActions(comp));
-		yP.setLstEvents(this.getEvents(comp));
-		yP.setChildren(this.getListPanelComponents(ymlP.getFields(), myParent));
+		yP.setDescription(myParent.getDescription()+"-"+comp);
+						
+		yP.setLstActions(this.getActions(comp,yP));
+		yP.setLstEvents(this.getEvents(comp,yP));
+		
 		return yP;
 	}
 	
@@ -616,22 +642,27 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 */
 	private YVwTabGroup getVwTabGroup (String comp, byte row, byte col, YVwContainer myParent) {
 		YVwTabGroup yTG= new YVwTabGroup();
-		YAMLVwTab ymlT=this.getTab(comp).get();
+		YAMLVwTab ymlT=this.getTab(comp);
 		yTG.setRow(row);
 		yTG.setCol(col);
-		yTG.setName(ymlT.getName());
-		
-		yTG.setDescription(ymlT.getDescription());
-		
-		//yTG.setParent(this.yView); // Not necessary. JPA manages this
+		if (ymlT==null) {
+			yTG.setName(comp);
+			//yTG.setDescription(comp);
+			yTG.setClassName(myParent.getClassName());
+			yTG.setChildren(null);
+		} else {
+			yTG.setName(ymlT.getName());
+			//yTG.setDescription(ymlT.getDescription());
+			if (ymlT.getKlass()==null) yTG.setClassName(myParent.getClassName());
+			else yTG.setClassName(this.getClassName(ymlT.getKlass()));
+			yTG.setChildren(this.getTabElements(ymlT.getContainers(), myParent));
+		}
+		//yTG.setParent(this.yForm); // Not necessary. JPA manages this
 		yTG.setParent(myParent); // Not necessary. JPA manages this
+		yTG.setDescription(myParent.getDescription()+"-"+comp);
 				
-		if (ymlT.getKlass()==null) yTG.setClassName(myParent.getClassName());
-		else yTG.setClassName(this.getClassName(ymlT.getKlass()));
-		
-		yTG.setLstActions(this.getActions(comp));
-		yTG.setLstEvents(this.getEvents(comp));
-		yTG.setChildren(this.getTabElements(ymlT.getContainers(), myParent));
+		yTG.setLstActions(this.getActions(comp, yTG));
+		yTG.setLstEvents(this.getEvents(comp, yTG));
 		return yTG;
 	}
 	
@@ -644,26 +675,31 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 */
 	private YVwField getVwField (String comp, byte row, byte col, YVwContainer myParent) {
 		YVwField yF= new YVwField();
-		YAMLVwField ymlF=this.getField(comp).get();
+		YAMLVwField ymlF=this.getField(comp);
 		yF.setRow(row);
 		yF.setCol(col);
-		yF.setName(ymlF.getName());
-		
-		//yF.setParent(this.yView); // Not necessary. JPA manages this
+		if (ymlF==null) {
+			yF.setName(comp);
+			yF.setClassName(myParent.getClassName());
+		} else {
+			yF.setName(ymlF.getName());
+			if (ymlF.getKlass()==null) yF.setClassName(myParent.getClassName());
+			else yF.setClassName(this.getClassName(ymlF.getKlass()));
+		}
+		//yF.setParent(this.yForm); // Not necessary. JPA manages this
 		yF.setParent(myParent); // Not necessary. JPA manages this
 		
-		if (ymlF !=null && ymlF.getKlass()!=null) yF.setClassName(this.getClassName(ymlF.getKlass())); 
-		else  yF.setClassName(myParent.getClassName());
-		
 		// When
-		if (ymlF !=null & ymlF.getAttribute()!=null) yF.setAttribute(ymlF.getAttribute());
-		else if (Character.isUpperCase(ymlF.getName().charAt(2))) yF.setAttribute(ymlF.getName().substring(3));
-		else yF.setAttribute(ymlF.getName().substring(2)); 
+		if (ymlF !=null && ymlF.getAttribute()!=null) yF.setAttribute(ymlF.getAttribute());
+		else if (Character.isUpperCase(yF.getName().charAt(2))) yF.setAttribute(yF.getName().substring(3));
+		else yF.setAttribute(yF.getName().substring(2)); 
 			
-		yF.setLstActions(this.getActions(comp));
-		yF.setLstEvents(this.getEvents(comp));
-		if (ymlF !=null & ymlF.getEditor()!=null) yF.setEditor(ymlF.getEditor());
-		yF.setDescription(yF.getClassName().getDescription()+"."+ yF.getAttribute() +"-"+ this.getName());
+		yF.setLstActions(this.getActions(comp,yF));
+		yF.setLstEvents(this.getEvents(comp,yF));
+		if (ymlF !=null && ymlF.getEditor()!=null) yF.setEditor(ymlF.getEditor());
+		yF.setDescription(myParent.getDescription() + "-" + 
+				          yF.getClassName().getDescription()+"."+ 
+				          yF.getAttribute());
 		this.setModelAttributes(yF);
 		return yF;
 	}
@@ -729,11 +765,12 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 		myTab.setRow(row); //Not important
 		myTab.setCol(col);
 		myTab.setName("tbe_"+ container);
-		myTab.setDescription(myTab.getName());
 		
-		//yF.setParent(this.yView); // Not necessary. JPA manages this
+		
+		//yF.setParent(this.yForm); // Not necessary. JPA manages this
 		myTab.setParent(myParent); // Not necessary. JPA manages this
 		
+		myTab.setDescription(myParent.getDescription()+"-"+myTab.getName());
 		//A tab element has no class!!
 		//if (ymlF.getKlass()==null) yF.setClassName(myParent.getClassName());
 		//else yF.setClassName(this.getClassName(ymlF.getKlass()));
@@ -800,7 +837,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	}
 	
 	
-	private List<YVwEvent> getEvents (String compName) {
+	private List<YVwEvent> getEvents (String compName, YVwComponent comp) {
 		List<YAMLVwEvent> lstYamE=null;
 		ElementTypeEdu elType=getElType(compName);
 		switch (elType) {
@@ -811,7 +848,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 			case FIELD:     lstYamE=this.getFieldEvents    (compName); break;
 			default:        throw new IllegalArgumentException("Invalid component type: " + elType);
 		}
-		return getEvents (lstYamE);
+		return getEvents (lstYamE, comp);
 	}
 	
 	/**
@@ -819,16 +856,18 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @param ymlEvents
 	 * @return
 	 */
-	private List<YVwEvent> getEvents (List<YAMLVwEvent> ymlEvents ) {
+	private List<YVwEvent> getEvents (List<YAMLVwEvent> ymlEvents, YVwComponent myParent) {
 		List<YVwEvent> myEvents= new ArrayList<>();
 		if (ymlEvents!=null) {
 			for (YAMLVwEvent ymlE: ymlEvents) {
 				YVwEvent myEvent=new YVwEvent();
+				// all events should be evaluated by an action of a class 
 				String[]s=StringUtils.split(ymlE.getAction(), ".");
 				myEvent.setClassName(this.getClassName(s[0]));
 				myEvent.setMethod(s[1]);
+				
 				//myEvent.setParent(parent); //NOt necessary, already defined by JPA
-				myEvent.setDescription(ymlE.getElementType().toString()+"-"+ymlE.getElement());
+				myEvent.setDescription(myParent.getDescription() +"-"+ymlE.getElementType().toString());
 				myEvent.setLstAffectedIds(ymlE.getRefresh());
 				myEvents.add(myEvent);
 		}	}
@@ -837,7 +876,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	}
 	
 
-	private List<YVwAction> getActions (String compName) {
+	private List<YVwAction> getActions (String compName, YVwComponent comp ) {
 		List<YAMLVwAction> lstYamA=null;
 		ElementTypeEdu elType=getElType(compName);
 		switch (elType) {
@@ -848,7 +887,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 			case FIELD:     lstYamA=this.getFieldActions(compName);     break;
 			default:        throw new IllegalArgumentException("Invalid component type: " + elType);
 		}
-		return getActions (lstYamA);
+		return getActions (lstYamA, comp);
 	}
 	
 	/**
@@ -856,7 +895,7 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 	 * @param ymlEvents
 	 * @return
 	 */
-	private List<YVwAction> getActions (List<YAMLVwAction> ymlActions ) {
+	private List<YVwAction> getActions (List<YAMLVwAction> ymlActions, YVwComponent myParent ) {
 		List<YVwAction> myActions= new ArrayList<>();
 		if (ymlActions!=null) {
 			for (YAMLVwAction ymlE: ymlActions) {
@@ -866,8 +905,13 @@ public class YAMLVwFormLoad extends YAMLVwComponent implements Serializable{
 					myAction.setClassName(this.getClassName(s[0]));
 					myAction.setMethod(s[1]);
 				}
-				//myAction.setParent(parent); //NOt necessary, already defined by JPA
-				myAction.setDescription(ymlE.getElementType().toString()+"-"+ymlE.getElement());
+				else {
+					myAction.setClassName(myParent.getClassName());
+					myAction.setMethod(ymlE.getName());
+				}
+				myAction.setParent(myParent); //NOt necessary, already defined by JPA
+				//myAction.setDescription(ymlE.getElementType().toString()+"-"+ymlE.getElement());
+				myAction.setDescription(myParent.getDescription() +"-" + ymlE.getName());
 				myAction.setLstAffectedIds(ymlE.getRefresh());
 				myAction.setIcon(ymlE.getIcon());
 				myAction.setType(ymlE.getButton());

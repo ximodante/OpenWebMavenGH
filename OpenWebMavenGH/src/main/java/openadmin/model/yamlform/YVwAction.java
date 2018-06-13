@@ -29,8 +29,8 @@ import openadmin.model.Base;
 import openadmin.model.control.ClassName;
 
 @Entity
-@Table(name = "yamlaction", schema = "control", 
-       uniqueConstraints = @UniqueConstraint(columnNames =  { "pare", "descripcio" })//,
+@Table(name = "ymlaction", schema = "control" //, 
+       //uniqueConstraints = @UniqueConstraint(columnNames =  { "pare", "descripcio" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
 @Audited
@@ -73,13 +73,13 @@ public class YVwAction extends Audit implements Base, Serializable{
 	private String icon=null; //Button icon
 	
 	@Getter @Setter
-	@Column(name= "tipus", unique = true)
+	@Column(name= "tipus")
 	private ButtonType type=ButtonType.Button; 
 	
 	@Getter @Setter
 	@Size(max = 30)
 	@NotNull
-	@Column(name= "nom", unique = true)
+	@Column(name= "nom")
 	private String name=null; //descripcio
 	
 	public static void main(String[] args) {

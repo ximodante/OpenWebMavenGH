@@ -17,13 +17,14 @@ import lombok.ToString;
  *
  */
 @Entity
-@Table(name = "yamlvista", schema = "control"//, 
+@Table(name = "ymlform", schema = "control"//, 
        //uniqueConstraints = @UniqueConstraint(columnNames =  { "parent", "row","column" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
 @Audited
 @SuppressWarnings("serial")
 @NoArgsConstructor
+//@ToString(callSuper=true, includeFieldNames=true)
 @ToString
 public class YVwForm extends YVwContainer {
 

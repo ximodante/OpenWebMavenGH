@@ -74,17 +74,18 @@
       
       <!-- YAML VIEW Classes  -->
       
-      <class>openadmin.model.yamlview.YVwAction        </class>
-      <class>openadmin.model.yamlview.YVwComponent     </class>
-      <class>openadmin.model.yamlview.YVwEvent         </class>
-      <class>openadmin.model.yamlview.YVwField         </class>
-      <class>openadmin.model.yamlview.YVwListPanel     </class>
+      <class>openadmin.model.yamlform.YVwAction        </class>
+      <class>openadmin.model.yamlform.YVwComponent     </class>
+      <class>openadmin.model.yamlform.YVwContainer     </class>
+      <class>openadmin.model.yamlform.YVwEvent         </class>
+      <class>openadmin.model.yamlform.YVwField         </class>
       
-      <class>openadmin.model.yamlview.YVwContainer     </class>
-      <class>openadmin.model.yamlview.YVwPanel         </class>
-      <class>openadmin.model.yamlview.YVwTabelement    </class>
-      <class>openadmin.model.yamlview.YVwTabGroup      </class>
-      <class>openadmin.model.yamlview.YVwView          </class>
+      <class>openadmin.model.yamlform.YVwForm          </class>
+      <class>openadmin.model.yamlform.YVwListPanel     </class>
+      <class>openadmin.model.yamlform.YVwPanel         </class>
+      <class>openadmin.model.yamlform.YVwTabElement    </class>
+      <class>openadmin.model.yamlform.YVwTabGroup      </class>
+      
       
       
       
