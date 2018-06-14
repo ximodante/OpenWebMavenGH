@@ -1,4 +1,4 @@
-package openadmin.model.yamlform;
+package openadmin.model.yamlform02;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -29,13 +28,13 @@ import openadmin.model.Base;
 import openadmin.model.control.ClassName;
 
 @Entity
-@Table(name = "ymlaction", schema = "control" //, 
-       //uniqueConstraints = @UniqueConstraint(columnNames =  { "pare", "descripcio" })//,
+@Table(name = "ymlevent", schema = "control" //, 
+       //uniqueConstraints = @UniqueConstraint(columnNames =  { "pare", "tipus" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )
 @Audited
 @ToString @NoArgsConstructor @SuppressWarnings("serial")
-public class YVwAction extends Audit implements Base, Serializable{
+public class YEvent extends Audit implements Base, Serializable{
 	
 	/** attribute that contain the identifier*/
 	@Getter @Setter
@@ -53,12 +52,14 @@ public class YVwAction extends Audit implements Base, Serializable{
 	@Getter @Setter
 	@ManyToOne
 	@JoinColumn(name = "pare", nullable= false)
-	private YVwComponent parent; // Component that has produces the action
+	private YComponent parent; // Component that creates the event
 		
 	@Getter @Setter
-	@ManyToOne
-	@JoinColumn(name = "clase", nullable= false)
-	private ClassName className=null; //class that has the method to execute
+	@NotNull
+	@Column(name= "clase")
+	//@ManyToOne
+	//@JoinColumn(name = "clase", nullable= false)
+	private String className=null; //class that has the method to execute
 	
 	@Getter @Setter
 	@NotNull
@@ -67,24 +68,10 @@ public class YVwAction extends Audit implements Base, Serializable{
 		
 	@Getter @Setter
 	@ElementCollection
-	private List<String> lstAffectedIds=new ArrayList<String>(); // Ids of the the affected components
+	private List<String> refresh=new ArrayList<String>(); // Ids of the the affected components
 	
 	@Getter @Setter
-	private String icon=null; //Button icon
+	@Column(name= "tipus", unique = true)
+	private EventType type=EventType.onclick; 
 	
-	@Getter @Setter
-	@Column(name= "tipus")
-	private ButtonTypeEdu type=ButtonTypeEdu.Button; 
-	
-	@Getter @Setter
-	@Size(max = 30)
-	@NotNull
-	@Column(name= "nom")
-	private String name=null; //descripcio
-	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

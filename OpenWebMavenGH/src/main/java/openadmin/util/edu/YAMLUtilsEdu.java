@@ -12,7 +12,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import lombok.Getter;
+import lombok.Setter;
 import openadmin.util.configuration.yamlview.YAMLVwFormLoad;
+import openadmin.util.configuration.yamlview02.YAMLComponent;
 
 public class YAMLUtilsEdu {
 	private static ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -36,6 +39,18 @@ public class YAMLUtilsEdu {
 	public static void main(String[] args) throws JsonProcessingException {
 		//YAMLRawEdu yr=null;
 		YAMLVwFormLoad yv=null;
+		
+		YAMLComponent yc=null;
+		InputStream iin = YAMLUtilsEdu.class.getResourceAsStream("/view/user.yaml");
+		try {
+			yc = YAMLFileToObject(iin, YAMLComponent.class);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		System.out.println(yc.toString());
+		
 		//Object obj=null;
 		try {
 			

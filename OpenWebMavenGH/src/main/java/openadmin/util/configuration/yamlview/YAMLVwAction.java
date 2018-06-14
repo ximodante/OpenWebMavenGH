@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import openadmin.model.yamlform.ButtonType;
+import openadmin.model.yamlform.ButtonTypeEdu;
 import openadmin.model.yamlform.ElementTypeEdu;
 
 @SuppressWarnings("serial")
@@ -30,7 +30,7 @@ public class YAMLVwAction  implements IYAMLElement<String>, Serializable{
 	private String icon= null; 
 	
 	@Getter @Setter 
-	private ButtonType button=ButtonType.Button;
+	private ButtonTypeEdu button=ButtonTypeEdu.Button;
 	
 	// Elements to refresh with ajax (fields, tabs, panels etc)
 	@Getter @Setter

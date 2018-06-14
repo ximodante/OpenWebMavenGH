@@ -1,0 +1,119 @@
+#-------------------------------------------------------------------------------------------
+# 13/01/2018
+# Test View is a template
+# Instructions to use YAML:
+#     http://sangsoonam.github.io/2017/03/13/yaml-vs-json.html
+#     http://yaml.org/spec/1.2/spec.html
+#-------------------------------------------------------------------------------------------
+#
+# IMPORTANT:
+#  A YAML Screen defined here, should be defined previously in a MenuItem that points to it.!!!!!
+#
+# NOMENCLATURE:
+#
+# a. Prefixes :
+#   p_ --> PANEL
+#   l_ --> LISTPANEL
+#   t_ --> TABGROUP or TAB
+#   f_ --> FIELD 
+#
+# b. If a field does not have attribute tag then the attribute is the suffix after "f_"
+#    for instance for "f_year", the attribute is "year" 
+#--------------------------------------------------
+# 1. General Info  
+name: user
+description: user YAML
+klass: openadmin.model.control.User
+program: control
+rsbundle: my_resource_bundle ???                  # Resource bundle for translation
+defaultFormActions: true                          # Get default actions from file _defaultFormActions
+defaultRoleGroups: true                           # Get default role groups from file _defaultRoleGroups
+lines:                                            # Only panels, linePanels or tabs   
+    - [ p_main           ]                        # 1 panel                 in 1 line
+    - [ t_01             ]                        # 1 tabs groups           in 1 line 
+    
+#-------------------------------------------------------------------------------------------
+
+#2. Panel definition
+panels:
+  - name: p_main                                     # main panel
+    description: User Main Panel 
+    lines:                                            # fields displayed in lines   
+    - [ f_id,                                ]
+    - [ f_description , f_password           ]  
+    - [ f_fullName,     f_identifier         ]  
+    - [ f_fdateBegin,   f_dateEnd            ]     
+    - [ f_firma,        f_language, f_active ]                       
+    #--------------------------------------                  
+ #-------------------------------------------------------------------------------------------
+
+ #3: List Panels that has collection
+listPanels:                                           # a panel with an array ( a detail class (adresses for a person)
+  - name: l_access   
+    description:  Access list 
+    klass: openadmin.model.control.Access 
+    fields: [f_Aid, f_Adescription, f_AentityAdm, f_Aprogram, f_Arole]         
+    #---------------------------------------------------
+#---------------------------------------------------------------------------------------------  
+
+#4. Tab definition
+tabs:
+  - { name: t_01   , containers: [ l_access ] }        # 1 Tabgroup containing 1 tabspanels
+ 
+#---------------------------------------------------------------------------------------------
+
+#5. Additional info of Fields
+#fields:
+#  - { name: f_Aid,                attribute: , editor: Keyboard }
+
+#---------------------------------------------------------------------------------------------
+
+#6. Events definition (form, panel, tab and field events)
+#formEvents:
+#  - { name: onresize, action: class01.action01 }
+  
+#panelEvents: 
+#  - { name: onresize, element: p_main,     action: class01.action02, refresh: [f_01,f_02] }
+
+#listPanelEvents: 
+#  - { name: onresize, element: l_adress,   action: class01.action02, refresh: [f_01,f_02] }
+  
+#tabEvents: 
+#  - { name: onresize, element: t_01,       action: class02.action01, refresh: [f_02,f_03] }
+  
+#fieldEvents:
+#  - { name: onblur,   element: f_02,       action: class03.action01, refresh: [f_01,f_02] }
+  
+#---------------------------------------------------------------------------------------------
+
+#7. Action definition (form, panel, tab and field events)
+#formActions:
+#  - { name: Save,      action: class05.action01, icon: icon1.jpg, roleGroup: gnew }
+#  - { name: Cancel,    action: class05.action02, icon: icon2.jpg, roleGroup: gadmin }
+#  - { name: SendEmail, action: class05.action03, icon: icon3.jpg, refresh: [f_01,f_02], roleGroup: glook }
+#  - { name: Insert,    action: class05.action04, icon: icon3.jpg, refresh: [f_01,f_02], roleGroup: gedit  }
+      
+#panelActions:  
+#  - { name: Refresh,   element: p_main,     action: class05.action01, icon: icon1.jpg, refresh: [f_01,f_02], roleGroup: glook } 
+
+#ListPanelActions:  
+#  - { name: Refresh,   element: p_main,     action: class05.action01, icon: icon1.jpg, refresh: [f_01,f_02], roleGroup: glook } 
+
+#tabActions:  
+#  - { name: Edit,      element: t_01,       action: class02.action01, refresh: [f_02,f_03], roleGroup: glook }
+
+#fieldActions:
+#  - { name: Shift,     element: f_02,       action: class03.action01, refresh: [f_01,f_02], roleGroup: glook }
+
+#---------------------------------------------------------------------------------------------
+#8. Role groups. 
+#   A role is defined by program.role.
+#   The program is got from ????
+roleGroups:
+  - { name: gadmin, roles: [admin] }
+  - { name: gdel,   roles: [admin, del ] }
+  - { name: gedit,  roles: [admin, del, edit ] }
+  - { name: gnew,   roles: [admin, del, edit, new ] }
+  - { name: glook,  roles: [admin, del, edit, new, look ] }  
+  
+  

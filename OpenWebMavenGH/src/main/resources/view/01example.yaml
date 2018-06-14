@@ -1,0 +1,144 @@
+#-------------------------------------------------------------------------------------------
+# 14/06/2018
+# Test View is a template
+# Instructions to use YAML:
+#     http://sangsoonam.github.io/2017/03/13/yaml-vs-json.html
+#     http://yaml.org/spec/1.2/spec.html
+#-------------------------------------------------------------------------------------------
+#
+# IMPORTANT:
+#  A YAML Screen defined here, should be defined previously in a MenuItem that points to it.!!!!!
+#
+# NOMENCLATURE:
+#
+# a. Prefixes :
+#   pn_ --> PANEL
+#   gp_ --> GRIDPANEL
+#   tb_ --> TAB
+#   tg_ --> TABGTOUP
+#   fl_ --> FIELD 
+#
+# b. If a field does not have attribute tag then the attribute is the suffix after "f_"
+#    for instance for "fl_year", the attribute is "year" 
+#--------------------------------------------------
+#
+# DEFAULT VALUES:
+#   1. If no klass is indicated, the klass is assigned its parent's klass by default
+#   2. The name of the main form is "form" by default and cannot be assigned
+#   3. If no package is indicated, the package is assigned its parent's pack by default     
+#   4. The caption of a field is his attribute name
+#  
+# ERROR TESTING:
+#    
+#   1. Only element type form can have a description
+#   2. All elements in lines attributes should exist
+#   3. All elements in refresh attribute should exist
+#   4. A field should be associated to a class attribute
+#   5. Property names should be in a list of properties
+#   6. Depending on the property, its value could be parametrized by valor or type (numeric etc)
+#--------------------------------------------------
+#
+# 1. Form (General) Info  
+description: View example
+name: form
+klass: User
+pack: yamlform02
+program: control
+rsbundle: my_resource_bundle                      # Resource bundle for translation
+defaultFormActions: true                          # Get default actions     from file "_defaultValues.yaml"
+defaultRoleGroups: true                           # Get default role groups from file "_defaultValues.yaml"
+lines:                                            # Only panels, linePanels or tabs   
+    - [ pn_main           ]                       # 1 panel                 in 1 line
+    - [ tg_01             ]                       # 1 tabs groups                 in 1 line 
+    - [ pn_01, gp_history ]                       # 1 panel and 1 linePanel in 1 line
+properties:
+    - { name: caption, value: user}    
+#-------------------------------------------------------------------------------------------
+
+#2. Panel definition
+components:
+  - name: pn_main                                     # main panel
+    lines:                                            # fields displayed in lines   
+    - [ fl_01, fl_02 ]  
+    - [ fl_03, fl_04 ]
+    properties:
+      - { name: caption, value: Main data}    
+                                  
+    #--------------------------------------                  
+  - name: pn_01                                       # another panel
+    lines:
+    - [ fl_06, fl_07, fl_08, fl_09 ]                  # fields displayed in line 1
+    - [ fl_10, fl_11, fl_12, fl_13 ]                  # fields displayed in line 2
+    properties:
+      - { name: caption, value: Main data}    
+    
+    #--------------------------------------                  
+
+
+#3: Grid Panel definition for collections
+  - name: gp_history   
+    klass: openadmin.model.control.History 
+    lines: [[fl_21, f_22, f_23, f_24]]     
+    properties:
+      - { name: caption, value: History}       
+    #---------------------------------------------------
+  - name: gp_address   
+    klass: openadmin.model.control.Address 
+    lines: [[fl_31, f_32, f_33, f_34]]         
+    #---------------------------------------------------  
+  - name: gp_vehicles   
+    klass: openadmin.model.control.History 
+    lines: [[fl_41, f_42, f_43, f_44]]         
+    #---------------------------------------------------  
+
+#4. Tab Group definition
+  - name: tg_01   
+    lines: [tb_01, tb_02]   
+    properties:
+      - { name: caption, value: History}   
+    #---------------------------------------------------
+
+#5. Tab definition
+  - name: tb_01   
+    lines: [ [gp_history ] , [gp_address]]
+    properties:
+      - { name: caption, value: History and Addres}
+    #---------------------------------------------------
+  - name: tb_02   
+    lines: [ [gp_vehicles ]]
+    properties:
+      - { name: caption, value: Vehicles}
+    #---------------------------------------------------
+
+#6. Fields definition
+  - name: fl_01   
+    properties:
+      - { name: tooltiptext, value: retail price}
+      - { name: enabled,     value: false }
+    #--------------------------------------------------- 
+  - name: fl_02   
+    properties:
+      - { name: tooltiptext, value: wholesail price}
+      - { name: editor,      value: slider}
+#---------------------------------------------------------------------------------------------
+
+#7. Events definition 
+events:
+  - { name: onresize, parent: form,  klass: user,       method: clean         , refresh: main   }
+  - { name: onblur,   parent: f_02,  klass: otherclass, method: calculateTotal, refresh: [pn_main, f_31] }
+  
+#---------------------------------------------------------------------------------------------
+
+#8. Action definition 
+actions:
+  - { name: Calculate, parent: form,  klass: user,       method: clean         , refresh: main,  roleGroup: gtest   }
+  - { name: LoadData,  parent: pn_01, klass: otherclass, method: loadData      , refresh: pn_01, roleGroup: glook   }
+
+#---------------------------------------------------------------------------------------------
+#9. Role groups. 
+#   A role is defined by program.role.
+#   The program is got from ????
+roleGroups:
+  - { name: gtest,  roles: [admin] }
+  
+  

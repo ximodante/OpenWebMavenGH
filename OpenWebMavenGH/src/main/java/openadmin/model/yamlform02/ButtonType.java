@@ -1,4 +1,4 @@
-package openadmin.model.yamlform;
+package openadmin.model.yamlform02;
 
 public enum ButtonType {
 	Button,
