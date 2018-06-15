@@ -15,6 +15,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -76,7 +78,7 @@ public class YComponent extends Audit implements Base, Serializable{
 	@Getter @Setter
 	@Size(max = 25)
 	@Column(name = "nom")
-	private String name=null; //
+	private String name="form"; //
 	
 	// Class to edit
 	@Getter @Setter
@@ -146,5 +148,10 @@ public class YComponent extends Audit implements Base, Serializable{
 	    orphanRemoval = true
 	)
 	private List<YProperty> lstProperties=new ArrayList<>();
-	
+
+	@PrePersist @PreUpdate
+	public void prePersist() {
+		if (this.getType()!=ElementType.FORM)
+			this.setDescription(""+parent.getId()+"-" + this.getName());
+	}
 }

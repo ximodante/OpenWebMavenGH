@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -61,4 +63,9 @@ public class YProperty extends Audit implements Base, Serializable{
 	@ManyToOne
 	@JoinColumn(name = "pare", nullable= false)
 	private YComponent parent; // Component that has produces the action
+	
+	@PrePersist @PreUpdate
+	public void prePersist() {
+		this.setDescription(""+parent.getId()+"-" + this.getName());
+	}
 }	

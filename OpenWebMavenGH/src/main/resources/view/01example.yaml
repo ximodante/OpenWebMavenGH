@@ -39,6 +39,7 @@
 #--------------------------------------------------
 #
 # 1. Form (General) Info  
+
 description: View example
 name: form
 klass: User
@@ -131,8 +132,8 @@ events:
 
 #8. Action definition 
 actions:
-  - { name: Calculate, parent: form,  klass: user,       method: clean         , refresh: main,  roleGroup: gtest   }
-  - { name: LoadData,  parent: pn_01, klass: otherclass, method: loadData      , refresh: pn_01, roleGroup: glook   }
+  - { name: Calculate, parent: form,  klass: user,       method: clean         , refresh: main,  icon: fa-area-chart, roleGroup: gtest , type: Button  }
+  - { name: LoadData,  parent: pn_01, klass: otherclass, method: loadData      , refresh: pn_01, icon: fa-bolt,       roleGroup: glook   }
 
 #---------------------------------------------------------------------------------------------
 #9. Role groups. 

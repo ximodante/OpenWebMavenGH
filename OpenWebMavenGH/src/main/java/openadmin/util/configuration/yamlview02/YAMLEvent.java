@@ -14,7 +14,7 @@ import openadmin.model.yamlform02.EventType;
 public class YAMLEvent implements Serializable {
 	
 	@Getter @Setter
-	private EventType name=null;
+	private EventType type=null;
 	
 	@Getter @Setter
 	private String parent= "form";  

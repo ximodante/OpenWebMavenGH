@@ -1,9 +1,9 @@
 formActions:
-  - { name: New,    icon: fa-plus,       roleGroup: gnew  }
-  - { name: Edit,   icon: fa-edit,       roleGroup: gedit }
-  - { name: Copy,   icon: fa-copy,       roleGroup: gnew  }
-  - { name: Delete, icon: fa-trash,      roleGroup: gdel  }
-  - { name: Search, icon: fa-binoculars, roleGroup: glook }   
+  - { name: New,    parent: form, icon: fa-plus,       roleGroup: gnew,  type: Button }
+  - { name: Edit,   parent: form, icon: fa-edit,       roleGroup: gedit, type: Button }
+  - { name: Copy,   parent: form, icon: fa-copy,       roleGroup: gnew,  type: Button }
+  - { name: Delete, parent: form, icon: fa-trash,      roleGroup: gdel,  type: Button }
+  - { name: Search, parent: form, icon: fa-binoculars, roleGroup: glook, type: Button }   
   
 roleGroups:
   - { name: gadmin, roles: [admin] }

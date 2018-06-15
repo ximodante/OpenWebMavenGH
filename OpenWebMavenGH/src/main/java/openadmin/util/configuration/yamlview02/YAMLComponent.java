@@ -3,7 +3,7 @@ package openadmin.util.configuration.yamlview02;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,8 +30,8 @@ public class YAMLComponent implements Serializable{
 	// simple package name of the class (control, vehicles, ..)
 	// to get the model package  you should add "openadmin.model"  to the pack
 	// to get the action package you should add "openadmin.action" to the pack
-	//@Getter @Setter 
-	//private String pack=null; 
+	@Getter @Setter 
+	private String pack=null; 
 	
 	@Getter @Setter 
 	private String klass=null; // Class to edit fields
@@ -61,23 +61,23 @@ public class YAMLComponent implements Serializable{
 	
 	@Getter @Setter
 	//Properties pair name value
-	private Set <YAMLProperty> properties=new HashSet<>();
+	private Set <YAMLProperty> properties=new TreeSet<>();
 	
 	@Getter @Setter
 	//Definition of all components of the form
-	private Set <YAMLComponent> components=new HashSet<>();
+	private Set <YAMLComponent> components=new TreeSet<>();
 	
 	@Getter @Setter
 	//All the events of the form and children
-	private Set <YAMLEvent> events=new HashSet<>();
+	private Set <YAMLEvent> events=new TreeSet<>();
 	
 	@Getter @Setter
 	//All the actions of the form and children
-	private Set <YAMLAction> actions=new HashSet<>();
+	private Set <YAMLAction> actions=new TreeSet<>();
 	
 	@Getter @Setter
 	//All the actions of the form and children
-	private Set <YAMLRoleGroup> roleGroups=new HashSet<>();
+	private Set <YAMLRoleGroup> roleGroups=new TreeSet<>();
 	
 	public static void main(String[] args) throws JsonProcessingException {
 		

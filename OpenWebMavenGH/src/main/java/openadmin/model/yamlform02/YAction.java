@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -74,8 +76,9 @@ public class YAction extends Audit implements Base, Serializable{
 	private String method=null; //method from the class to execute
 	
 	@Getter @Setter
-	@ElementCollection
-	private List<String> refresh=new ArrayList<String>(); // Ids of the the affected components
+	//@ElementCollection
+	//private List<String> refresh=new ArrayList<String>(); // Ids of the the affected components
+	private String refresh=null; // Ids of the the affected components separated by comma
 	
 	@Getter @Setter
 	private String icon=null; //Button icon
@@ -89,6 +92,10 @@ public class YAction extends Audit implements Base, Serializable{
 	@Column(name= "rols")
 	private String roles=""; 
 	
+	@PrePersist @PreUpdate
+	public void prePersist() {
+		this.setDescription(""+parent.getId()+"-" + this.getName());
+	}
 	
 	
 	public static void main(String[] args) {

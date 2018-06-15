@@ -14,7 +14,10 @@ import openadmin.model.yamlform02.ButtonType;
 public class YAMLAction implements Serializable {
 	
 	@Getter @Setter
-	private ButtonType name=null;
+	private String name=null;
+	
+	@Getter @Setter
+	private ButtonType type=ButtonType.CommandButton;
 		
 	@Getter @Setter
 	private String parent= "form";  
@@ -31,6 +34,9 @@ public class YAMLAction implements Serializable {
 	// Comma separated fields 
 	@Getter @Setter
 	private String refresh= null; 
+	
+	@Getter @Setter
+	private String icon=null; //Button icon
 	
 	// Group of roles that can execute the action
 	@Getter @Setter
