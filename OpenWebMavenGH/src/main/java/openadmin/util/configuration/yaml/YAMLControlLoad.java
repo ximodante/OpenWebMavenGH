@@ -459,9 +459,12 @@ public class YAMLControlLoad implements Serializable{
 		myMenu.setType(ymlMenu.getNodeType());
 		myMenu.setDescription(ymlMenu.getDescription().trim());
 		
-		if (myMenu.getDescription().length()==0) myMenu.setDescription(myClass.getDescription());
+		//if (myMenu.getDescription().length()==0) myMenu.setDescription(myClass.getDescription());
+		if (myMenu.getDescription().length()==0)
+			myMenu.setDescription(myClass.getDescription() + "_" + this.defaultProgram );
 		
 		//System.out.println("   menu:"+ myMenu.getDescription());
+		//20180618: Now a MenuItem can be in several programs
 		this.cMenuItems.put(myMenu.getDescription(), this.connection.persist(myMenu));
 		
 		// Add default actions only if viewType is not action nor submenu

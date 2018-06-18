@@ -38,13 +38,20 @@
 #   6. Depending on the property, its value could be parametrized by valor or type (numeric etc)
 #--------------------------------------------------
 #
+#  NOTES:
+#   1. Several menu items can call this form. A menu item description
+#   
+#       
+#
+#
+#
 # 1. Form (General) Info  
 
 description: View example
 name: form
 klass: User
 pack: yamlform02
-program: control
+# 20180618: NOT YET USED programs: {control}
 rsbundle: my_resource_bundle                      # Resource bundle for translation
 defaultFormActions: true                          # Get default actions     from file "_defaultValues.yaml"
 defaultRoleGroups: true                           # Get default role groups from file "_defaultValues.yaml"

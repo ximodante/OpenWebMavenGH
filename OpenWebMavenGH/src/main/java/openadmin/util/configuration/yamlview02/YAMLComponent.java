@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.TreeSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -39,10 +40,11 @@ public class YAMLComponent implements Serializable{
 	@Getter @Setter 
 	private String attribute=null;
 	
-	// Name of the program from control.Program.descripton
-	@Getter @Setter
-	private String program=null; // Description of the program
-	
+	// Name of the programs from control.Program.descripton that can call this form
+	//@Getter @Setter
+	//private List<String> programs=new ArrayList<>(); // Description of the programs that can call this form
+	//20180618: The programs can be got by accessing menuItems by their classname as
+	//          the descrioption of a munu item is classname+program
 	@Getter @Setter
 	private String rsbundle=null; // Name of the resource bundle for i18n
 	
@@ -61,23 +63,31 @@ public class YAMLComponent implements Serializable{
 	
 	@Getter @Setter
 	//Properties pair name value
-	private Set <YAMLProperty> properties=new TreeSet<>();
+	//private Set <YAMLProperty> properties=new TreeSet<>();
+	private List <YAMLProperty> properties=new ArrayList<>();
 	
 	@Getter @Setter
 	//Definition of all components of the form
-	private Set <YAMLComponent> components=new TreeSet<>();
+	//private Set <YAMLComponent> components=new TreeSet<>();
+	private List <YAMLComponent> components=new ArrayList<>();
 	
 	@Getter @Setter
 	//All the events of the form and children
-	private Set <YAMLEvent> events=new TreeSet<>();
+	//private Set <YAMLEvent> events=new TreeSet<>();
+	private List <YAMLEvent> events=new ArrayList<>();
 	
 	@Getter @Setter
 	//All the actions of the form and children
-	private Set <YAMLAction> actions=new TreeSet<>();
+	//private Set <YAMLAction> actions=new TreeSet<>();
+	private List <YAMLAction> actions=new ArrayList<>();
 	
 	@Getter @Setter
 	//All the actions of the form and children
-	private Set <YAMLRoleGroup> roleGroups=new TreeSet<>();
+	//private Set <YAMLRoleGroup> roleGroups=new TreeSet<>();
+	private List <YAMLRoleGroup> roleGroups=new ArrayList<>();
+	
+	@Getter @Setter
+	private YAMLComponent parent;
 	
 	public static void main(String[] args) throws JsonProcessingException {
 		

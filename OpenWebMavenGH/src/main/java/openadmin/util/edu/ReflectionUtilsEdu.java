@@ -435,7 +435,41 @@ public class ReflectionUtilsEdu {
 		
 		
 	}
+	/**
+	 * If the object contains a field
+	 * @param object
+	 * @param fieldName
+	 * @return
+	 */
+	public static boolean doesObjectContainField(Object object, String fieldName) {
+	    return Arrays.stream(object.getClass().getFields())
+	            .anyMatch(f -> f.getName().equals(fieldName));
+	}
 	
+	/**
+	 * If a class contains a field
+	 * @param myClass
+	 * @param fieldName
+	 * @return
+	 */
+	public static boolean doesClassContainField(Class<?> myClass, String fieldName) {
+	    return Arrays.stream(myClass.getFields())
+	            .anyMatch(f -> f.getName().equals(fieldName));
+	}
+	
+	/**
+	 * if a class (given by its class name) contains a field
+	 * @param className
+	 * @param fieldName
+	 * @return
+	 * @throws SecurityException
+	 * @throws ClassNotFoundException
+	 */
+	public static boolean doesClassContainField(String className, String fieldName) 
+		throws SecurityException, ClassNotFoundException {
+	    return Arrays.stream(Class.forName(className).getFields())
+	            .anyMatch(f -> f.getName().equals(fieldName));
+	}
 	
 	
 	public static void main(String[] args) {

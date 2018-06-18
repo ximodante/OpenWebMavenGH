@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import openadmin.util.configuration.yamlview.YAMLVwRoleGroup;
 
 @ToString
 public class YAMLMenuItem implements Serializable{
@@ -44,6 +45,12 @@ public class YAMLMenuItem implements Serializable{
 	
 	@Getter @Setter
 	private List<YAMLMenuItem> menuItems= null;        // MenuItems
+	
+	// Optional, name of the roleGroup that can access a menuitem
+	// Usually used only in YAMLForms
+	@Getter @Setter
+	private String roleGroup=null; 
+	
 	
 	/*
 	public boolean isDefaultActions() {

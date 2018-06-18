@@ -70,6 +70,10 @@ defaultActions:
 menuItems: 
   # In program control, only admin rol can access, so no need to show actions, using default actions
   #    as the only user that belongs both to entities and default actions can access menus.
+  #
+  # A menu item description is formed (by default of he className.description and "-" and program.description   
+  #    so it can be repeated in several programs, but not in the same program!
+  #    
   #----------------------------------------------------------------------------------------------------------------------------------
   - { program: control , description: System_Administration,     icon: fa-folder,   type: submenu,
                #---------------------------------------------------------------------------------------------------------------------
