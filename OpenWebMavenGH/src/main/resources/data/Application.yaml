@@ -93,7 +93,7 @@ menuItems:
                                          actions: [ { name: dataLoad,  roleGroup: gadmin } ]
                                          #------------------------------------------------------------------------------------------
                             }, 
-                            { className: openadmin.model.control.User,  description: User YAML, icon: fa-user,  type: yaml           }                            
+                            { className: openadmin.model.control.User,  description: User YAML, icon: fa-user,  type: yaml , roleGroup: glook          }                            
                           ] 
     }
   #----------------------------------------------------------------------------------------------------------------------------------

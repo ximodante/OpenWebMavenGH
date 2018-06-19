@@ -26,6 +26,7 @@ public class YAMLAction implements Serializable {
 	private String pack= null; 
 				
 	@Getter @Setter
+	//Full class name with package
 	private String klass= null; 
 		
 	@Getter @Setter

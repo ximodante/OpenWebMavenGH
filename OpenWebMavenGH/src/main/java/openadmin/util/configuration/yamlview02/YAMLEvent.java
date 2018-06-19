@@ -22,6 +22,7 @@ public class YAMLEvent implements Serializable {
 	@Getter @Setter
 	private String pack= null; 
 			
+	// Full class name with package
 	@Getter @Setter
 	private String klass= null; 
 	

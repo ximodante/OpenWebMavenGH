@@ -132,15 +132,15 @@ components:
 
 #7. Events definition 
 events:
-  - { name: onresize, parent: form,  klass: user,       method: clean         , refresh: main   }
-  - { name: onblur,   parent: f_02,  klass: otherclass, method: calculateTotal, refresh: [pn_main, f_31] }
+  - { name: onresize, parent: form,  klass: openadmin.action.control.User,       method: clean         , refresh: main   }
+  - { name: onblur,   parent: f_02,  klass: openadmin.action.control.Otherclass, method: calculateTotal, refresh: [pn_main, f_31] }
   
 #---------------------------------------------------------------------------------------------
 
 #8. Action definition 
 actions:
-  - { name: Calculate, parent: form,  klass: user,       method: clean         , refresh: main,  icon: fa-area-chart, roleGroup: gtest , type: Button  }
-  - { name: LoadData,  parent: pn_01, klass: otherclass, method: loadData      , refresh: pn_01, icon: fa-bolt,       roleGroup: glook   }
+  - { name: Calculate, parent: form,  klass: openadmin.action.control.User,       method: clean         , refresh: main,  icon: fa-area-chart, roleGroup: gtest , type: Button  }
+  - { name: LoadData,  parent: pn_01, klass: openadmin.action.control.Otherclass, method: loadData      , refresh: pn_01, icon: fa-bolt,       roleGroup: glook   }
 
 #---------------------------------------------------------------------------------------------
 #9. Role groups. 

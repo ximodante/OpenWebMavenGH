@@ -14,7 +14,7 @@ import java.util.List;
 import javax.validation.constraints.Size;
 //import java.util.Optional;
 
-import javax.validation.constraints.Size;
+//import javax.validation.constraints.Size;
 
 import openadmin.model.Base;
 
@@ -105,7 +105,7 @@ public class ReflectionUtilsEdu {
 	 * @return
 	 * @throws IntrospectionException
 	 */
-	public static PropertyDescriptor[] getPropertiesDescriptor(Class klass) 
+	public static PropertyDescriptor[] getPropertiesDescriptor(Class<?> klass) 
 			throws IntrospectionException {
 		
 		BeanInfo beanInfo = Introspector.getBeanInfo(klass);
@@ -465,14 +465,55 @@ public class ReflectionUtilsEdu {
 	 * @throws SecurityException
 	 * @throws ClassNotFoundException
 	 */
-	public static boolean doesClassContainField(String className, String fieldName) 
-		throws SecurityException, ClassNotFoundException {
-	    return Arrays.stream(Class.forName(className).getFields())
-	            .anyMatch(f -> f.getName().equals(fieldName));
+	public static boolean doesClassContainField(String className, String fieldName) { 
+	    boolean exists=false;
+	    
+		try {
+			exists=Arrays.stream(Class.forName(className).getFields())
+			        .anyMatch(f -> f.getName().equals(fieldName));
+		} catch (SecurityException | ClassNotFoundException e) {
+			exists=false;
+		}
+		return exists;
 	}
 	
+	/**
+	 * Test if a class exists
+	 * @param className
+	 * @return
+	 */
+	public static boolean doesClassExists(String className) {
+		boolean exists=true;
+		try {
+			Class.forName(className);
+		} catch (ClassNotFoundException e) {
+			exists=false;
+		}
+		
+		return exists;
+	}
+	
+	/**
+	 * Test if a method exists
+	 * @param className
+	 * @param methodName
+	 * @return
+	 */
+	public static boolean doesClassContainMethod(String className, String methodName) { 
+	    boolean exists=false;
+	    
+		try {
+			exists=Arrays.stream(Class.forName(className).getMethods())
+			        .anyMatch(f -> f.getName().equals(methodName));
+		} catch (SecurityException | ClassNotFoundException e) {
+			exists=false;
+		}
+		return exists;
+	}
 	
 	public static void main(String[] args) {
+		System.out.println("kk:" +doesClassExists("kk"));
+		System.out.println("User:" + doesClassExists("openadmin.model.control.User"));
 		Object myObj;
 		try {
 			
