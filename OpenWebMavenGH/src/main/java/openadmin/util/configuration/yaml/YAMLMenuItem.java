@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import openadmin.util.configuration.yamlview.YAMLVwRoleGroup;
 
 @ToString
 public class YAMLMenuItem implements Serializable{

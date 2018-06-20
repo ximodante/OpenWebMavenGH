@@ -1,4 +1,4 @@
-package openadmin.util.configuration.yamlview02;
+package openadmin.util.configuration.yamlview;
 
 import java.io.Serializable;
 
@@ -6,41 +6,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import openadmin.model.yamlform02.ButtonType;
+import openadmin.model.yamlform02.EventType;
 
 @SuppressWarnings("serial")
 @NoArgsConstructor
 @ToString
-public class YAMLAction implements Serializable {
+public class YAMLEvent implements Serializable {
 	
 	@Getter @Setter
-	private String name=null;
+	private EventType type=null;
 	
-	@Getter @Setter
-	private ButtonType type=ButtonType.CommandButton;
-		
 	@Getter @Setter
 	private String parent= "form";  
-		
+	
 	@Getter @Setter
 	private String pack= null; 
-				
+			
+	// Full class name with package
 	@Getter @Setter
-	//Full class name with package
 	private String klass= null; 
-		
+	
 	@Getter @Setter
 	private String method= null; 
-		
+	
 	// Comma separated fields 
 	@Getter @Setter
 	private String refresh= null; 
-	
-	@Getter @Setter
-	private String icon=null; //Button icon
-	
-	// Group of roles that can execute the action
-	@Getter @Setter
-	private String roleGroup= null; 
-	
+		
 }

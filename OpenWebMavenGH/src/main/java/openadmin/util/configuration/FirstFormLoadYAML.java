@@ -7,7 +7,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,16 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 import openadmin.dao.operation.DaoJpaEdu;
 import openadmin.dao.operation.DaoOperationFacadeEdu;
 import openadmin.model.control.User;
-import openadmin.model.yamlform.YVwAction;
-import openadmin.model.yamlform.YVwEvent;
-import openadmin.model.yamlform.YVwField;
-import openadmin.model.yamlform.YVwForm;
-import openadmin.model.yamlform.YVwListPanel;
-import openadmin.model.yamlform.YVwPanel;
-import openadmin.model.yamlform.YVwTabElement;
-import openadmin.model.yamlform.YVwTabGroup;
+import openadmin.util.configuration.yamlview.YAMLComponent;
 import openadmin.util.configuration.yamlview.YAMLDefaultValues;
-import openadmin.util.configuration.yamlview.YAMLVwFormLoad;
+import openadmin.util.configuration.yamlview.YAMLFormLoad;
 import openadmin.util.edu.FileUtilsEdu;
 import openadmin.util.edu.PropertyUtilsEdu;
 import openadmin.util.edu.YAMLUtilsEdu;
@@ -69,6 +62,7 @@ public class FirstFormLoadYAML {
 	 * @param folder
 	 * @return
 	 */
+	//@SuppressWarnings("unused")
 	private static File[] getAllYamlViewFiles(String folder, String suffix) {
 		
 		//No Maven
@@ -124,22 +118,27 @@ public class FirstFormLoadYAML {
 			throws ClassNotFoundException, IOException, IntrospectionException, InstantiationException, 
 			IllegalAccessException, InvocationTargetException, NoSuchMethodException, RuntimeException {	
 		
-		LocalDateTime myDate = LocalDateTime.now();
+		//LocalDateTime myDate = LocalDateTime.now();
 		YAMLDefaultValues yDV=getDefaultValues();
 		//for (File f:getAllYamlViewFiles(DataFolder,".yaml")) {
 		for (File f:getYamlViewFiles(DataFolder,YAMLFiles)) {	
 			
-			YAMLVwFormLoad yf=null;
+			YAMLComponent yc=null;
+			YAMLFormLoad yFL=new YAMLFormLoad();
 		    
 			//1. Read YAML File
 			InputStream in = new FileInputStream(f);
 			
 			try {
-				//yf = YAMLUtilsEdu.YAMLStringToObject(myStr, YAMLControlLoad.class);
-				yf = YAMLUtilsEdu.YAMLFileToObject(in, YAMLVwFormLoad.class);
-				yf.setDefaultValues(yDV);
+				//1. Load values from YAML File
+				yc = YAMLUtilsEdu.YAMLFileToObject(in, YAMLComponent.class);
+				yFL.setForm(yc);
 				
-				System.out.println(yf.toString());
+				//2. Assign Default values
+				yFL.setDefaultValues(yDV);
+				
+				
+				System.out.println(yc.toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -150,20 +149,17 @@ public class FirstFormLoadYAML {
 			connection = new DaoJpaEdu(firstLoadUser, "control_post", (short) 0,langType);
 	
 			//3. Assign current connection to YAMLControlLoad
-			yf.setConnection(connection);
+			yFL.setConnection(connection);
 	
 			connection.begin();
+			//Fill helper and control structure
+			yFL.init();
 			
-			if (yf.checkErrors(false).trim().length()>10)
-				System.out.println(yf.checkErrors(true));
+			if (yFL.checkErrors(false).trim().length()>10)
+				System.out.println(yFL.checkErrors(true));
 			else {
 		
-				//2. Open BD Connection	
-				
-		
-				//4. Persist configuration in DB	
-				yf.Init();
-				
+				yFL.persist();		
 				//5. Delete old configuration
 				/*
 				connection.deleteOlderThan(YVwAction.class     , myDate);

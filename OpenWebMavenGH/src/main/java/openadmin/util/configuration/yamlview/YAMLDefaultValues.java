@@ -1,6 +1,8 @@
 package openadmin.util.configuration.yamlview;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +12,9 @@ import lombok.ToString;
 @ToString @NoArgsConstructor
 public class YAMLDefaultValues {
 	@Getter @Setter
-	private List<YAMLVwAction> formActions= null;
+	private Set<YAMLAction> formActions= new HashSet<>();
 	
 	@Getter @Setter
-	private List<YAMLVwRoleGroup> roleGroups= null; 
+	private Set<YAMLRoleGroup> roleGroups= new HashSet<>(); 
 
 }

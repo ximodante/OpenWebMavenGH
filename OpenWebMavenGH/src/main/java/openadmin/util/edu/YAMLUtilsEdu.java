@@ -14,8 +14,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import lombok.Getter;
 import lombok.Setter;
-import openadmin.util.configuration.yamlview.YAMLVwFormLoad;
-import openadmin.util.configuration.yamlview02.YAMLComponent;
+import openadmin.util.configuration.yamlview.YAMLComponent;
 
 public class YAMLUtilsEdu {
 	private static ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -38,7 +37,7 @@ public class YAMLUtilsEdu {
 	
 	public static void main(String[] args) throws JsonProcessingException {
 		//YAMLRawEdu yr=null;
-		YAMLVwFormLoad yv=null;
+		//YAMLVwFormLoad yv=null;
 		
 		YAMLComponent yc=null;
 		InputStream iin = YAMLUtilsEdu.class.getResourceAsStream("/view/user.yaml");
@@ -52,6 +51,7 @@ public class YAMLUtilsEdu {
 		System.out.println(yc.toString());
 		
 		//Object obj=null;
+		/*
 		try {
 			
 			for (int i=0; i<2; i ++) {
@@ -144,12 +144,12 @@ public class YAMLUtilsEdu {
 			
 			*/
 			
-			
+		/*	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		*/
 		/**
 		for (int i=0;i<1000; i++)
 		System.out.println(""+i+ ObjectToJSONString(new LogEdu(null, null, 1, "SELECT * FROM KK", DBAction.FIND_DESC,"Prova 1")));

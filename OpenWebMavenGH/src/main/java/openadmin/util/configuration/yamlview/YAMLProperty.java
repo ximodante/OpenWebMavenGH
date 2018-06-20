@@ -1,4 +1,4 @@
-package openadmin.util.configuration.yamlview02;
+package openadmin.util.configuration.yamlview;
 
 
 import java.io.Serializable;

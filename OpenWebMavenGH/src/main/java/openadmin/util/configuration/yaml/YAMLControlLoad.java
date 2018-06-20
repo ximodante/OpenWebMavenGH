@@ -27,8 +27,7 @@ import openadmin.model.control.MenuItem;
 import openadmin.model.control.Program;
 import openadmin.model.control.Role;
 import openadmin.model.control.User;
-
-import openadmin.util.configuration.yamlview.YAMLVwRoleGroup;
+import openadmin.util.configuration.yamlview.YAMLRoleGroup;
 import openadmin.util.edu.YAMLUtilsEdu;
 
 
@@ -64,7 +63,7 @@ public class YAMLControlLoad implements Serializable{
 
 	//2018/06/06 Added roleGroup
 	@Getter @Setter
-	private List<YAMLVwRoleGroup> roleGroups= null;         // Programs
+	private List<YAMLRoleGroup> roleGroups= null;         // Programs
 
 	
 	/************************************************************
@@ -257,7 +256,7 @@ public class YAMLControlLoad implements Serializable{
 	private HashMap<String,List<String>> getRolesFromRoleGroup() {
 		HashMap<String,List<String>>lRoles=new HashMap<String,List<String>>();
 		if(this.roleGroups !=null) {
-			for (YAMLVwRoleGroup ymlRoleG : this.roleGroups) {
+			for (YAMLRoleGroup ymlRoleG : this.roleGroups) {
 				lRoles.put(ymlRoleG.getName(),ymlRoleG.getRoles());
 		}	}
 		return lRoles;
