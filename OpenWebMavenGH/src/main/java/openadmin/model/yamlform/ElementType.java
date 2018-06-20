@@ -1,4 +1,4 @@
-package openadmin.model.yamlform02;
+package openadmin.model.yamlform;
 
 public enum ElementType {
 	FORM,

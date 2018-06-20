@@ -18,11 +18,11 @@ import openadmin.model.control.ActionViewRole;
 import openadmin.model.control.ClassName;
 import openadmin.model.control.MenuItem;
 import openadmin.model.control.Program;
-import openadmin.model.yamlform02.ElementType;
-import openadmin.model.yamlform02.YAction;
-import openadmin.model.yamlform02.YComponent;
-import openadmin.model.yamlform02.YEvent;
-import openadmin.model.yamlform02.YProperty;
+import openadmin.model.yamlform.ElementType;
+import openadmin.model.yamlform.YAction;
+import openadmin.model.yamlform.YComponent;
+import openadmin.model.yamlform.YEvent;
+import openadmin.model.yamlform.YProperty;
 import openadmin.util.edu.ReflectionUtilsEdu;
 
 public class YAMLFormLoad {

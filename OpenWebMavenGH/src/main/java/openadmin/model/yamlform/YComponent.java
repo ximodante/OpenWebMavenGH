@@ -1,4 +1,4 @@
-package openadmin.model.yamlform02;
+package openadmin.model.yamlform;
 
 import java.io.Serializable;
 import java.util.ArrayList;

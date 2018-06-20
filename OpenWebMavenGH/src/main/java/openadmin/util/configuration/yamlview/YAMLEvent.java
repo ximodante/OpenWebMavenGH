@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import openadmin.model.yamlform02.EventType;
+import openadmin.model.yamlform.EventType;
 
 @SuppressWarnings("serial")
 @NoArgsConstructor
