@@ -3,8 +3,6 @@ package openadmin.util.configuration.yamlview02;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -12,20 +10,19 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.sun.faces.renderkit.AttributeManager.Key;
-
 import lombok.Getter;
 import lombok.Setter;
 import openadmin.dao.operation.DaoOperationFacadeEdu;
+import openadmin.model.control.Action;
+import openadmin.model.control.ActionViewRole;
 import openadmin.model.control.ClassName;
 import openadmin.model.control.MenuItem;
-import openadmin.model.yamlform02.ButtonType;
+import openadmin.model.control.Program;
 import openadmin.model.yamlform02.ElementType;
 import openadmin.model.yamlform02.YAction;
 import openadmin.model.yamlform02.YComponent;
 import openadmin.model.yamlform02.YEvent;
 import openadmin.model.yamlform02.YProperty;
-import openadmin.util.configuration.yamlview.IYAMLElement;
 import openadmin.util.edu.ReflectionUtilsEdu;
 
 public class YAMLFormLoad {
@@ -46,9 +43,18 @@ public class YAMLFormLoad {
 	@Getter @Setter
 	int fase=0;
 	
+	// Relation with openadmin.model.control
 	// control.MenuItem that reference this form
 	List<MenuItem> lstMenuItems=new ArrayList<>();
 	
+	// control.Action that reference this form
+	List<Action> lstActions=new ArrayList<>();
+	
+	// control.ActionViewRole that reference this form
+	List<ActionViewRole> lstActionViewRoles=new ArrayList<>();
+	
+	// control.Program that reference this form
+	List<Program> lstPrograms=new ArrayList<>();
 	
 	/*******************************************************************
 	 * 1.A HELPER INFO STRUCTURE
@@ -142,6 +148,10 @@ public class YAMLFormLoad {
 		if (this.fase!=1)
 			throw new RuntimeException("Fase must be 1 when executing method 'init()'");
 		
+		if (this.connection==null)
+			throw new RuntimeException("A DB connection should be stablished before execuiting this method 'init()'");
+		
+		
 		this.fase=2;
 		
 		this.getMenuItems();
@@ -151,19 +161,11 @@ public class YAMLFormLoad {
 		
 		//2. Fill the DB structure
 		this.fillYForm();
+		
+		//3. Get control model related elements to this form
+		this.getControlElements();
 	}
 	
-	/**
-	 * Get the MenuItems that can call this form
-	 */
-	private void getMenuItems() {
-		String myStr=
-			" SELECT m " +  
-		    " FROM MenuItem m " + 
-			" WHERE m.className.description='" + this.getSimpleName(this.form.getKlass())+ "'" +
-			 "  AND m.type=4";
-		this.lstMenuItems= this.connection.findObjectPersonalized2(myStr);
-	}
 	
 	private String getSimpleName(String klass) {
 		return StringUtils.substringAfterLast("."+ klass, ".");
@@ -228,7 +230,13 @@ public class YAMLFormLoad {
 	}
 	
 	// Get duplicate components from all component lines 
+	//     or nonexistent components from component lines
 	private void getErrorsInLines (Set<String> linCompSet, YAMLComponent comp) {
+		// Test if class exists
+		String myClassName=this.getClassNameYML(comp);
+		if (!this.isExistingClass(myClassName) && ! this.notExistingClasses.contains(myClassName))
+			this.notExistingClasses.add(myClassName);
+		
 		//For each line of the component
 		for (List<String> ls: comp.getLines()) {
 			//For each component name of the line
@@ -238,13 +246,15 @@ public class YAMLFormLoad {
 				if (linCompSet.add(name)) {
 					//1 if the component not exists yet
 					YAMLComponent myChildComp=hYAMLCom.get(name);
+					
 					//If the component doesn't exist in the hashmap, maybe it is a field
 					// or maybe not.
 					//1.1 The component doesn't exist
-					if (myChildComp==null) { ???????
-						String myClassName=this.getClassNameYML(myChildComp);
-						if (!this.isExistingClass(myClassName) && ! this.notExistingClasses.contains(myClassName))
-							this.notExistingClasses.add(myClassName);
+					if (myChildComp==null) { 
+						myChildComp=new YAMLComponent();
+						myChildComp.setName(name);
+						myChildComp.setParent(comp);
+						
 						//1.1 if the component is a container (not a field)	
 						if (this.getCompType(name)!=ElementType.FIELD) 
 							this.notExistingComponents.add(name);
@@ -358,6 +368,8 @@ public class YAMLFormLoad {
 		return klass;
 	}
 	
+	
+	
 	/*******************************************************************
 	 * 3. TRANSLATE INFORMATION From YAMLComponent to Component
 	 * 3.1 
@@ -389,7 +401,7 @@ public class YAMLFormLoad {
 		myComp.setName(compName);
 		myComp.setRow(row);
 		myComp.setCol(col);
-		byte level=(Byte) null;
+		byte level=(byte) -1;
 		// Main Form
 		if (myParent==null) {
 			this.yForm=myComp;
@@ -397,7 +409,7 @@ public class YAMLFormLoad {
 			myComp.setDescription(this.form.getDescription());
 			myComp.setType(ElementType.FORM);
 			myComp.setAttribute(null);
-			level=(byte) -1;
+			
 		// Child component
 		} else {
 			ymlComp=this.hYAMLCom.get(compName);
@@ -569,9 +581,79 @@ public class YAMLFormLoad {
 	}
 	/*******************************************************************
 	 * 4. OBTAIN CONTROL INFORMATION
-	 * 4.1 Get className
-	 * 4.2 Get program 
+     * 4.1 Get Control elements
+	 * 4.2 Get MenuItems
+	 * 4.3 Get ActionViewRoles
+	 * 4.4 Get Actions
+	 * 4.5 Get Programs 
+	 * 4.6 Get className
 	 *******************************************************************/
+	/**
+	 * Get control model related elements to this form
+	 */
+	private void getControlElements() {
+		this.getMenuItems();
+		this.getActionViewRoles();
+		this.getActions();
+		this.getPrograms();
+	}
+	/**
+	 * Get the MenuItems that can call this form
+	 */
+	private void getMenuItems() {
+		String myStr=
+			" SELECT m " +  
+		    " FROM MenuItem m " + 
+			" WHERE m.className.description='" + this.getSimpleName(this.form.getKlass())+ "'" +
+			 "  AND m.type=4";
+		this.lstMenuItems= this.connection.findObjectPersonalized2(myStr);
+	}
+
+	/**
+	 * Get ActionViewRoles related to this form
+	 */
+	private void getActionViewRoles() {
+		// Get all ids form Menuitems related to this form
+		String menuItemIds=	this.lstMenuItems.stream()
+			.map(e->""+e.getId())
+			.collect(Collectors.joining(","));
+		
+		String myStr=
+			" SELECT a " +  
+		    " FROM ActionViewRole a " + 
+			" WHERE a.menuItem.id IN (" + menuItemIds + ")"; 
+		
+		this.lstActionViewRoles= this.connection.findObjectPersonalized2(myStr);
+	}
+	
+	/**
+	 * Get Actions related to this form
+	 */
+	private void getActions() {
+		// Get actions from ActionViewRole
+		this.lstActions= lstActionViewRoles.stream()
+			.map(e-> e.getAction())
+			.distinct()
+			.collect(Collectors.toList());
+	}
+	
+	/**
+	 * Get Programs related to this form
+	 */
+	private void getPrograms() {
+		String actionViewRoleIds=this.lstActionViewRoles.stream()
+			.map(e->""+e.getId())
+			.collect(Collectors.joining(","));
+		
+		String myStr=
+			" SELECT a.program " +  
+		    " FROM Access a " +
+			" JOIN ActionViewRole avr " + 		
+			"   ON avr.id IN (" + actionViewRoleIds + ") " + 
+			"  AND avr.role = a.role"; 
+			
+		this.lstPrograms= this.connection.findObjectPersonalized2(myStr);
+	}
 	
 	
 	/** 
@@ -645,11 +727,10 @@ public class YAMLFormLoad {
 				this.withErrors(this.notExistingActionClass,"Class in Action",   "Inexistent" , i++,verbose, myErrors) +
 				
 				
-				this.ClassNameError(i++, verbose, myErrors) +
-				this.MenuItemError (i++, verbose, myErrors) + 
-				this.ActionError   (i++, verbose, myErrors) + 
-				this.ProgramError  (i++, verbose, myErrors);
-			
+				this.emptyList(this.lstMenuItems,       "MenuItem", i++, verbose, myErrors) +
+				this.emptyList(this.lstActions,         "Action",   i++, verbose, myErrors) +
+				this.emptyList(this.lstActionViewRoles, "ActionViewRole", i++, verbose, myErrors) +
+				this.emptyList(this.lstPrograms,        "Programn", i++, verbose, myErrors);
 		
 		
 		
@@ -670,7 +751,38 @@ public class YAMLFormLoad {
 		return myErrors;
 	}
 	
+	public String emptyList(List<?> myLst, String elemName, 
+			int counter, boolean verbose, String myErrors ) {
+		if (verbose) myErrors = myErrors +
+				"\n\n" +
+				"======================================================\n" +
+				counter + ". Empty list of " + elemName  + " :\n" + 
+				"======================================================\n";
+		if (myLst==null || myLst.isEmpty()) 
+			myErrors=myErrors + "\n" + "-> No " + elemName  + " found.";
+			
+		return myErrors;
+	}
 	
+	/***************************************************************
+	 * 
+	 * 6. PERSIST YFORM TO CONTROL
+	 *  
+	 ***************************************************************/
+	public void persist() {
+		if (this.fase!=3)
+			throw new RuntimeException("Fase must be 3 when executing method 'persist()'");
+		
+		if (this.connection==null)
+			throw new RuntimeException("A DB connection should be stablished before executing this method 'persist()'");
+		
+		
+		this.fase=4;
+		
+		this.yForm= this.connection.persist(this.yForm);
+	}	
+		
+		
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
