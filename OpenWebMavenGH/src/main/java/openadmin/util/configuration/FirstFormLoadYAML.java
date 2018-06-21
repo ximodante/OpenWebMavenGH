@@ -159,6 +159,10 @@ public class FirstFormLoadYAML {
 				System.out.println(yFL.checkErrors(true));
 			else {
 		
+				// Fill DB structure
+				yFL.fillYForm();
+				
+				// Persist
 				yFL.persist();		
 				//5. Delete old configuration
 				/*

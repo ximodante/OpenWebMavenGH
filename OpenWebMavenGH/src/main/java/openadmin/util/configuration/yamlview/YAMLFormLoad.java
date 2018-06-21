@@ -136,13 +136,23 @@ public class YAMLFormLoad {
 		
 		//1. Set default actions
 		if (form.isDefaultFormActions()) 
-			yDV.getFormActions().stream().forEach(e ->this.form.getActions().add(e));
+			//yDV.getFormActions().stream().forEach(e ->this.form.getActions().add(e));
+			yDV.getFormActions().stream().forEach(e ->this.addDefaultAction(e));
 		
 		//1. Set default role groups
 		if (form.isDefaultRoleGroups())
 			yDV.getRoleGroups().stream().forEach(e ->this.form.getRoleGroups().add(e));
 	}
 	
+	/**
+	 * Trick for filling the List<Action> and set defaultÇAction to true
+	 * This procedure is used in a stream 
+	 * @param act
+	 */
+	private void addDefaultAction(YAMLAction act) {
+		act.setDefaultAction(true);
+		this.form.getActions().add(act);
+	}
 	
 	public void init() {
 		if (this.fase!=1)
@@ -154,17 +164,17 @@ public class YAMLFormLoad {
 		
 		this.fase=2;
 		
-		this.getMenuItems();
-		
 		//1. Fill the helpers
 		this.fillHelpers();
 		
-		//2. Fill the DB structure
-		this.fillYForm();
-		
-		//3. Get control model related elements to this form
+		//2. Get control model related elements to this form
 		this.getControlElements();
+		
+		//3. Fill the DB structure
+		//this.fillYForm();
+				
 	}
+	
 	
 	
 	private String getSimpleName(String klass) {
@@ -215,7 +225,7 @@ public class YAMLFormLoad {
 			.flatMap( roleGroup-> roleGroup.getRoles().stream())
 			.collect(Collectors.toSet());
 		
-		//6. Duplicated and not existing components through lines
+		//6. Duplicated and not existing components through lines plus complete information
 		this.getErrorsInLines(new HashSet<String>(), this.getForm());
 		
 		//7. Duplicated properties per component
@@ -238,40 +248,45 @@ public class YAMLFormLoad {
 			this.notExistingClasses.add(myClassName);
 		
 		//For each line of the component
-		for (List<String> ls: comp.getLines()) {
-			//For each component name of the line
-			for (String name: ls) {
+		List<List<String>>myLines=comp.getLines();
+		if (myLines!=null) {
+			for (List<String> ls: comp.getLines()) {
+				//For each component name of the line
+				for (String name: ls) {
 				
-				//Find if the component exists in the list of components
-				if (linCompSet.add(name)) {
-					//1 if the component not exists yet
-					YAMLComponent myChildComp=hYAMLCom.get(name);
+					//Find if the component exists in the list of components
+					if (linCompSet.add(name)) {
+						//1 if the component not exists yet
+						YAMLComponent myChildComp=hYAMLCom.get(name);
 					
-					//If the component doesn't exist in the hashmap, maybe it is a field
-					// or maybe not.
-					//1.1 The component doesn't exist
-					if (myChildComp==null) { 
-						myChildComp=new YAMLComponent();
-						myChildComp.setName(name);
-						myChildComp.setParent(comp);
+						//If the component doesn't exist in the hashmap, maybe it is a field
+						// or maybe not.
+						//1.1 The component doesn't exist
+						if (myChildComp==null) { 
+							myChildComp=new YAMLComponent();
+							myChildComp.setName(name);
+							myChildComp.setParent(comp);
 						
-						//1.1 if the component is a container (not a field)	
-						if (this.getCompType(name)!=ElementType.FIELD) 
-							this.notExistingComponents.add(name);
-						//If not existing component is a field, it must be an attribute of the class
-						// if not, then an error should be reported
-						//1.1.2 The component is a field (if exists in the class, it is OK) 
-						//1.1.2.2 If the field doesn't exist in the class	
-						//1.1.2.2 If the field doesn't exist in the class
-						else if (!this.isAttributeFromClass(this.getClassNameYML(myChildComp), name)) 
-							this.notExistingAttributes.add(this.getClassNameYML(myChildComp)+"-"+name);
+							//1.1 if the component is a container (not a field)	
+							if (this.getCompType(name)!=ElementType.FIELD) 
+								this.notExistingComponents.add(name);
+							//If not existing component is a field, it must be an attribute of the class
+							// if not, then an error should be reported
+							//1.1.2 The component is a field (if exists in the class, it is OK) 
+							//1.1.2.2 If the field doesn't exist in the class	
+							//1.1.2.2 If the field doesn't exist in the class
+							else if (!this.isAttributeFromClass(this.getClassNameYML(myChildComp), name)) 
+								this.notExistingAttributes.add(this.getClassNameYML(myChildComp)+"-"+name);
 					
-					//1.2 The component exists, recursively inspect its lines
-					} else this.getErrorsInLines(linCompSet, myChildComp);
+							//1.2 The component exists, recursively inspect its lines
+						} else {
+							myChildComp.setParent(comp);
+							this.getErrorsInLines(linCompSet, myChildComp);
+						}
 				
-				//2. if the component existed yet, it is a duplicate 
-				}else this.dupCompsInLines.add(name);
-	}	}	}
+						//2. if the component existed yet, it is a duplicate 
+					}else this.dupCompsInLines.add(name);
+	}	}	}	}
 	
 	/**
 	 * Tests if there are classes or methods in events that do not exist
@@ -294,16 +309,15 @@ public class YAMLFormLoad {
 	 */
 	private void getNotExistingClassesInActions() {
 		for (YAMLAction yAction:this.form.getActions()) {
-			if (isExistingClass(yAction.getKlass())) {
-				if (! this.isMethodFromClass(yAction.getKlass(), yAction.getMethod())) {
+			//Default actions don't have executing class
+			if (!yAction.isDefaultAction()) {
+				if (! isExistingClass(yAction.getKlass())) 
+					this.notExistingActionClass.add(yAction.getKlass());
+				else if (! this.isMethodFromClass(yAction.getKlass(), yAction.getMethod())) 
 					this.notExistingActionClass.add(yAction.getKlass() +"." + yAction.getMethod());
-				}
+				
 					
-			} else {
-				this.notExistingActionClass.add(yAction.getKlass());
-			}
-		}
-	}
+	}	}	}
 	
 	/**
 	 * If a field is an attribute from the class
@@ -315,6 +329,7 @@ public class YAMLFormLoad {
 		String fullClassName=myClassName;
 		ClassName cName=this.getClassName(myClassName);
 		if (cName !=null) fullClassName=cName.getFullName();
+		myFieldName=StringUtils.substringAfterLast(myFieldName, "fl_");
 		return ReflectionUtilsEdu.doesClassContainField(fullClassName, myFieldName);
 	}
 	
@@ -378,8 +393,11 @@ public class YAMLFormLoad {
 	/**
 	 * Convert YMLComponent general form to YComponent 
 	 */
-	private void fillYForm() {
+	public void fillYForm() {
+		if (this.fase!=3)
+			throw new RuntimeException("Fase must be 3 when executing method 'fillYForm()'");
 		
+		this.fase=4;
 		this.yForm=getComponent((byte)-1, (byte)-1,"form", null);
 		
 	}
@@ -394,14 +412,18 @@ public class YAMLFormLoad {
 	 */
 	private YComponent getComponent (byte row, byte col, String compName, YComponent myParent) {
 		
-		
+		System.out.println("===========================");
+		System.out.println("Component:"+ compName);
+		System.out.println("===========================");
 		YComponent myComp =new YComponent();
 		YAMLComponent ymlComp=null;
 		
 		myComp.setName(compName);
 		myComp.setRow(row);
 		myComp.setCol(col);
+		
 		byte level=(byte) -1;
+		
 		// Main Form
 		if (myParent==null) {
 			this.yForm=myComp;
@@ -414,18 +436,22 @@ public class YAMLFormLoad {
 		} else {
 			ymlComp=this.hYAMLCom.get(compName);
 			myComp.setType(this.getCompType(compName));
-			myComp.setAttribute(this.getAttribute(ymlComp));
 			level=myParent.getLevel();
 		}
-				
-		myComp.setClassName(this.getClassName(ymlComp.getKlass(), myParent));
-		myComp.setLevel(++level); 
-		myComp.setParent(myParent);
 		
+		myComp.setParent(myParent);
+		myComp.setLevel(++level); 
 		myComp.setLstActions(this.getActions(myComp));
 		myComp.setLstEvents(this.getEvents(myComp));
-		myComp.setLstComponents(this.getComponents(ymlComp.getLines(),myComp));
-		myComp.setLstProperties(this.getProperties(ymlComp.getProperties(), myComp));
+		if (myComp.getType()==ElementType.FIELD) myComp.setAttribute(this.getAttribute(ymlComp, compName));
+		
+		if (ymlComp!=null) {
+			myComp.setClassName(this.getClassName(ymlComp.getKlass(), myParent));
+			myComp.setLstComponents(this.getComponents(ymlComp.getLines(),myComp));
+			myComp.setLstProperties(this.getProperties(ymlComp.getProperties(), myComp));
+		} else {
+			myComp.setClassName(this.getClassName(null, myParent));
+		}
 		
 		// Description updated by @PrePersist and @Preupdate method
 		//myComp.setDescription(this.form.getDescription());
@@ -467,13 +493,14 @@ public class YAMLFormLoad {
 		List<YComponent>lstComp=new ArrayList<>();
 		
 		byte row=0;
-		for(List<String> myLine:lines) {
-			byte col=0;
-			for(String compName: myLine) {
-				lstComp.add(this.getComponent(row, col++, compName, myParent));
-			}
-			row++;
-		}
+		if (lines!=null) {
+			for(List<String> myLine:lines) {
+				byte col=0;
+				for(String compName: myLine) {
+					lstComp.add(this.getComponent(row, col++, compName, myParent));
+				}
+				row++;
+		}	}
 		return lstComp;
 	}
 	
@@ -484,9 +511,11 @@ public class YAMLFormLoad {
 	 * @return
 	 */
 	private List<YProperty> getProperties(List<YAMLProperty> ymlProperties, YComponent myParent) {
-		return ymlProperties.stream()
-			.map(e ->this.getProperty(e, myParent))
-			.collect(Collectors.toList());
+		if (ymlProperties!=null)
+			return ymlProperties.stream()
+				.map(e ->this.getProperty(e, myParent))
+				.collect(Collectors.toList());
+		else return new ArrayList<YProperty>();
 	}
 	
 	/**
@@ -501,11 +530,18 @@ public class YAMLFormLoad {
 		
 		myAct.setName(ymlAct.getName());
 		myAct.setParent(myParent);
-		myAct.setClassName(ymlAct.getKlass());
-		myAct.setMethod(ymlAct.getMethod());
-		myAct.setRefresh(ymlAct.getRefresh());
-		myAct.setIcon(ymlAct.getIcon());
-		
+		myAct.setDefaultAction(ymlAct.isDefaultAction());
+		if (ymlAct.isDefaultAction()) {
+			// We need ficticious className so the from className is supplied
+			myAct.setClassName(this.yForm.getClassName().getFullName());
+			//We supply the method as the name of the action
+			myAct.setMethod(ymlAct.getName());
+		}else {
+			myAct.setClassName(ymlAct.getKlass());
+			myAct.setMethod(ymlAct.getMethod());
+			myAct.setRefresh(ymlAct.getRefresh());
+			myAct.setIcon(ymlAct.getIcon());
+		}
 		myAct.setType(ymlAct.getType());
 		myAct.setRoles(
 			StringUtils.join(
@@ -683,13 +719,10 @@ public class YAMLFormLoad {
 	 * @param name
 	 * @return
 	 */
-	private String getAttribute(YAMLComponent ymlComp) {
-		String myAtt=ymlComp.getAttribute();
-		if (myAtt==null) {
-			String name=ymlComp.getName();
-			if (this.getCompType(name)==ElementType.FIELD)
-				myAtt=name.substring(3);
-		}
+	private String getAttribute(YAMLComponent ymlComp, String name) {
+		String myAtt=null;
+		if (ymlComp!=null) 	myAtt=ymlComp.getAttribute();
+		if (myAtt==null)	myAtt=name.substring(3);
 		return myAtt;
 	}
 	
@@ -705,7 +738,7 @@ public class YAMLFormLoad {
 	 * 5.3 Actions' RoleGroup should exist in RoleGroups 
 	 *******************************************************************/
 	public String checkErrors(boolean verbose) { 
-		if (this.fase!=2)
+		if (this.fase!=2 && !verbose)
 			throw new RuntimeException("Fase must be 2 when executing method 'checkErrors()'");
 		
 		this.fase=3;
@@ -742,7 +775,7 @@ public class YAMLFormLoad {
 		if (verbose) myErrors = myErrors +
 				"\n\n" +
 				"======================================================\n" +
-				counter + ". " + errorType  + "s " + elemName + "s :\n" + 
+				counter + ". " + errorType  + " " + elemName + "s :\n" + 
 				"======================================================\n";
 		if (myLst!=null) 
 			for(String s: myLst) 
@@ -770,14 +803,14 @@ public class YAMLFormLoad {
 	 *  
 	 ***************************************************************/
 	public void persist() {
-		if (this.fase!=3)
-			throw new RuntimeException("Fase must be 3 when executing method 'persist()'");
+		if (this.fase!=4)
+			throw new RuntimeException("Fase must be 4 when executing method 'persist()'");
 		
 		if (this.connection==null)
 			throw new RuntimeException("A DB connection should be stablished before executing this method 'persist()'");
 		
 		
-		this.fase=4;
+		this.fase=5;
 		
 		this.yForm= this.connection.persist(this.yForm);
 	}	

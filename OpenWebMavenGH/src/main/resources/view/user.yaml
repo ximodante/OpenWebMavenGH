@@ -26,7 +26,6 @@ name: user
 description: user YAML
 klass: User
 pack: control
-program: control
 rsbundle: my_resource_bundle ???                  # Resource bundle for translation
 defaultFormActions: true                          # Get default actions from file _defaultFormActions
 defaultRoleGroups: true  
@@ -56,10 +55,10 @@ components:
 #3: Grid Panel definition for collections
 #4. Tab Group definition
 #6. Fields definition
-  - { name: fl_fdateBegin,  properties: [ { name: enabled, value: false } ] }
-  - { name: fl_fdateEnd  ,  properties: [ { name: enabled, value: false } ] }
-  - { name: fl_flastUser ,  properties: [ { name: enabled, value: false } ] }
-  - { name: fl_flastUser ,  properties: [ { name: enabled, value: false } ] }  
+  - { name: fl_fdateBegin, properties: [ { name: enabled, value: false } ] }
+  - { name: fl_fdateEnd,   properties: [ { name: enabled, value: false } ] }
+  - { name: fl_lastUser,   properties: [ { name: enabled, value: false } ] }
+    
 #---------------------------------------------------------------------------------------------
 #7. Events definition 
 #8. Action definition 

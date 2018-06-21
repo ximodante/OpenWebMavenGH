@@ -139,8 +139,8 @@ events:
 
 #8. Action definition 
 actions:
-  - { name: Calculate, parent: form,  klass: openadmin.action.control.User,       method: clean         , refresh: main,  icon: fa-area-chart, roleGroup: gtest , type: Button  }
-  - { name: LoadData,  parent: pn_01, klass: openadmin.action.control.Otherclass, method: loadData      , refresh: pn_01, icon: fa-bolt,       roleGroup: glook   }
+  - { name: calculate, parent: form,  klass: openadmin.action.control.User,       method: clean         , refresh: main,  icon: fa-area-chart, roleGroup: gtest , type: Button  }
+  - { name: loadData,  parent: pn_01, klass: openadmin.action.control.Otherclass, method: loadData      , refresh: pn_01, icon: fa-bolt,       roleGroup: glook   }
 
 #---------------------------------------------------------------------------------------------
 #9. Role groups. 

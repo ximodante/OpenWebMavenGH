@@ -1,11 +1,9 @@
 package openadmin.model.yamlform;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,7 +25,6 @@ import lombok.ToString;
 import openadmin.annotations.Default;
 import openadmin.model.Audit;
 import openadmin.model.Base;
-import openadmin.model.control.ClassName;
 
 @Entity
 @Table(name = "ymlevent", schema = "control" //, 

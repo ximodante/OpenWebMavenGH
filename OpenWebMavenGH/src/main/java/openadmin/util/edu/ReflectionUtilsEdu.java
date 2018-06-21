@@ -14,6 +14,8 @@ import java.util.List;
 import javax.validation.constraints.Size;
 //import java.util.Optional;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
+
 //import javax.validation.constraints.Size;
 
 import openadmin.model.Base;
@@ -442,8 +444,7 @@ public class ReflectionUtilsEdu {
 	 * @return
 	 */
 	public static boolean doesObjectContainField(Object object, String fieldName) {
-	    return Arrays.stream(object.getClass().getFields())
-	            .anyMatch(f -> f.getName().equals(fieldName));
+		return doesClassContainField(object.getClass(), fieldName);
 	}
 	
 	/**
@@ -453,7 +454,7 @@ public class ReflectionUtilsEdu {
 	 * @return
 	 */
 	public static boolean doesClassContainField(Class<?> myClass, String fieldName) {
-	    return Arrays.stream(myClass.getFields())
+	    return Arrays.stream(FieldUtils.getAllFields(myClass))
 	            .anyMatch(f -> f.getName().equals(fieldName));
 	}
 	
@@ -466,15 +467,11 @@ public class ReflectionUtilsEdu {
 	 * @throws ClassNotFoundException
 	 */
 	public static boolean doesClassContainField(String className, String fieldName) { 
-	    boolean exists=false;
-	    
 		try {
-			exists=Arrays.stream(Class.forName(className).getFields())
-			        .anyMatch(f -> f.getName().equals(fieldName));
-		} catch (SecurityException | ClassNotFoundException e) {
-			exists=false;
-		}
-		return exists;
+			return doesClassContainField(Class.forName(className), fieldName);
+		} catch (ClassNotFoundException e) {
+			return false;
+		} 
 	}
 	
 	/**

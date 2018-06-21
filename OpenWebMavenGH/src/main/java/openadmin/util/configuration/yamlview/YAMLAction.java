@@ -43,4 +43,8 @@ public class YAMLAction implements Serializable {
 	@Getter @Setter
 	private String roleGroup= null; 
 	
+	// Only default actions (New, Edit, Copy Delete and Serach) are defaultActions
+	@Getter @Setter
+	private boolean isDefaultAction=false;
+	
 }

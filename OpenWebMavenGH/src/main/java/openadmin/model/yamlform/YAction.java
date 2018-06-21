@@ -92,6 +92,10 @@ public class YAction extends Audit implements Base, Serializable{
 	@Column(name= "rols")
 	private String roles=""; 
 	
+	@Getter @Setter
+	@Column(name="default")
+	private boolean isDefaultAction=false;
+	
 	@PrePersist @PreUpdate
 	public void prePersist() {
 		this.setDescription(""+parent.getId()+"-" + this.getName());

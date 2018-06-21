@@ -89,7 +89,6 @@ public class YComponent extends Audit implements Base, Serializable{
 	//Attribute of the class only for fields
 	@Getter @Setter
 	@Size(max = 20)
-	@NotNull
 	@Column(name= "atribut")
 	private String attribute=null; 
 	
