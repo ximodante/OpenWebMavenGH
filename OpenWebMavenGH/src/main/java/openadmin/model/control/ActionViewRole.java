@@ -9,7 +9,6 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import javax.validation.constraints.Size;
@@ -51,8 +50,8 @@ public class ActionViewRole extends Audit implements Base, java.io.Serializable 
 	/** attribute that contain the relationship with role*/
 	@Getter @Setter
 	@ManyToOne
-	@JoinColumn(name = "rol", nullable= false)
-	private Role role;
+	@JoinColumn(name = "gruprols", nullable= false)
+	private RoleGroup roleGroup;
 	
 	/** attribute that contain the relationship with view*/
 	@Getter @Setter
@@ -75,7 +74,7 @@ public class ActionViewRole extends Audit implements Base, java.io.Serializable 
 		if( null != getMenuItem() ||null !=  getAction() || null != getRole())
 			this.description = ""+ getRole().getId() + "_" + getMenuItem().getId() + "_" + getAction().getId() ;
 		*/
-		this.description = ""+ getRole().getId() + "_" + getMenuItem().getId() + "_" ;
+		this.description = ""+ getRoleGroup().getId() + "_" + getMenuItem().getId() + "_" ;
 		
 		if (this.getAction()==null) this.description = this.description + "null"; 
 		else this.description = this.description + + getAction().getId();		

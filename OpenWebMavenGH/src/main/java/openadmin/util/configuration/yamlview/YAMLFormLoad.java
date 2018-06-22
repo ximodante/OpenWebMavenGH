@@ -441,8 +441,7 @@ public class YAMLFormLoad {
 		
 		myComp.setParent(myParent);
 		myComp.setLevel(++level); 
-		myComp.setLstActions(this.getActions(myComp));
-		myComp.setLstEvents(this.getEvents(myComp));
+		
 		if (myComp.getType()==ElementType.FIELD) myComp.setAttribute(this.getAttribute(ymlComp, compName));
 		
 		if (ymlComp!=null) {
@@ -452,7 +451,8 @@ public class YAMLFormLoad {
 		} else {
 			myComp.setClassName(this.getClassName(null, myParent));
 		}
-		
+		myComp.setLstActions(this.getActions(myComp));
+		myComp.setLstEvents(this.getEvents(myComp));
 		// Description updated by @PrePersist and @Preupdate method
 		//myComp.setDescription(this.form.getDescription());
 		
@@ -532,7 +532,7 @@ public class YAMLFormLoad {
 		myAct.setParent(myParent);
 		myAct.setDefaultAction(ymlAct.isDefaultAction());
 		if (ymlAct.isDefaultAction()) {
-			// We need ficticious className so the from className is supplied
+			// We need fictitious className so the from className is supplied
 			myAct.setClassName(this.yForm.getClassName().getFullName());
 			//We supply the method as the name of the action
 			myAct.setMethod(ymlAct.getName());

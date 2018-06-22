@@ -26,6 +26,7 @@ import openadmin.model.control.EntityAdm;
 import openadmin.model.control.MenuItem;
 import openadmin.model.control.Program;
 import openadmin.model.control.Role;
+import openadmin.model.control.RoleGroup;
 import openadmin.model.control.User;
 import openadmin.util.configuration.yamlview.YAMLRoleGroup;
 import openadmin.util.edu.YAMLUtilsEdu;
@@ -82,6 +83,9 @@ public class YAMLControlLoad implements Serializable{
 	
 	@Getter
 	private HashMap<String,Program>cPrograms=null;
+	
+	@Getter
+	private HashMap<String,RoleGroup>cRoleGroups=null;
 	
 	@Getter
 	private Set<Access>cAccesses=null;
@@ -238,7 +242,8 @@ public class YAMLControlLoad implements Serializable{
 		*/
 	}
 
-	// 2.-1 Set estimated Roles to an Action (Knowing th program name)
+	/**
+	// 2.-1 Set estimated Roles to an Action (Knowing the program name)
 	private void setEstimatedRoles(YAMLAction ymlAct, String programName) {
 		
 		if(ymlAct.getEstimatedRoles()==null || ymlAct.getEstimatedRoles().size()<1) {
@@ -250,7 +255,7 @@ public class YAMLControlLoad implements Serializable{
 					lRol.add(this.getRoleDescription(rName, programName));
 				ymlAct.setEstimatedRoles(lRol);
 	}	}	}
-	
+	*/
 	
 	//2.0 Get list of role names of a RoleGroup
 	private HashMap<String,List<String>> getRolesFromRoleGroup() {
@@ -297,6 +302,31 @@ public class YAMLControlLoad implements Serializable{
 			for (YAMLRole ymlRole : this.roles) {
 				
 				for (String sRol: ymlRole.getNames()) { 
+					for (String sProg: ymlRole.getPrograms()) {
+						//Role myRole=new Role(sRol.trim().toUpperCase() + "." + sProg.trim().toLowerCase());
+						Role myRole=new Role(this.getRoleDescription(sRol, sProg));
+						if (lRoles.get(myRole.getDescription()) == null)
+								lRoles.put(myRole.getDescription(), this.connection.persist(myRole));
+		}	}	}	}
+				/*
+				for (String sRol: ymlRole.getNames()) { 
+					Role myRole=new Role(sRol.trim().toUpperCase());
+						if (lRoles.get(myRole.getDescription()) == null)
+								lRoles.put(myRole.getDescription(), this.connection.persist(myRole));
+		}	}	}*/	
+		return lRoles;
+	}
+	
+	
+	//2.2 ControlRolesGroups
+	private HashMap<String,Role> getControlRoleGroups() {
+		HashMap<String,RoleGroup>lRoleGroups=new HashMap<String,RoleGroup>();
+		if(this.roleGroups !=null) {
+			for (YAMLRoleGroup ymlRG : this.roleGroups) {
+				RoleGroup myRG=new RoleGroup(ymlRG.getName());
+				myRG
+				lRoleGroups.
+				for (String sRolGrp: ymlRoleGrp.getNames()) { 
 					for (String sProg: ymlRole.getPrograms()) {
 						//Role myRole=new Role(sRol.trim().toUpperCase() + "." + sProg.trim().toLowerCase());
 						Role myRole=new Role(this.getRoleDescription(sRol, sProg));
@@ -382,11 +412,12 @@ public class YAMLControlLoad implements Serializable{
 	}	}	}	} 
 	
 	//2.4.1 SubMenu MenuItems
-	private Set<String> SubMenuItemsClassNameActionsPriv(YAMLMenuItem ymlMenu, MenuItem parent, Set<String> myParentRoles ) {
+	private Set<String> SubMenuItemsClassNameActionsPriv(YAMLMenuItem ymlMenu, MenuItem parent, Set<String> myParentRoleGroups ) {
 		MenuItem myMenu=new MenuItem();
 		ClassName myClass=null;
 		
-		Set<String> myRoles=new TreeSet<String>();
+		//Set<String> myRoles=new TreeSet<String>();
+		Set<String> myRoleGroups=new TreeSet<String>();
 		
 		if (ymlMenu.getProgram().trim().length()>0) 
 			this.defaultProgram=ymlMenu.getProgram().trim().toLowerCase();
@@ -411,29 +442,30 @@ public class YAMLControlLoad implements Serializable{
 			for (YAMLMenuItem ymlMenu1 : ymlMenu.getMenuItems()) {
 				//0=Submenu
 				if (ymlMenu1.getNodeType()==0) {
-					myRoles=SubMenuItemsClassNameActionsPriv(ymlMenu1, myMenu, myRoles);
+					myRoleGroups=SubMenuItemsClassNameActionsPriv(ymlMenu1, myMenu, myRoleGroups);
 				//1=Command or action, 2=Default View, 3=Custom View 4= YAML View
 				} else {
-					myRoles=MenuItemsClassNameActionsPriv(ymlMenu1, myMenu, myRoles);
+					myRoleGroups=MenuItemsClassNameActionsPriv(ymlMenu1, myMenu, myRoleGroups);
 		}	}	}
 		
 		//Submenu Gets roles from children. All the roles of the children can access a parent submenu
-		List<String> lRol=new ArrayList<String>(myRoles);
+		//List<String> lRol=new ArrayList<String>(myRoles);
+		List<String> lRolGrp=new ArrayList<String>(myRoleGroups);
 				
 		//Add Submenu action
 		YAMLAction ymlAct=new YAMLAction();
 		ymlAct.setName("submenu");
 		ymlAct.setGroup(0); // No matter the group value as there is only 1 action
 		//ymlAct.setRoles(lRol);
-		ymlAct.setEstimatedRoles(lRol);
-		myParentRoles= this.setMyActions(ymlAct, myClass, myMenu, myParentRoles, false);
+		ymlAct.setEstimatedRoleGroups(lRolGrp);
+		myParentRoleGroups= this.setMyActions(ymlAct, myClass, myMenu, myParentRoles, false);
 		
-		return myParentRoles;
+		return myParentRoleGroups;
 	}	
 		
 	
-	//2.4.2 Simple MenuItems (return roles)
-	private Set<String> MenuItemsClassNameActionsPriv(YAMLMenuItem ymlMenu, MenuItem parent, Set<String> myParentRoles ) {
+	//2.4.2 Simple MenuItems (return roleGroupss)
+	private Set<String> MenuItemsClassNameActionsPriv(YAMLMenuItem ymlMenu, MenuItem parent, Set<String> myParentRoleGroups ) {
 		
 		MenuItem myMenu=new MenuItem();
 		ClassName myClass=null;
@@ -468,20 +500,20 @@ public class YAMLControlLoad implements Serializable{
 		
 		// Add default actions only if viewType is not action nor submenu
 		if(ymlMenu.isDefaultActions() && myMenu.getType()!=0 && myMenu.getType()!=1 ) 
-			myParentRoles=this.setMyDefaultActions(ymlMenu, myClass, myMenu, myParentRoles);
+			myParentRoleGroups=this.setMyDefaultActions(ymlMenu, myClass, myMenu, myParentRoleGroups);
 		
 				
 		//Add other actions
 		if (ymlMenu.getActions() != null) {
 			for (YAMLAction ymlAct: ymlMenu.getActions()) {
-				this.setEstimatedRoles(ymlAct,this.defaultProgram);
-				myParentRoles=this.setMyActions(ymlAct, myClass, myMenu, myParentRoles, false);
+				//this.setEstimatedRoles(ymlAct,this.defaultProgram);
+				myParentRoleGroups=this.setMyActions(ymlAct, myClass, myMenu, myParentRoleGroups, false);
 		}	}
-		return myParentRoles;
+		return myParentRoleGroups;
 	}	
 		
 	// 2.4.3 Retrieve Default Actions
-	private Set<String> setMyDefaultActions(YAMLMenuItem ymlMenu, ClassName myClass, MenuItem myMenu, Set<String> myParentRoles) {
+	private Set<String> setMyDefaultActions(YAMLMenuItem ymlMenu, ClassName myClass, MenuItem myMenu, Set<String> myParentRoleGroups) {
 		if (ymlMenu.isDefaultActions()) {
 			if (this.getDefaultActions() != null) {
 				for (YAMLAction ymlAct: this.getDefaultActions() ) {
@@ -511,11 +543,11 @@ public class YAMLControlLoad implements Serializable{
 		}
 		
 		// Add ActionViewRole
-		this.setEstimatedRoles(ymlAct,this.defaultProgram);
+		//this.setEstimatedRoles(ymlAct,this.defaultProgram);
 		//if (ymlAct.getRoles() != null) {
-		if (ymlAct.getEstimatedRoles() != null) {
+		//if (ymlAct.getEstimatedRoles() != null) {
 			//for (String sRole: ymlAct.getRoles()) {
-			for (String sRole: ymlAct.getEstimatedRoles()) {
+			//for (String sRole: ymlAct.getEstimatedRoles()) {
 				//String roleDesc=this.defaultProgram +"."+ sRole.trim().toUpperCase();
 				//String roleDesc=sRole.trim().toUpperCase();
 				//String roleDesc=sRole.trim().toUpperCase() + "." + this.defaultProgram.trim().toLowerCase();

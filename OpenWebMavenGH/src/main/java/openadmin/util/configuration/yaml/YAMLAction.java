@@ -7,7 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;;
+import lombok.ToString;
+import openadmin.util.configuration.yamlview.YAMLRoleGroup;;
 
 @ToString
 @NoArgsConstructor
@@ -36,10 +37,12 @@ public class YAMLAction implements Serializable{
 	@Getter @Setter
 	private String roleGroup= null;        // Roles
 	
-	//2018/06/06 added
+	//2018/06/06 added for submenus
 	@Getter @Setter
 	private List<String> estimatedRoles= null;        // Roles calculated from roleGroup
 	
-
-
+	//2018/06/22 Only for sybmenus!!!
+	@Getter @Setter
+	private List<String> estimatedRoleGroups=null;
+	
 }

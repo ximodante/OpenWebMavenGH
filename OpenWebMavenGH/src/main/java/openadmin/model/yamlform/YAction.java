@@ -93,7 +93,7 @@ public class YAction extends Audit implements Base, Serializable{
 	private String roles=""; 
 	
 	@Getter @Setter
-	@Column(name="default")
+	@Column(name="generica")
 	private boolean isDefaultAction=false;
 	
 	@PrePersist @PreUpdate
