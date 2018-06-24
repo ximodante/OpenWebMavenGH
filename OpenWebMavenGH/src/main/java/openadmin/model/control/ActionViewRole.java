@@ -27,8 +27,8 @@ import openadmin.model.Base;
 @Entity
 @ToString @NoArgsConstructor
 @Table(name = "accioVistaRol", schema = "control", 
-       uniqueConstraints = @UniqueConstraint(columnNames =  { "rol", "menuitem","accio" }),
-       indexes = {@Index (name = "idx_role_menuitem", columnList = "rol, menuitem")})
+       uniqueConstraints = @UniqueConstraint(columnNames =  { "gruprols", "menuitem","accio" }),
+       indexes = {@Index (name = "idx_role_menuitem", columnList = "gruprols, menuitem")})
 @Audited
 public class ActionViewRole extends Audit implements Base, java.io.Serializable {
  
@@ -77,7 +77,7 @@ public class ActionViewRole extends Audit implements Base, java.io.Serializable 
 		this.description = ""+ getRoleGroup().getId() + "_" + getMenuItem().getId() + "_" ;
 		
 		if (this.getAction()==null) this.description = this.description + "null"; 
-		else this.description = this.description + + getAction().getId();		
+		else this.description = this.description +  getAction().getId();		
 		 
 	}
 	

@@ -67,8 +67,7 @@ public class RolePerGroup extends Audit implements Base, java.io.Serializable{
 	public void setDescription(String pDescription) {
 
 		this.description = pDescription.toLowerCase();
-		if (pDescription.trim().length()<1) 
-			this.description=role.getDescription()+"." + StringUtils.substringAfterLast(roleGroup.getDescription(), ".");
+		
 		
 	
 	}	

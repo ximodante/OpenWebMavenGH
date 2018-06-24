@@ -1,6 +1,7 @@
 package openadmin.web.components;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 import org.primefaces.model.menu.DefaultMenuItem;
@@ -21,7 +22,8 @@ public class PFPanelMenuEdu implements Serializable {
 		
 	}
 	
-	public DefaultSubMenu itemPare(MenuItem pMenuItem, Set<MenuItem> lstMenuItem) {
+	//public DefaultSubMenu itemPare(MenuItem pMenuItem, Set<MenuItem> lstMenuItem) {
+	public DefaultSubMenu itemPare(MenuItem pMenuItem, List<MenuItem> lstMenuItem) {
 		 
 		 DefaultSubMenu submenu = new DefaultSubMenu(langType.msgGenerals(pMenuItem.getDescription()));
 		 

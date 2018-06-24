@@ -18,4 +18,7 @@ public class YAMLRoleGroup implements Serializable {
 	@Getter @Setter
 	private List<String> roles= null; // Name of roles of this group
 	
+	@Getter @Setter
+	private int roleCount;
+	
 }

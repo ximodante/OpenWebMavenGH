@@ -67,7 +67,9 @@
       <class>openadmin.model.control.EntityAdm         </class>
       <class>openadmin.model.control.MenuItem          </class>
       <class>openadmin.model.control.Program           </class>
+      <class>openadmin.model.control.RoleGroup         </class>
       <class>openadmin.model.control.Role              </class>
+      <class>openadmin.model.control.RolePerGroup      </class>
       <class>openadmin.model.control.SiNo              </class>
       
       <class>openadmin.model.control.User              </class>

@@ -42,7 +42,7 @@ public class YAMLAction implements Serializable{
 	private List<String> estimatedRoles= null;        // Roles calculated from roleGroup
 	
 	//2018/06/22 Only for sybmenus!!!
-	@Getter @Setter
-	private List<String> estimatedRoleGroups=null;
+	//@Getter @Setter
+	//private List<String> estimatedRoleGroups=null;
 	
 }

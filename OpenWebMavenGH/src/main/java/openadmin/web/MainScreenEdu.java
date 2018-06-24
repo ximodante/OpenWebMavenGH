@@ -139,11 +139,15 @@ public class MainScreenEdu implements Serializable {
 		Role rol = 	new Role();
 		rol.setId(pRol);
 		
+		
+		
 		//activeRol = ctx.getConnControl().findObjectPK(rol);
 		
 		
 		//Current Rol
 		ctx.setActiveRol(ctx.getConnControl().findObjectPK(rol));
+		
+		/*****************
 		
 		Program program = new Program();
 		program.setId(pProgram);
@@ -156,6 +160,19 @@ public class MainScreenEdu implements Serializable {
 		Set<MenuItem> lstMenuItems = 
 				ctx.getConnControl().findObjects(actionViewRole).stream()
 				.map(ActionViewRole::getMenuItem).collect(Collectors.toCollection(TreeSet::new));
+		
+		***************************/
+		
+		String pSQL=
+			"SELECT DISTINCT avr.menuItem " + 
+		    "FROM RolePerGroup rp " +
+			"JOIN ActionViewRole avr ON rp.role.id="+ pRol + " AND avr.roleGroup=rp.roleGroup "	; //+ 
+		    //"ORDER BY avr.menuItem";
+		List<MenuItem>lstMenuItems=ctx.getConnControl().findObjectPersonalized2(pSQL);
+		
+		lstMenuItems=lstMenuItems.stream()
+				.sorted((o1, o2)->o1.getId().compareTo(o2.getId()))
+				.collect(Collectors.toList());
 		
 		
 		//Registra en el log el nom del programa seleccionat
@@ -274,6 +291,7 @@ public class MainScreenEdu implements Serializable {
 			outView.getChildren().clear();
 		}
 	
+		/*****************
 		//Action view
 		ActionViewRole actionViewRole = new ActionViewRole();
 		actionViewRole.setMenuItem(pMenuItem);
@@ -284,6 +302,17 @@ public class MainScreenEdu implements Serializable {
 				.map(ActionViewRole::getAction)
 				.collect(Collectors.toList());
 	
+	    ****/
+		String pSQL=
+			"SELECT avr.action " + 
+			"FROM ActionViewRole avr " + 
+			"JOIN RolePerGroup rpg " + 
+			"  ON avr.menuItem.id=" + pMenuItem.getId() + " " + 
+			" AND rpg.role.id=" +  ctx.getActiveRol().getId() + 
+			" AND rpg.roleGroup=avr.roleGroup";
+		List<Action> lstActionView =
+			ctx.getConnControl().findObjectPersonalized2(pSQL);
+			
 		//Create object
 		if (null == obj) {
 		

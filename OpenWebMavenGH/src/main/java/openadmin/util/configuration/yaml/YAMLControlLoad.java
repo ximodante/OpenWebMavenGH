@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,6 +29,7 @@ import openadmin.model.control.MenuItem;
 import openadmin.model.control.Program;
 import openadmin.model.control.Role;
 import openadmin.model.control.RoleGroup;
+import openadmin.model.control.RolePerGroup;
 import openadmin.model.control.User;
 import openadmin.util.configuration.yamlview.YAMLRoleGroup;
 import openadmin.util.edu.YAMLUtilsEdu;
@@ -103,7 +106,7 @@ public class YAMLControlLoad implements Serializable{
 	private HashMap<String,ActionViewRole> cActionViewRoles=null;
 	
 	@Getter
-	private HashMap<String,List<String>> cRoleGroups=null;
+	private HashMap<String,List<String>> cRoleGroups2=null;
 	
 	private String defaultProgram="control";
 	
@@ -189,7 +192,24 @@ public class YAMLControlLoad implements Serializable{
     	else return favIconName;
     }
 	
-	// ======================================================
+    /** Get which roleGroup has more roles
+     * 
+     * @param roleGroupName
+     * @return
+     */
+    private String widerRG(String RG1, String RG2) {
+    	if (this.cRoleGroups2!=null) {
+    		List<String> s1=cRoleGroups2.get(RG1);
+    		List<String> s2=cRoleGroups2.get(RG2);
+    		
+    		if (s1==null) return RG2;
+    		else if (s2==null) return RG1;
+    		else if (s1.size() > s2.size()) return RG1;
+    		else return RG2;
+    	} else return RG1;	
+    }	
+
+    // ======================================================
 	// 2. Control classes extraction and populate to DB
 	//    Also delete old configuration records from DB
 	// ======================================================
@@ -211,13 +231,17 @@ public class YAMLControlLoad implements Serializable{
 		this.cRoles=this.getControlRoles();
 		
 		//3. Role Groups
-		this.cRoleGroups =this.getRolesFromRoleGroup();
+		this.cRoleGroups2=this.getRolesFromRoleGroup();
+		this.cRoleGroups =this.getControlRoleGroups();
 		
-		//4. Entity & Program & Access
+		//4. Roles per groups
+		this.obtainRolesPerRoleGroups();
+		
+		//5. Entity & Program & Access
 		this.EntityAdmProgramAccess();
 		
 		
-		//5. MenuItems & ClassName & Action
+		//6. MenuItems & ClassName & Action
 		this.MenuItemsClassNameActions();
 		
 		
@@ -260,10 +284,9 @@ public class YAMLControlLoad implements Serializable{
 	//2.0 Get list of role names of a RoleGroup
 	private HashMap<String,List<String>> getRolesFromRoleGroup() {
 		HashMap<String,List<String>>lRoles=new HashMap<String,List<String>>();
-		if(this.roleGroups !=null) {
-			for (YAMLRoleGroup ymlRoleG : this.roleGroups) {
+		if(this.roleGroups !=null) 
+			for (YAMLRoleGroup ymlRoleG : this.roleGroups) 
 				lRoles.put(ymlRoleG.getName(),ymlRoleG.getRoles());
-		}	}
 		return lRoles;
 	}
 	
@@ -318,31 +341,38 @@ public class YAMLControlLoad implements Serializable{
 	}
 	
 	
-	//2.2 ControlRolesGroups
-	private HashMap<String,Role> getControlRoleGroups() {
-		HashMap<String,RoleGroup>lRoleGroups=new HashMap<String,RoleGroup>();
+	//2.3 ControlRolesGroups
+	private HashMap<String,RoleGroup> getControlRoleGroups() {
+		HashMap<String,RoleGroup>lRG=new HashMap<String,RoleGroup>();
 		if(this.roleGroups !=null) {
 			for (YAMLRoleGroup ymlRG : this.roleGroups) {
-				RoleGroup myRG=new RoleGroup(ymlRG.getName());
-				myRG
-				lRoleGroups.
-				for (String sRolGrp: ymlRoleGrp.getNames()) { 
-					for (String sProg: ymlRole.getPrograms()) {
-						//Role myRole=new Role(sRol.trim().toUpperCase() + "." + sProg.trim().toLowerCase());
-						Role myRole=new Role(this.getRoleDescription(sRol, sProg));
-						if (lRoles.get(myRole.getDescription()) == null)
-								lRoles.put(myRole.getDescription(), this.connection.persist(myRole));
-		}	}	}	}
-				/*
-				for (String sRol: ymlRole.getNames()) { 
-					Role myRole=new Role(sRol.trim().toUpperCase());
-						if (lRoles.get(myRole.getDescription()) == null)
-								lRoles.put(myRole.getDescription(), this.connection.persist(myRole));
-		}	}	}*/	
-		return lRoles;
+				for (String prg:this.getProgramNames()) {
+					RoleGroup myRG=new RoleGroup(ymlRG.getName()+ "." + prg);
+					if (lRG.get(myRG.getDescription())==null)
+						lRG.put(myRG.getDescription(), this.connection.persist(myRG));
+		}	}	}	
+		return lRG;   
 	}
 	
-	// 2.3 EntityAdm & Program & Accesses
+	// 2.4 RolePerGroup
+	// The description of a role per group is "role.rolgroup.program"
+	private void obtainRolesPerRoleGroups() {
+		if (this.cRoles!=null) {
+			for (Role r:cRoles.values()) {
+				//s[0]=simple role name;  s[1]=program name
+				String[] s=StringUtils.split(r.getDescription(),".");
+				if(this.roleGroups !=null) {
+					for (YAMLRoleGroup ymlRG : this.roleGroups) {
+						if (ymlRG.getRoles().contains(s[0])) {
+							RoleGroup rg=this.cRoleGroups.get(ymlRG.getName()+"."+s[1]);
+							RolePerGroup rpg=new RolePerGroup();
+							rpg.setRole(r);
+							rpg.setRoleGroup(rg);
+							rpg.setDescription(s[0]+"."+ymlRG.getName()+"."+s[1]);
+							this.connection.persist(rpg);
+	}	}	}	}	}	}
+	
+	// 2.5 EntityAdm & Program & Accesses
 	public void EntityAdmProgramAccess() {
 		this.cEntityAdms = new HashMap<String,EntityAdm>();
 		this.cPrograms   = new HashMap<String,Program>() ;
@@ -399,25 +429,24 @@ public class YAMLControlLoad implements Serializable{
 		this.cClassNames=new HashMap<String,ClassName>();
 		this.cActionViewRoles=new HashMap<String,ActionViewRole>();
 		
-		Set<String> myRoles=new TreeSet<String>();
+		//Role Group name
+		String myRG="";
 		
 		if(this.menuItems !=null) {
 			for (YAMLMenuItem ymlMenu : this.menuItems) {
 				//Submenu
 				if (ymlMenu.getNodeType()==0) {
-					myRoles =this.SubMenuItemsClassNameActionsPriv(ymlMenu, null, myRoles);
+					myRG =this.SubMenuItemsClassNameActionsPriv(ymlMenu, null, myRG);
 				// Not submenus (action or views)	
 				} else {
-					myRoles = MenuItemsClassNameActionsPriv(ymlMenu, null, myRoles);
+					myRG = MenuItemsClassNameActionsPriv(ymlMenu, null);
 	}	}	}	} 
 	
 	//2.4.1 SubMenu MenuItems
-	private Set<String> SubMenuItemsClassNameActionsPriv(YAMLMenuItem ymlMenu, MenuItem parent, Set<String> myParentRoleGroups ) {
+	private String SubMenuItemsClassNameActionsPriv(YAMLMenuItem ymlMenu, MenuItem parent, String myParentRG ) {
 		MenuItem myMenu=new MenuItem();
 		ClassName myClass=null;
 		
-		//Set<String> myRoles=new TreeSet<String>();
-		Set<String> myRoleGroups=new TreeSet<String>();
 		
 		if (ymlMenu.getProgram().trim().length()>0) 
 			this.defaultProgram=ymlMenu.getProgram().trim().toLowerCase();
@@ -437,38 +466,42 @@ public class YAMLControlLoad implements Serializable{
 		this.cMenuItems.put(myMenu.getDescription(), this.connection.persist(myMenu));
 		
 		
-		
+		String myRG="";
+		String myRG1="";
 		if(ymlMenu.getMenuItems() !=null) {
 			for (YAMLMenuItem ymlMenu1 : ymlMenu.getMenuItems()) {
 				//0=Submenu
-				if (ymlMenu1.getNodeType()==0) {
-					myRoleGroups=SubMenuItemsClassNameActionsPriv(ymlMenu1, myMenu, myRoleGroups);
+				if (ymlMenu1.getNodeType()==0) 
+					myRG1=SubMenuItemsClassNameActionsPriv(ymlMenu1, myMenu, myRG);
 				//1=Command or action, 2=Default View, 3=Custom View 4= YAML View
-				} else {
-					myRoleGroups=MenuItemsClassNameActionsPriv(ymlMenu1, myMenu, myRoleGroups);
-		}	}	}
+				else 
+					myRG1=MenuItemsClassNameActionsPriv(ymlMenu1, myMenu);
+				
+				myRG=this.widerRG(myRG, myRG1);
+		}	}	
 		
 		//Submenu Gets roles from children. All the roles of the children can access a parent submenu
-		//List<String> lRol=new ArrayList<String>(myRoles);
-		List<String> lRolGrp=new ArrayList<String>(myRoleGroups);
-				
+						
 		//Add Submenu action
 		YAMLAction ymlAct=new YAMLAction();
 		ymlAct.setName("submenu");
 		ymlAct.setGroup(0); // No matter the group value as there is only 1 action
 		//ymlAct.setRoles(lRol);
-		ymlAct.setEstimatedRoleGroups(lRolGrp);
-		myParentRoleGroups= this.setMyActions(ymlAct, myClass, myMenu, myParentRoles, false);
+		//ymlAct.setEstimatedRoleGroups(lRolGrp);
+		ymlAct.setRoleGroup(myRG);
+		myRG1= this.setMyActions(ymlAct, myClass, myMenu, false);
 		
-		return myParentRoleGroups;
+		return myRG;
 	}	
 		
 	
 	//2.4.2 Simple MenuItems (return roleGroupss)
-	private Set<String> MenuItemsClassNameActionsPriv(YAMLMenuItem ymlMenu, MenuItem parent, Set<String> myParentRoleGroups ) {
+	private String MenuItemsClassNameActionsPriv(YAMLMenuItem ymlMenu, MenuItem parent ) {
 		
 		MenuItem myMenu=new MenuItem();
 		ClassName myClass=null;
+		String myRG="";
+		String myRG1="";
 		
 		if (ymlMenu.getProgram().trim().length()>0) 
 			this.defaultProgram=ymlMenu.getProgram().trim().toLowerCase();
@@ -500,31 +533,35 @@ public class YAMLControlLoad implements Serializable{
 		
 		// Add default actions only if viewType is not action nor submenu
 		if(ymlMenu.isDefaultActions() && myMenu.getType()!=0 && myMenu.getType()!=1 ) 
-			myParentRoleGroups=this.setMyDefaultActions(ymlMenu, myClass, myMenu, myParentRoleGroups);
+			myRG=this.setMyDefaultActions(ymlMenu, myClass, myMenu);
 		
 				
 		//Add other actions
 		if (ymlMenu.getActions() != null) {
 			for (YAMLAction ymlAct: ymlMenu.getActions()) {
 				//this.setEstimatedRoles(ymlAct,this.defaultProgram);
-				myParentRoleGroups=this.setMyActions(ymlAct, myClass, myMenu, myParentRoleGroups, false);
+				myRG1=this.setMyActions(ymlAct, myClass, myMenu, false);
+				myRG=this.widerRG(myRG, myRG1);
 		}	}
-		return myParentRoleGroups;
+		return myRG;
 	}	
 		
 	// 2.4.3 Retrieve Default Actions
-	private Set<String> setMyDefaultActions(YAMLMenuItem ymlMenu, ClassName myClass, MenuItem myMenu, Set<String> myParentRoleGroups) {
+	private String setMyDefaultActions(YAMLMenuItem ymlMenu, ClassName myClass, MenuItem myMenu) {
+		String myRG="";
+		String myRG1="";
 		if (ymlMenu.isDefaultActions()) {
 			if (this.getDefaultActions() != null) {
 				for (YAMLAction ymlAct: this.getDefaultActions() ) {
-					this.setEstimatedRoles(ymlAct,this.defaultProgram);
-					myParentRoles=this.setMyActions(ymlAct, myClass, myMenu, myParentRoles ,true);
+					//this.setEstimatedRoles(ymlAct,this.defaultProgram);
+					myRG1=this.setMyActions(ymlAct, myClass, myMenu, true);
+					myRG=this.widerRG(myRG, myRG1);
 		}	}	}	
-		return myParentRoles;
+		return myRG;
 	}
 		
 	//2.4.4 Create Actions and ActionviewRole
-	private Set<String> setMyActions(YAMLAction ymlAct, ClassName myClass, MenuItem myMenu, Set<String> myParentRoles, boolean isDefaultAction) {
+	private String setMyActions(YAMLAction ymlAct, ClassName myClass, MenuItem myMenu, boolean isDefaultAction) {
 		Action myAct=null;
 		
 		//(Not for submenus that have no actions) 1=Command, 2=Default View, 3=Custom View, 4=YAML View
@@ -543,30 +580,19 @@ public class YAMLControlLoad implements Serializable{
 		}
 		
 		// Add ActionViewRole
-		//this.setEstimatedRoles(ymlAct,this.defaultProgram);
-		//if (ymlAct.getRoles() != null) {
-		//if (ymlAct.getEstimatedRoles() != null) {
-			//for (String sRole: ymlAct.getRoles()) {
-			//for (String sRole: ymlAct.getEstimatedRoles()) {
-				//String roleDesc=this.defaultProgram +"."+ sRole.trim().toUpperCase();
-				//String roleDesc=sRole.trim().toUpperCase();
-				//String roleDesc=sRole.trim().toUpperCase() + "." + this.defaultProgram.trim().toLowerCase();
-				//String roleDesc=this.getRoleDescription(sRole, this.defaultProgram);
-				
-				//Only persist actionViewRole if the role exists!!!!
-				//Role myRole=this.cRoles.get(roleDesc);
-				Role myRole=this.cRoles.get(sRole);
-				// If the role exists for this program
-				if (myRole!=null) {
-					ActionViewRole myAVR = new ActionViewRole();
-					myAVR.setAction(myAct);
-					myAVR.setMenuItem(myMenu);
-					myAVR.setRole(myRole);
-					myAVR.setDescription("");
-					this.cActionViewRoles.put(myAVR.getDescription(), this.connection.persist(myAVR));
-					myParentRoles.add(sRole);
-		}	}	}
-		return myParentRoles;
+		String myRG=ymlAct.getRoleGroup();
+		RoleGroup myRGrp=this.cRoleGroups.get(myRG+"."+this.defaultProgram);
+		// If the role exists for this program
+		if (myRGrp!=null) {
+			ActionViewRole myAVR = new ActionViewRole();
+			myAVR.setAction(myAct);
+			myAVR.setMenuItem(myMenu);
+			myAVR.setRoleGroup(myRGrp);
+			myAVR.setDescription("");
+			this.cActionViewRoles.put(myAVR.getDescription(), this.connection.persist(myAVR));
+					
+		}	
+		return myRG;
 	}
 	
 	
@@ -678,22 +704,23 @@ public class YAMLControlLoad implements Serializable{
 	 * Detects duplicated Roles in Default Actions
 	 * @return
 	 */
+	/**
 	public String DuplicatedDefaultActionRole(String myErrors) {
 		if (this.defaultActions!=null) {
 			for( YAMLAction action: this.defaultActions) {
 				Set<String> mySet= new HashSet<String>();
-				this.setEstimatedRoles(action,this.defaultProgram);
+				//this.setEstimatedRoles(action,this.defaultProgram);
 				//for (String sRol: action.getRoles()) {
-				for (String sRol: action.getEstimatedRoles()) {
-					String name= sRol.trim().toLowerCase();
-					if (mySet.add(name)==false) 
-						myErrors=myErrors + "\n" + "->Duplicated DefaultAction Role:" + action.getName() + "-" + sRol;
-				}	
+				//for (String sRol: action.getEstimatedRoles()) {
+				//	String name= sRol.trim().toLowerCase();
+				//	if (mySet.add(name)==false) 
+				//		myErrors=myErrors + "\n" + "->Duplicated DefaultAction Role:" + action.getName() + "-" + sRol;
+				//}	
 			}
 		}	
 		return myErrors;
 	}
-	
+	**/
 	/**
 	 * Detects duplicated menu Items description
 	 * @param myErrors
@@ -749,6 +776,7 @@ public class YAMLControlLoad implements Serializable{
 	 * @param myErrors
 	 * @return
 	 */
+	/**
 	public String NoDefaultActionRole(String myErrors) {
 		//Set<String> mySet= this.getRoleNames();
 		Set<String> mySet= this.getSimpleRoleNames();
@@ -766,6 +794,7 @@ public class YAMLControlLoad implements Serializable{
 		}	
 		return myErrors;
 	}
+	**/
 	
 	/**
 	 * Detects nonexistent programs in MenuItem
@@ -803,6 +832,8 @@ public class YAMLControlLoad implements Serializable{
 	 * @param myErrors
 	 * @return
 	 */
+	
+	/**
 	private String NoMenuItemActionRolePriv(String myErrors, List<YAMLMenuItem> lMenuItems, Set<String> roleSet ) {
 		if (lMenuItems !=null) {
 			for (YAMLMenuItem ymlMenu: lMenuItems) {
@@ -823,17 +854,21 @@ public class YAMLControlLoad implements Serializable{
 		}	
 		return myErrors;
 	}
-	
+	**/
 	
 	/**
 	 * Detects nonexistent roles in MenuItem - Action 
 	 * @param myErrors
 	 * @return
 	 */
+	
+	/**
 	public String NoMenuItemActionRole(String myErrors) {
 		myErrors=NoMenuItemActionRolePriv(myErrors, this.menuItems,this.getRoleNames());
 		return myErrors;
 	}
+	
+	**/
 	
 	/**
 	 * Gets the role description as ROLE.program
@@ -847,7 +882,7 @@ public class YAMLControlLoad implements Serializable{
 	}
 	
 	public String checkErrors(boolean verbose) {
-		if (this.cRoleGroups==null) this.cRoleGroups =this.getRolesFromRoleGroup();
+		if (this.cRoleGroups2==null) this.cRoleGroups2 =this.getRolesFromRoleGroup();
 		String s="";
 		if (verbose) s=s+
 			"======================================================\n" +
@@ -886,12 +921,13 @@ public class YAMLControlLoad implements Serializable{
 			"======================================================\n";
 		s=this.DuplicatedDefaultAction(s);
 			
-		
+		/**
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
 			"7. Duplicated DefaultActionRole:\n" + 
 			"======================================================\n";
 		s=this.DuplicatedDefaultActionRole(s);
+		**/	
 			
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
@@ -911,11 +947,14 @@ public class YAMLControlLoad implements Serializable{
 			"======================================================\n";
 		s=this.NoMenuItemProgram(s);
 			
+		
+		/**
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
 			"11. NoMenuItemActionRole:\n" + 
 			"======================================================\n";
 		s=this.NoMenuItemActionRole(s);
+		**/
 		
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
@@ -927,15 +966,16 @@ public class YAMLControlLoad implements Serializable{
 	}	
 	
 	public String checkWarnings(boolean verbose) {
-		if (this.cRoleGroups==null) this.cRoleGroups =this.getRolesFromRoleGroup();
+		if (this.cRoleGroups2==null) this.cRoleGroups2 =this.getRolesFromRoleGroup();
 		String s="";
 		
+		/**
 		if (verbose) s= s + "\n\n" + 
 			"======================================================\n" +
 			"9. NoDefaultActionRole:\n" + 
 			"======================================================\n";
 		s=this.NoDefaultActionRole(s);
-			
+		**/	
 			
 		return s;
 	}
