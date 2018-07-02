@@ -274,7 +274,6 @@ public class YAMLFormLoad {
 							// if not, then an error should be reported
 							//1.1.2 The component is a field (if exists in the class, it is OK) 
 							//1.1.2.2 If the field doesn't exist in the class	
-							//1.1.2.2 If the field doesn't exist in the class
 							else if (!this.isAttributeFromClass(this.getClassNameYML(myChildComp), name)) 
 								this.notExistingAttributes.add(this.getClassNameYML(myChildComp)+"-"+name);
 					
@@ -812,8 +811,24 @@ public class YAMLFormLoad {
 		
 		this.fase=5;
 		
-		this.yForm= this.connection.persist(this.yForm);
-	}	
+		//this.yForm= this.connection.persist(this.yForm);
+		this.yForm=this.persistComponent(yForm);
+	}
+	
+	private YComponent persistComponent(YComponent myComp) {
+		myComp=this.connection.persist(myComp);
+		
+		for (YEvent myEvent: myComp.getLstEvents())
+			myEvent=this.connection.persist(myEvent);
+		
+		for (YAction myAct: myComp.getLstActions())
+			myAct=this.connection.persist(myAct);
+		
+		for (YComponent myChildComp: myComp.getLstComponents())
+			myChildComp=this.persistComponent(myChildComp);
+		
+		return myComp;
+	}
 		
 		
 	public static void main(String[] args) {

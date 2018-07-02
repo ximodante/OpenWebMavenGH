@@ -532,9 +532,15 @@ public class YAMLControlLoad implements Serializable{
 		this.cMenuItems.put(myMenu.getDescription(), this.connection.persist(myMenu));
 		
 		// Add default actions only if viewType is not action nor submenu
-		if(ymlMenu.isDefaultActions() && myMenu.getType()!=0 && myMenu.getType()!=1 ) 
+		//if(ymlMenu.isDefaultActions() && myMenu.getType()!=0 && myMenu.getType()!=1 )
+		
+		// Add default actions only if viewType is 2(Default) or 3(Custom)
+		if(ymlMenu.isDefaultActions() && myMenu.getType()==2 || myMenu.getType()==3 )
 			myRG=this.setMyDefaultActions(ymlMenu, myClass, myMenu);
 		
+		// Add YAML Action for viewType =4 (YAML View)
+		if(myMenu.getType()==4)
+			myRG=this.setYMLAction(ymlMenu, myClass, myMenu);
 				
 		//Add other actions
 		if (ymlMenu.getActions() != null) {
@@ -560,6 +566,36 @@ public class YAMLControlLoad implements Serializable{
 		return myRG;
 	}
 		
+	private String setYMLAction(YAMLMenuItem ymlMenu, ClassName myClass, MenuItem myMenu) {
+		String myRG="";
+		Action myAct=null;
+		// Add action
+		myAct=new Action ();
+		myAct.setDescription(myClass.getDescription().trim() + "_yaml" );
+		myAct.setClassName(myClass);
+		myAct.setGrup(0);
+		//myAct.setIcon(this.favIcon(ymlAct.getIcon()));
+					
+		myAct.setType((byte)1);                 // Not default Action 
+					
+		this.cActions.put(myAct.getDescription(), this.connection.getOrPersist(myAct));
+			
+		myRG=ymlMenu.getRoleGroup();
+			
+			
+		RoleGroup myRGrp=this.cRoleGroups.get(myRG+"."+this.defaultProgram);
+		// If the role exists for this program
+		if (myRGrp!=null) {
+			ActionViewRole myAVR = new ActionViewRole();
+			myAVR.setAction(myAct);
+			myAVR.setMenuItem(myMenu);
+			myAVR.setRoleGroup(myRGrp);
+			myAVR.setDescription("");
+			this.cActionViewRoles.put(myAVR.getDescription(), this.connection.persist(myAVR));
+		}
+		return myRG;
+	}
+	
 	//2.4.4 Create Actions and ActionviewRole
 	private String setMyActions(YAMLAction ymlAct, ClassName myClass, MenuItem myMenu, boolean isDefaultAction) {
 		Action myAct=null;

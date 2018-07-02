@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
+//import javax.persistence.CascadeType;
+//import javax.persistence.OneToMany;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,10 +16,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -38,13 +41,16 @@ import openadmin.model.control.ClassName;
  * It can be: mainform, panel, gridpanel, tabgroup, tab and field type
  * A component can have events and associated actions
  * If a component is a container, it can contain other components
+ * 
+ * JPA does not work well with Collections. Some attributtes like audits and last user 
+ *   are not persisted. o collections have been defined as @Transient.
  * @author eduard
  *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 //@DiscriminatorColumn(name = "Component_Type")
-@Table(name = "ymlcomp", schema = "control" //, 
+@Table(name = "ymlcomp", schema = "control_yaml_form" //, 
        //uniqueConstraints = { 
        //		   @UniqueConstraint(columnNames =  { "pare", "fila","columna" }),
     	//	   @UniqueConstraint(columnNames =  { "pare", "nom" })
@@ -110,44 +116,59 @@ public class YComponent extends Audit implements Base, Serializable{
 	//@NoSql
 	private YComponent parent=null; // Parent component container
 	
+	
 	@Getter @Setter
+	@Transient
+	/*
 	@OneToMany(
 	mappedBy = "parent", 
 	//mappedBy = "pare",
 	cascade = CascadeType.ALL, 
 	orphanRemoval = true
-	)
+	)*/
+	
 	private List<YAction> lstActions=new ArrayList<>(); // detail of the Actions included in the tab
 	
+	
 	@Getter @Setter
+	@Transient
+	/*
 	@OneToMany(
 		mappedBy = "parent", 
 		//mappedBy = "pare",	
 	    cascade = CascadeType.ALL, 
 	    orphanRemoval = true
 	)
+	*/
 	private List<YEvent> lstEvents=new ArrayList<>();
 
 	//1. Part for containers
+	
 	@Getter @Setter
+	@Transient
+	/*
 	@OneToMany(
 		mappedBy = "parent", 
 		//mappedBy = "pare",	
 	    cascade = CascadeType.ALL, 
 	    orphanRemoval = true
 	)
+	*/
 	private List<YComponent> lstComponents=new ArrayList<>();
 
 	//Additional properties 
 	@Getter @Setter
+	@Transient
+	/*
 	@OneToMany(
 		mappedBy = "parent", 
 	    //mappedBy = "pare",	
 	    cascade = CascadeType.ALL, 
 	    orphanRemoval = true
 	)
+	*/
 	private List<YProperty> lstProperties=new ArrayList<>();
-
+    
 	@PrePersist @PreUpdate
 	public void prePersist() {
 		if (this.getType()!=ElementType.FORM)

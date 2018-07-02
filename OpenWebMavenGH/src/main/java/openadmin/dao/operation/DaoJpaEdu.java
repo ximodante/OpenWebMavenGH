@@ -729,4 +729,20 @@ public class DaoJpaEdu implements DaoOperationFacadeEdu {
 		//System.out.println(obj.toString());
 		return obj;
 	}
+	
+	/** 
+	 * If an object exits, it is returned, else it is inserted as a new object
+	 * and return the object with the correct id
+	 */
+	public <T extends Base> T getOrPersist(T t) {
+		T obj=this.findObjectDescription(t);
+		if (obj==null) {
+			this.persistObject(t);
+			// t gets its id updated with autoincrement
+			//obj=connection.findObjectDescription(t); // NO need to get id value
+			obj=t;
+		} 
+		//System.out.println(obj.toString());
+		return obj;
+	}
 }

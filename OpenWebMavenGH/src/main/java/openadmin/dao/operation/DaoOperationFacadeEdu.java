@@ -136,6 +136,8 @@ public interface DaoOperationFacadeEdu {
 	
 	public <T extends Base> T persist(T t);
 	
+	public <T extends Base> T getOrPersist(T t);
+	
 	/** Getters and setters*/
 	public User getUser();
 	

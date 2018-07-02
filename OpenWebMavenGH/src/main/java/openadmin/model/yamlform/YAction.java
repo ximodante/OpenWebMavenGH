@@ -31,7 +31,7 @@ import openadmin.model.Base;
 import openadmin.model.control.ClassName;
 
 @Entity
-@Table(name = "ymlact", schema = "control" //, 
+@Table(name = "ymlact", schema = "control_yaml_form" //, 
        //uniqueConstraints = @UniqueConstraint(columnNames =  { "pare", "descripcio" })//,
        //indexes = {@Index (name = "idx_pare_row_column", columnList = "parent, row, column")}
 )

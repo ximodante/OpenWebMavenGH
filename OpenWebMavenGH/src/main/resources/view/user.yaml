@@ -48,16 +48,16 @@ components:
   - name: pn_statistics                               # main panel
     comment: Used to view data only, no enabled for updating info
     lines:                                            # fields displayed in lines   
-    - [ fl_fdateBegin,  fl_dateEnd    ]     
-    - [ fl_lastUser,    fl_auditData  ]                       
+    - [ fl_dateBegin,  fl_dateEnd    ]     
+    - [ fl_lastUser,   fl_auditData  ]                       
     #--------------------------------------                  
                       
 #3: Grid Panel definition for collections
 #4. Tab Group definition
 #6. Fields definition
-  - { name: fl_fdateBegin, properties: [ { name: enabled, value: false } ] }
-  - { name: fl_fdateEnd,   properties: [ { name: enabled, value: false } ] }
-  - { name: fl_lastUser,   properties: [ { name: enabled, value: false } ] }
+  - { name: fl_dateBegin, properties: [ { name: enabled, value: false } ] }
+  - { name: fl_dateEnd,   properties: [ { name: enabled, value: false } ] }
+  - { name: fl_lastUser,  properties: [ { name: enabled, value: false } ] }
     
 #---------------------------------------------------------------------------------------------
 #7. Events definition 
