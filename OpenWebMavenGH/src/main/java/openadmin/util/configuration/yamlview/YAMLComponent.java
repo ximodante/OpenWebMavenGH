@@ -3,10 +3,10 @@ package openadmin.util.configuration.yamlview;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.TreeSet;
+//import java.util.TreeSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+//import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import openadmin.model.control.ClassName;
 import openadmin.util.edu.YAMLUtilsEdu;
 
 @SuppressWarnings("serial")
@@ -37,6 +38,10 @@ public class YAMLComponent implements Serializable{
 	@Getter @Setter 
 	private String klass=null; // Class to edit fields
 	
+	@Getter @Setter 
+	private ClassName myClass=null; // ClassName 
+	
+		
 	@Getter @Setter 
 	private String attribute=null;
 	

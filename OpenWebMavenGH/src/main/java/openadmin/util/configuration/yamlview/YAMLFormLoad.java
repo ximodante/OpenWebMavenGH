@@ -544,9 +544,9 @@ public class YAMLFormLoad {
 		myAct.setType(ymlAct.getType());
 		myAct.setRoles(
 			StringUtils.join(
-				this.hYAMLRgr.get(ymlAct.getRoleGroup()),
+				this.hYAMLRgr.get(ymlAct.getRoleGroup()).getRoles(),
 				","));
-		// Description updated by @PrePersist and @Preupdate menthod
+		// Description updated by @PrePersist and @Preupdate method
 		//myAct.setDescription(""+myParent.getId()+"-"+myAct.getName());
 		
 		return myAct;
@@ -627,19 +627,30 @@ public class YAMLFormLoad {
 	 * Get control model related elements to this form
 	 */
 	private void getControlElements() {
+		this.getClassId();
 		this.getMenuItems();
 		this.getActionViewRoles();
 		this.getActions();
 		this.getPrograms();
 	}
+	
+	private void getClassId() {
+		String myStr=
+			" SELECT c " +  
+		    " FROM ClassName c " + 
+			" WHERE c.description='" + this.getSimpleName(this.form.getKlass())+ "'";
+		this.form.setMyClass((ClassName) (this.connection.findObjectPersonalized2(myStr).get(0)));
+		
+	}
 	/**
-	 * Get the MenuItems that can call this form
+	 * Get the MenuItems that can call this form.
+	 * YAML forms are in menu items of type "4"
 	 */
 	private void getMenuItems() {
 		String myStr=
 			" SELECT m " +  
 		    " FROM MenuItem m " + 
-			" WHERE m.className.description='" + this.getSimpleName(this.form.getKlass())+ "'" +
+			" WHERE m.className.id=" + this.form.getMyClass().getId()+ 
 			 "  AND m.type=4";
 		this.lstMenuItems= this.connection.findObjectPersonalized2(myStr);
 	}
@@ -676,8 +687,10 @@ public class YAMLFormLoad {
 	 * Get Programs related to this form
 	 */
 	private void getPrograms() {
+		/*
 		String actionViewRoleIds=this.lstActionViewRoles.stream()
 			.map(e->""+e.getId())
+			.distinct()
 			.collect(Collectors.joining(","));
 		
 		String myStr=
@@ -686,8 +699,24 @@ public class YAMLFormLoad {
 			" JOIN ActionViewRole avr " + 		
 			"   ON avr.id IN (" + actionViewRoleIds + ") " + 
 			"  AND avr.role = a.role"; 
+		*/
+		String roleGroupIds=this.lstActionViewRoles.stream()
+				.map(e->""+e.getRoleGroup().getId())
+				.distinct()
+				.collect(Collectors.joining(","));
+		
+		String myStr=
+				" SELECT a.program " +  
+			    " FROM Access a " +
+				" JOIN RolePerGroup rpg " + 		
+				"   ON rpg.roleGroup.id IN (" + roleGroupIds + ") " + 
+				"  AND rpg.role = a.role"; 
 			
 		this.lstPrograms= this.connection.findObjectPersonalized2(myStr);
+		this.lstPrograms=
+			this.lstPrograms.stream()
+			.distinct()
+			.collect(Collectors.toList());
 	}
 	
 	
@@ -823,6 +852,9 @@ public class YAMLFormLoad {
 		
 		for (YAction myAct: myComp.getLstActions())
 			myAct=this.connection.persist(myAct);
+		
+		for (YProperty myProp: myComp.getLstProperties())
+			myProp=this.connection.persist(myProp);
 		
 		for (YComponent myChildComp: myComp.getLstComponents())
 			myChildComp=this.persistComponent(myChildComp);
